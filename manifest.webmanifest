@@ -1,0 +1,17 @@
+{
+  "name": "漢字パイレーツ10級",
+  "short_name": "漢字パイレーツ",
+  "description": "漢字検定10級の漢字を、海賊の男の子といっしょに楽しくおぼえるゲーム",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EEF6FA",
+  "theme_color": "#1C6EA4",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
