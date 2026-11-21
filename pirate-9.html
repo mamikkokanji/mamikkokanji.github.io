@@ -619,7 +619,7 @@ function buildQuestion(type,t){
     return {type, t, prompt:"この漢字の部首はどれ？", big:esc(t.k), opts};
   }
   const set=new Set([t.s]);
-  for(const d of shuffle([-3,-2,-1,1,2,3])){ if(set.size===4) break; if(t.s+d>0) set.add(t.s+d); }
+  for(const d of [-1,1,...shuffle([-3,-2,2,3])]){ if(set.size===4) break; if(t.s+d>0) set.add(t.s+d); }
   const opts=shuffle([...set]).map(n=>({label:`${n}画`, ok:n===t.s}));
   return {type, t, prompt:"この漢字は全部で何画？", big:esc(t.k), opts};
 }
@@ -1138,7 +1138,7 @@ function junTarget(){
 }
 function junQ(t){
   const n=(KVG[t.k]||[]).length, h=rnd(n), set=new Set([h+1]);
-  for(const x of shuffle([-1,1,-2,2,-3,3].map(d=>h+1+d).filter(x=>x>=1&&x<=n))){ if(set.size===4) break; set.add(x); }
+  for(const x of [-1,1,...shuffle([-2,2,-3,3])].map(d=>h+1+d).filter(x=>x>=1&&x<=n)){ if(set.size===4) break; set.add(x); }
   for(let x=1;set.size<4&&x<=n;x++) set.add(x);
   const opts=[...set].sort((a,b)=>a-b).map(x=>({label:`${x}画目`, ok:x===h+1}));
   return {type:"jun", t, prompt:"赤いところは、何画目に書く？", big:kvgSVG(t.k,h), opts};
