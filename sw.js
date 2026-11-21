@@ -1,6 +1,6 @@
 // 漢字なかまたち：オフラインでも遊べるようにするしくみ
 // ゲームを直したら VERSION を上げると、つぎに開いたとき新しい版に入れかわります
-const VERSION = "nakama-v2";
+const VERSION = "nakama-v3";
 const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png", "./chara-pirate.png", "./chara-dragon.png", "./chara-hamster.png", "./chara-unicorn.png", "./pirate-10.html", "./pirate-9.html", "./pirate-5.html", "./dragon-9.html", "./dragon-5.html", "./hamster-10.html", "./hamster-9.html", "./hamster-5.html", "./unicorn-10.html", "./unicorn-9.html", "./unicorn-5.html"];
 
 self.addEventListener("install", e => {
