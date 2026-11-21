@@ -1156,32 +1156,39 @@ renderChips(); renderRoom(); resumeOrNew(); bindReset(); connectCloud();
 (function(){
 const CH=window.PLAY_CH, PID=window.PLAY_ID;
 if(!CH || typeof state!=="object") return;
-const EVERY=5, KEYP="kanji-play-"+PID;
+const EVERY=10, KEYP="kanji-play-"+PID;
 const calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
 let ps=null; try{ ps=JSON.parse(localStorage.getItem(KEYP)||"null"); }catch(e){}
 if(!ps||typeof ps.used!=="number") ps={used:0,best:{}};
 const saveP=()=>{ try{ localStorage.setItem(KEYP,JSON.stringify(ps)); }catch(e){} };
 const earned=()=>Math.floor((state.correct||0)/EVERY);
 function tickets(){ if(ps.used>earned()){ ps.used=earned(); saveP(); } return earned()-ps.used; }
-const charSVG=()=>{ try{ return CH==="hamster"?hamsterSVG(stageOf(state.correct)):dragonSVG(stageOf(state.correct)); }catch(e){ return ""; } };
+const charSVG=()=>{ try{ const st=stageOf(state.correct); return window[CH+"SVG"](st); }catch(e){ return ""; } };
 const rnd=n=>Math.floor(Math.random()*n);
 const shuffle=a=>{ for(let i=a.length-1;i>0;i--){ const j=rnd(i+1); [a[i],a[j]]=[a[j],a[i]]; } return a; };
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
-const GAMES = CH==="hamster" ? [
-  {id:"feed",   icon:"🌻", name:"たねを あげよう",      desc:"でてくる たねを タッチして たべさせよう", unit:"こ"},
-  {id:"wheel",  icon:"🎡", name:"くるくる まわしぐるま", desc:"ボタンを いっぱい おして まわそう",       unit:"かいてん"},
-  {id:"memory", icon:"🃏", name:"かんじ しんけいすいじゃく", desc:"かんじと よみかたを そろえよう",     unit:"かい", low:true},
-] : [
-  {id:"target", icon:"🎯", name:"ほのおで まとあて",     desc:"でてくる まとを タッチして ほのおを ふこう", unit:"こ"},
-  {id:"hoi",    icon:"👉", name:"あっちむいて ホイ",     desc:"ドラゴンと 6かい しょうぶ！",            unit:"てん"},
-  {id:"memory", icon:"🃏", name:"かんじ しんけいすいじゃく", desc:"かんじと よみかたを そろえよう",     unit:"かい", low:true},
-];
+const MEM={id:"memory", icon:"🃏", name:"かんじ しんけいすいじゃく", desc:"かんじと よみかたを そろえよう", unit:"かい", low:true};
+const GAMES = ({
+  hamster:[
+    {id:"feed",   icon:"🌻", name:"たねを あげよう",      desc:"でてくる たねを タッチして たべさせよう", unit:"こ"},
+    {id:"wheel",  icon:"🎡", name:"くるくる まわしぐるま", desc:"ボタンを いっぱい おして まわそう",       unit:"かいてん"}],
+  dragon:[
+    {id:"target", icon:"🎯", name:"ほのおで まとあて",     desc:"でてくる まとを タッチして ほのおを ふこう", unit:"こ"},
+    {id:"hoi",    icon:"👉", name:"あっちむいて ホイ",     desc:"ドラゴンと 6かい しょうぶ！",            unit:"てん"}],
+  pirate:[
+    {id:"treasure", icon:"💰", name:"たからさがし",        desc:"すなを ほって たからを 3つ さがそう（10かいまで）", unit:"こ"},
+    {id:"target", icon:"💣", name:"たいほうで まとあて",   desc:"でてくる まとを タッチして たいほうを うとう", unit:"こ"}],
+  unicorn:[
+    {id:"feed",   icon:"⭐", name:"ながれぼし キャッチ",   desc:"でてくる ほしを タッチして あつめよう", unit:"こ"},
+    {id:"hoi",    icon:"👉", name:"あっちむいて ホイ",     desc:"ユニコーンと 6かい しょうぶ！",          unit:"てん"}],
+})[CH].concat([MEM]);
+const NAME=({hamster:"ハムスター",dragon:"ドラゴン",pirate:"かいぞく",unicorn:"ユニコーン"})[CH];
 
 // ---------- スタイル ----------
 const css=document.createElement("style");
 css.textContent=`
-.wrap>#playZone{order:5}
+.wrap>#playZone{order:4}
 .pz{--pc:var(--acc,var(--jade,#8A5CC2));display:flex;flex-direction:column;gap:10px}
 .pz h2{margin:0;font-size:1.05rem;color:var(--pc)}
 .pz .pz-t{margin:0;font-size:.95rem}
@@ -1205,6 +1212,14 @@ css.textContent=`
 .pz-time i{display:block;height:100%;background:var(--pc);width:100%}
 .pz-stage{position:relative;height:min(58vh,340px);border-radius:18px;overflow:hidden;background:linear-gradient(#FFF8EC,#F3E4C8);touch-action:none;user-select:none;-webkit-user-select:none}
 .pz-box.dragon .pz-stage{background:linear-gradient(#DDF1FF,#CFEBDD)}
+.pz-box.pirate .pz-stage{background:linear-gradient(#CFE9FA,#F4E3BC)}
+.pz-box.unicorn .pz-stage{background:linear-gradient(#3B2E6E,#8C6CC8)}
+.pz-box.unicorn .pz-seed::before{content:"⭐";font-size:34px;left:4px;top:2px;width:auto;height:auto;border:0;background:none;transform:none}
+.pz-sand{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:10px;height:100%;box-sizing:border-box;align-content:center}
+.pz-sand button{font:inherit;aspect-ratio:1;border:0;border-radius:10px;background:#E2C68E;box-shadow:inset 0 -4px 0 rgba(0,0,0,.12);font-size:1.5rem;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:center;padding:0}
+.pz-sand button.dug{background:#C9A86A;box-shadow:none;cursor:default}
+.pz-sand button.hot{background:#E9A06A}
+.pz-sand button.gold{background:#FBE7A2;animation:pzpop .3s}
 .pz-msg{text-align:center;font-weight:700;min-height:1.6em;margin:0}
 .pz-big{font:inherit;font-weight:900;font-size:1.2rem;border:0;border-radius:16px;padding:14px;background:var(--pc);color:#fff;cursor:pointer;touch-action:manipulation}
 .pz-big:active{transform:scale(.97)}
@@ -1316,7 +1331,7 @@ function openGame(id){
       again.focus({preventScroll:true});
     }
   };
-  ({feed,wheel,memory,target,hoi})[id](api);
+  ({feed,wheel,memory,target,hoi,treasure})[id](api);
   ov.querySelector(".pz-x").focus({preventScroll:true});
 }
 
@@ -1362,7 +1377,7 @@ function wheel(a){
 // ---------- しんけいすいじゃく ----------
 function yomiLabel(t){ const parts=String(t.yomi||"").split(/[・、,]/).map(s=>s.trim()).filter(Boolean); return parts.find(p=>/^[ぁ-ゖー（）()]+$/.test(p))||parts[0]||""; }
 function memory(a){
-  let P=[]; try{ P=pool0(); }catch(e){}
+  let P=[]; try{ P=(typeof ALL!=="undefined"&&ALL)||(typeof KANJI!=="undefined"&&KANJI)||pool0(); }catch(e){}
   const seenK=new Set(Object.keys(state.st||{}));
   let cand=shuffle(P.filter(t=>seenK.has(t.k))); if(cand.length<6) cand=cand.concat(shuffle(P.filter(t=>!seenK.has(t.k))));
   const pick=[], used=new Set();
@@ -1397,7 +1412,7 @@ function target(a){
     s.style.left=x+"px"; s.style.top=y+"px";
     s.addEventListener("pointerdown",e=>{ e.preventDefault(); if(s.classList.contains("hit")) return;
       n++; a.score(n); s.classList.add("hit");
-      const f=document.createElement("span"); f.className="pz-fire"; f.textContent="🔥"; f.style.left=x+"px"; f.style.top=y+"px"; a.stage.appendChild(f);
+      const f=document.createElement("span"); f.className="pz-fire"; f.textContent=CH==="pirate"?"💥":"🔥"; f.style.left=x+"px"; f.style.top=y+"px"; a.stage.appendChild(f);
       setTimeout(()=>{ s.remove(); f.remove(); },500);
       chr.classList.remove("munch"); void chr.offsetWidth; chr.classList.add("munch"); });
     a.stage.appendChild(s);
@@ -1407,7 +1422,24 @@ function target(a){
   a.timer(20,()=>a.end(n));
 }
 
-// ---------- ドラゴン：あっちむいて ホイ ----------
+// ---------- かいぞく：たからさがし ----------
+function treasure(a){
+  const N=25, T=3, DIG=10; const gold=new Set(); while(gold.size<T) gold.add(rnd(N));
+  let digs=0, found=0; a.score(0);
+  a.stage.innerHTML=`<div class="pz-sand">${Array.from({length:N},(_,i)=>`<button type="button" data-i="${i}" aria-label="すな ${i+1}"></button>`).join("")}</div>`;
+  const near=i=>{ const x=i%5,y=Math.floor(i/5); for(const g of gold){ if(Math.abs(g%5-x)<=1&&Math.abs(Math.floor(g/5)-y)<=1) return true; } return false; };
+  a.msg.textContent=`のこり ${DIG}かい ほれるよ。オレンジの すなは たからの ちかく！`;
+  a.stage.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
+    if(b.classList.contains("dug")||digs>=DIG) return;
+    const i=+b.dataset.i; digs++; b.classList.add("dug");
+    if(gold.has(i)){ found++; b.classList.add("gold"); b.textContent="💰"; a.score(found); a.msg.textContent="たからを みつけた！"; }
+    else { const h=near(i); if(h) b.classList.add("hot"); b.textContent=h?"👀":""; a.msg.textContent=(h?"ちかいぞ！ ":"")+`のこり ${DIG-digs}かい`; }
+    if(found===T||digs>=DIG){ a.stage.querySelectorAll("button").forEach(x=>{ if(gold.has(+x.dataset.i)&&!x.classList.contains("gold")){ x.textContent="💰"; x.style.opacity=.5; } });
+      later(()=>a.end(found),900); }
+  }));
+}
+
+// ---------- あっちむいて ホイ ----------
 function hoi(a){
   const DIR=[["up","⬆️","うえ"],["down","⬇️","した"],["left","⬅️","ひだり"],["right","➡️","みぎ"]];
   const HAND={up:"👆",down:"👇",left:"👈",right:"👉"};
@@ -1421,7 +1453,7 @@ function hoi(a){
     chr.className="pz-chr"; hand.textContent="";
     if(round>=R){ a.end(pts); return; }
     const attack=round%2===0;
-    a.msg.textContent=`${round+1}かいめ：`+(attack?"きみが ゆびを さすばん。やじるしを えらんでね":"ドラゴンが ゆびを さすよ。ちがう ほうを むこう！");
+    a.msg.textContent=`${round+1}かいめ：`+(attack?"きみが ゆびを さすばん。やじるしを えらんでね":NAME+"が ゆびを さすよ。ちがう ほうを むこう！");
     lock(false);
   }
   btns.forEach(b=>b.addEventListener("click",()=>{
@@ -1432,12 +1464,36 @@ function hoi(a){
         const hit=me===dr; if(hit) pts++; a.msg.textContent=hit?"ホイ！ あたり！ 1てん":"ホイ！ ざんねん、はずれ"; }
       else { hand.textContent=HAND[dr]; chr.className="pz-chr";
         const safe=me!==dr; if(safe) pts++;
-        a.msg.textContent=safe?`ホイ！ ドラゴンは ${DIR.find(d=>d[0]===dr)[2]}。よけた！ 1てん`:"ホイ！ つられちゃった…";
+        a.msg.textContent=safe?`ホイ！ ${NAME}は ${DIR.find(d=>d[0]===dr)[2]}。よけた！ 1てん`:"ホイ！ つられちゃった…";
         hand.style.opacity=1; }
       a.score(pts); round++; later(setup,1400);
     },550);
   }));
   setup();
+}
+
+// ---------- パイレーツ・ユニコーン：ボス戦のかわりに、ぜんぶ みつけたら つぎへ ----------
+if((CH==="pirate"||CH==="unicorn") && typeof renderSea==="function"){
+  const PLACE=CH==="pirate"?"しま":"くに";
+  const css2=document.createElement("style"); css2.textContent=`.sea .bossrow.nb{display:block;text-align:center;padding:12px}.sea .bossrow.nb p{margin:0}`; document.head.appendChild(css2);
+  let justCleared=null;
+  const orig=renderSea;
+  renderSea=function(){
+    if(state.boss){ state.boss=null; save(); }
+    const i=state.sec, sec=SECS[i];
+    if(sec && secFound(i)>=sec.length && state.cleared<=i){ state.cleared=i+1; save(); justCleared=i; }
+    const r=orig.apply(this,arguments);
+    const row=document.querySelector("#sea .bossrow");
+    if(row && sec){
+      const n=secFound(i), clr=i<state.cleared, last=i>=SEC_N-1;
+      row.className="bossrow nb";
+      row.innerHTML=`<p>${clr?(last?"🎉 ぜんぶの "+PLACE+"を クリアした！ おめでとう！":"🎉 クリア！ つぎの "+PLACE+"へ いけるよ。うえの ちずから えらんでね"):`この ${PLACE}の かんじを ぜんぶ みつけると、つぎの ${PLACE}へ いけるよ（あと ${sec.length-n}じ）`}</p>`;
+    }
+    if(justCleared!=null){ const jc=justCleared; justCleared=null; setTimeout(()=>{ const fb=quiz.querySelector(".feedback .res.ok"); if(fb && !fb.parentNode.querySelector(".pz-clear")){ const d=document.createElement("div"); d.className="pz-get pz-clear"; d.textContent=`🎉 「${isleName(jc)}」を クリア！ ${jc>=SEC_N-1?"ぜんぶ クリア！":"つぎの "+PLACE+"へ いけるよ"}`; fb.after(d); } },0); }
+    return r;
+  };
+  if(state.boss){ state.boss=null; save(); try{ renderQuestion(); }catch(e){} }
+  try{ renderSea(); }catch(e){}
 }
 })();
 </script>

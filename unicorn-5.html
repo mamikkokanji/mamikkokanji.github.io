@@ -1271,6 +1271,353 @@ renderChips(); renderAll(); resumeOrNew(); bindReset(); connectCloud();
   }).observe(q,{childList:true,subtree:true});
 })();
 </script>
+<script>window.PLAY_CH="unicorn";window.PLAY_ID="unicorn-5";</script>
+<script>
+// あそびば：ハムスター・ドラゴンのミニゲーム（build.py が hamster-*/dragon-* に入れる）
+(function(){
+const CH=window.PLAY_CH, PID=window.PLAY_ID;
+if(!CH || typeof state!=="object") return;
+const EVERY=10, KEYP="kanji-play-"+PID;
+const calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+let ps=null; try{ ps=JSON.parse(localStorage.getItem(KEYP)||"null"); }catch(e){}
+if(!ps||typeof ps.used!=="number") ps={used:0,best:{}};
+const saveP=()=>{ try{ localStorage.setItem(KEYP,JSON.stringify(ps)); }catch(e){} };
+const earned=()=>Math.floor((state.correct||0)/EVERY);
+function tickets(){ if(ps.used>earned()){ ps.used=earned(); saveP(); } return earned()-ps.used; }
+const charSVG=()=>{ try{ const st=stageOf(state.correct); return window[CH+"SVG"](st); }catch(e){ return ""; } };
+const rnd=n=>Math.floor(Math.random()*n);
+const shuffle=a=>{ for(let i=a.length-1;i>0;i--){ const j=rnd(i+1); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const MEM={id:"memory", icon:"🃏", name:"かんじ しんけいすいじゃく", desc:"かんじと よみかたを そろえよう", unit:"かい", low:true};
+const GAMES = ({
+  hamster:[
+    {id:"feed",   icon:"🌻", name:"たねを あげよう",      desc:"でてくる たねを タッチして たべさせよう", unit:"こ"},
+    {id:"wheel",  icon:"🎡", name:"くるくる まわしぐるま", desc:"ボタンを いっぱい おして まわそう",       unit:"かいてん"}],
+  dragon:[
+    {id:"target", icon:"🎯", name:"ほのおで まとあて",     desc:"でてくる まとを タッチして ほのおを ふこう", unit:"こ"},
+    {id:"hoi",    icon:"👉", name:"あっちむいて ホイ",     desc:"ドラゴンと 6かい しょうぶ！",            unit:"てん"}],
+  pirate:[
+    {id:"treasure", icon:"💰", name:"たからさがし",        desc:"すなを ほって たからを 3つ さがそう（10かいまで）", unit:"こ"},
+    {id:"target", icon:"💣", name:"たいほうで まとあて",   desc:"でてくる まとを タッチして たいほうを うとう", unit:"こ"}],
+  unicorn:[
+    {id:"feed",   icon:"⭐", name:"ながれぼし キャッチ",   desc:"でてくる ほしを タッチして あつめよう", unit:"こ"},
+    {id:"hoi",    icon:"👉", name:"あっちむいて ホイ",     desc:"ユニコーンと 6かい しょうぶ！",          unit:"てん"}],
+})[CH].concat([MEM]);
+const NAME=({hamster:"ハムスター",dragon:"ドラゴン",pirate:"かいぞく",unicorn:"ユニコーン"})[CH];
+
+// ---------- スタイル ----------
+const css=document.createElement("style");
+css.textContent=`
+.wrap>#playZone{order:4}
+.pz{--pc:var(--acc,var(--jade,#8A5CC2));display:flex;flex-direction:column;gap:10px}
+.pz h2{margin:0;font-size:1.05rem;color:var(--pc)}
+.pz .pz-t{margin:0;font-size:.95rem}
+.pz .pz-t b{font-size:1.4rem;color:var(--pc)}
+.pz .pz-t small{display:block;color:var(--muted);font-size:.78rem}
+.pz-games{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pz-g{font:inherit;color:var(--ink);background:var(--surface);border:3px solid var(--line);border-radius:16px;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;touch-action:manipulation}
+.pz-g .i{font-size:1.9rem;line-height:1.1}
+.pz-g b{font-size:.78rem;line-height:1.3;text-align:center}
+.pz-g small{font-size:.68rem;color:var(--muted)}
+.pz-g:not(:disabled):hover,.pz-g:not(:disabled):focus-visible{border-color:var(--pc)}
+.pz-g:disabled{opacity:.45;cursor:default}
+.pz-get{font-weight:900;color:var(--pc);margin:4px 0 2px;font-size:1rem}
+.pz-ov{position:fixed;inset:0;z-index:100;background:rgba(20,14,10,.55);display:flex;align-items:center;justify-content:center;padding:max(10px,env(safe-area-inset-top,0px)) 10px max(10px,env(safe-area-inset-bottom,0px))}
+.pz-box{--pc:var(--acc,var(--jade,#8A5CC2));background:var(--surface);color:var(--ink);border-radius:22px;width:min(100%,460px);max-height:100%;overflow:auto;padding:12px 14px 16px;display:flex;flex-direction:column;gap:10px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.pz-head{display:flex;align-items:center;gap:8px}
+.pz-head b{font-size:1.05rem;flex:1}
+.pz-score{font-weight:900;color:var(--pc);font-size:1.1rem;white-space:nowrap}
+.pz-x{font:inherit;font-size:.85rem;font-weight:700;border:2px solid var(--line);background:var(--surface);color:var(--muted);border-radius:99px;padding:4px 12px;cursor:pointer}
+.pz-time{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.pz-time i{display:block;height:100%;background:var(--pc);width:100%}
+.pz-stage{position:relative;height:min(58vh,340px);border-radius:18px;overflow:hidden;background:linear-gradient(#FFF8EC,#F3E4C8);touch-action:none;user-select:none;-webkit-user-select:none}
+.pz-box.dragon .pz-stage{background:linear-gradient(#DDF1FF,#CFEBDD)}
+.pz-box.pirate .pz-stage{background:linear-gradient(#CFE9FA,#F4E3BC)}
+.pz-box.unicorn .pz-stage{background:linear-gradient(#3B2E6E,#8C6CC8)}
+.pz-box.unicorn .pz-seed::before{content:"⭐";font-size:34px;left:4px;top:2px;width:auto;height:auto;border:0;background:none;transform:none}
+.pz-sand{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:10px;height:100%;box-sizing:border-box;align-content:center}
+.pz-sand button{font:inherit;aspect-ratio:1;border:0;border-radius:10px;background:#E2C68E;box-shadow:inset 0 -4px 0 rgba(0,0,0,.12);font-size:1.5rem;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:center;padding:0}
+.pz-sand button.dug{background:#C9A86A;box-shadow:none;cursor:default}
+.pz-sand button.hot{background:#E9A06A}
+.pz-sand button.gold{background:#FBE7A2;animation:pzpop .3s}
+.pz-msg{text-align:center;font-weight:700;min-height:1.6em;margin:0}
+.pz-big{font:inherit;font-weight:900;font-size:1.2rem;border:0;border-radius:16px;padding:14px;background:var(--pc);color:#fff;cursor:pointer;touch-action:manipulation}
+.pz-big:active{transform:scale(.97)}
+.pz-chr{position:absolute;left:50%;bottom:6px;width:120px;height:120px;transform:translateX(-50%);transition:transform .25s}
+.pz-chr svg{width:100%;height:100%;overflow:visible}
+.pz-chr.munch{animation:pzmunch .35s}
+@keyframes pzmunch{40%{transform:translateX(-50%) scale(1.15,.9)}}
+.pz-seed{position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;border:0;background:none;padding:0;cursor:pointer;animation:pzpop .25s ease-out}
+.pz-seed::before{content:"";position:absolute;left:12px;top:6px;width:20px;height:32px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:repeating-linear-gradient(90deg,#3B2F2A 0 4px,#E9E1D2 4px 6px);border:2px solid #2A201B;transform:rotate(20deg)}
+.pz-seed.fly{transition:left .35s ease-in,top .35s ease-in,transform .35s;transform:scale(.4);pointer-events:none}
+.pz-tgt{position:absolute;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;border:0;padding:0;cursor:pointer;background:radial-gradient(circle,#D33 0 18%,#fff 19% 36%,#D33 37% 56%,#fff 57% 74%,#D33 75%);box-shadow:0 3px 0 rgba(0,0,0,.2);animation:pzpop .2s ease-out}
+.pz-tgt.hit{animation:pzhit .35s forwards;pointer-events:none}
+@keyframes pzpop{from{transform:scale(0)}}
+@keyframes pzhit{to{transform:scale(1.5);opacity:0}}
+.pz-fire{position:absolute;font-size:44px;margin:-26px 0 0 -22px;pointer-events:none;animation:pzhit .5s forwards}
+.pz-wheel{position:absolute;left:50%;top:50%;width:240px;height:240px;margin:-130px 0 0 -120px}
+.pz-wheel .rim{position:absolute;inset:0;border-radius:50%;border:10px solid #C98A3D;background:repeating-conic-gradient(from 0deg,#F4D9A8 0 15deg,#EFCB8C 15deg 30deg)}
+.pz-wheel .spk{position:absolute;inset:10px;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 43deg,#C98A3D 43deg 47deg,transparent 47deg 88deg,#C98A3D 88deg 92deg,transparent 92deg 133deg,#C98A3D 133deg 137deg,transparent 137deg 178deg,#C98A3D 178deg 182deg,transparent 182deg 223deg,#C98A3D 223deg 227deg,transparent 227deg 268deg,#C98A3D 268deg 272deg,transparent 272deg 313deg,#C98A3D 313deg 317deg,transparent 317deg 358deg,#C98A3D 358deg 360deg)}
+.pz-wheel .hub{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px;border-radius:50%;background:#8A5A25}
+.pz-wheel+.pz-chr{bottom:auto;top:50%;margin-top:-10px;width:110px;height:110px}
+.pz-stand{position:absolute;left:50%;bottom:8px;width:120px;height:46px;margin-left:-60px;border-radius:8px 8px 4px 4px;background:#A26A2E}
+.pz-mem{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px;height:100%;box-sizing:border-box;align-content:center}
+.pz-card{font:inherit;border:0;border-radius:12px;aspect-ratio:3/4;cursor:pointer;background:var(--pc);color:#fff;font-size:1.6rem;font-weight:900;display:flex;align-items:center;justify-content:center;padding:2px;transition:transform .2s;touch-action:manipulation}
+.pz-card.open{background:var(--surface);color:var(--ink);border:3px solid var(--pc)}
+.pz-card.open.k{font-family:var(--f-kanji,serif);font-size:2rem;font-weight:700}
+.pz-card.open.y{font-size:.95rem;line-height:1.2;word-break:break-all}
+.pz-card.done{background:var(--ok-soft,#D9F0E2);border-color:var(--ok,#2E8656);color:var(--ink)}
+.pz-card.bad{animation:pzshake .35s}
+@keyframes pzshake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.pz-hoi{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.pz-hoi .pz-chr{position:relative;left:auto;bottom:auto;transform:none;width:150px;height:150px;transition:transform .3s}
+.pz-hoi .pz-chr.up{transform:translateY(-36px) rotate(-6deg)}.pz-hoi .pz-chr.down{transform:translateY(36px) rotate(6deg)}
+.pz-hoi .pz-chr.left{transform:translateX(-60px) rotate(-14deg)}.pz-hoi .pz-chr.right{transform:translateX(60px) rotate(14deg) scaleX(-1)}
+.pz-hand{position:absolute;font-size:56px;left:50%;top:14px;margin-left:-28px;transition:opacity .2s}
+.pz-arrows{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pz-arrows button{font:inherit;font-size:1.6rem;border:3px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:10px 0;cursor:pointer;touch-action:manipulation}
+.pz-arrows button:disabled{opacity:.4}
+.pz-end{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:rgba(255,255,255,.88);color:#2A2430;text-align:center;padding:16px}
+.pz-end .n{font-size:2.6rem;font-weight:900;color:var(--pc)}
+.pz-end .best{font-size:.9rem}
+.pz-end .new{color:#C9940E;font-weight:900}
+@media (prefers-reduced-motion:reduce){.pz-seed,.pz-tgt,.pz-chr.munch,.pz-card.bad{animation:none}}
+`;
+document.head.appendChild(css);
+
+// ---------- あそびばパネル ----------
+const quiz=document.getElementById("quiz");
+const zone=document.createElement("section");
+zone.className="card pz"; zone.id="playZone"; zone.setAttribute("aria-label","あそびば");
+quiz.after(zone);
+function renderZone(){
+  const t=tickets(), left=EVERY-(state.correct%EVERY);
+  zone.innerHTML=`<h2>🎪 あそびば</h2>
+    <p class="pz-t">あそびけん <b>${t}</b> まい<small>${t?"1まいで 1かい あそべるよ":"あと "+left+"もん せいかいすると 1まい もらえるよ"}（${EVERY}もん せいかいで 1まい）</small></p>
+    <div class="pz-games">${GAMES.map(g=>`<button type="button" class="pz-g" data-g="${g.id}" ${t?"":"disabled"}><span class="i" aria-hidden="true">${g.icon}</span><b>${g.name}</b>${ps.best[g.id]!=null?`<small>さいこう ${ps.best[g.id]}${g.unit}</small>`:""}</button>`).join("")}</div>`;
+  zone.querySelectorAll(".pz-g").forEach(b=>b.addEventListener("click",()=>openGame(b.dataset.g)));
+}
+renderZone();
+
+let lastCorrect=state.correct;
+new MutationObserver(()=>{
+  if(state.correct!==lastCorrect){
+    const got=Math.floor(state.correct/EVERY)>Math.floor(lastCorrect/EVERY);
+    lastCorrect=state.correct; renderZone();
+    if(got){ const fb=quiz.querySelector(".feedback .res.ok"); if(fb && !fb.parentNode.querySelector(".pz-get")){ const d=document.createElement("div"); d.className="pz-get"; d.textContent="🎟 あそびけんを 1まい ゲット！ したの「あそびば」で あそべるよ"; fb.after(d); } }
+  } else if(tickets()!==+((zone.querySelector(".pz-t b")||{}).textContent)) renderZone();
+}).observe(quiz,{childList:true,subtree:true});
+
+// ---------- ゲームの まど ----------
+let ov=null, cleanup=[];
+function later(fn,ms){ const id=setTimeout(fn,ms); cleanup.push(()=>clearTimeout(id)); return id; }
+function every(fn,ms){ const id=setInterval(fn,ms); cleanup.push(()=>clearInterval(id)); return id; }
+function frame(fn){ let on=true; const loop=t=>{ if(!on) return; fn(t); requestAnimationFrame(loop); }; requestAnimationFrame(loop); cleanup.push(()=>{on=false}); }
+function stopAll(){ cleanup.forEach(f=>f()); cleanup=[]; }
+function closeGame(){ stopAll(); if(ov){ ov.remove(); ov=null; } document.documentElement.style.overflow=""; document.body.style.overflow=""; renderZone(); const b=zone.querySelector(".pz-g"); if(b) b.focus({preventScroll:true}); }
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&ov) closeGame(); });
+
+function openGame(id){
+  const g=GAMES.find(x=>x.id===id); if(!g||tickets()<1) return;
+  ps.used++; saveP();
+  ov=document.createElement("div"); ov.className="pz-ov";
+  ov.innerHTML=`<div class="pz-box ${CH}" role="dialog" aria-modal="true" aria-label="${esc(g.name)}">
+    <div class="pz-head"><b>${g.icon} ${esc(g.name)}</b><span class="pz-score" aria-live="polite"></span><button type="button" class="pz-x">おわる</button></div>
+    <div class="pz-time" hidden><i></i></div>
+    <div class="pz-stage"></div>
+    <p class="pz-msg">${esc(g.desc)}</p>
+    <div class="pz-ctl"></div></div>`;
+  document.body.appendChild(ov);
+  document.documentElement.style.overflow="hidden"; document.body.style.overflow="hidden";
+  ov.querySelector(".pz-x").addEventListener("click",closeGame);
+  const api={
+    g, stage:ov.querySelector(".pz-stage"), msg:ov.querySelector(".pz-msg"), ctl:ov.querySelector(".pz-ctl"),
+    score(v){ ov.querySelector(".pz-score").textContent=v+g.unit; },
+    timer(sec,onEnd){ const bar=ov.querySelector(".pz-time"); bar.hidden=false; const i=bar.querySelector("i"); const t0=performance.now();
+      frame(t=>{ const r=Math.max(0,1-(t-t0)/(sec*1000)); i.style.width=(r*100)+"%"; }); later(onEnd,sec*1000); },
+    end(v){ stopAll(); const old=ps.best[g.id]; const better=old==null||(g.low?v<old:v>old);
+      if(better){ ps.best[g.id]=v; saveP(); }
+      const left=tickets();
+      const e=document.createElement("div"); e.className="pz-end";
+      e.innerHTML=`<div>${g.low?"ぜんぶ そろった！":"おしまい！"}</div><div class="n">${v}${g.unit}</div>
+        <div class="best">${better&&old!=null?'<span class="new">さいこう きろく こうしん！</span>':"さいこう "+(ps.best[g.id])+g.unit}</div>
+        <div class="best">あそびけん のこり ${left}まい</div>
+        <button type="button" class="pz-big" style="margin-top:8px;min-width:12em">${left?"もういちど あそぶ":"もどる"}</button>
+        ${left?'<button type="button" class="pz-x" style="margin-top:4px">もどる</button>':""}`;
+      api.stage.appendChild(e); api.ctl.innerHTML="";
+      const [again,back]=e.querySelectorAll("button");
+      again.addEventListener("click",()=>{ if(left){ closeGame(); openGame(g.id); } else closeGame(); });
+      if(back) back.addEventListener("click",closeGame);
+      again.focus({preventScroll:true});
+    }
+  };
+  ({feed,wheel,memory,target,hoi,treasure})[id](api);
+  ov.querySelector(".pz-x").focus({preventScroll:true});
+}
+
+// ---------- ハムスター：たねを あげよう ----------
+function feed(a){
+  let n=0; a.score(0);
+  a.stage.innerHTML=`<div class="pz-chr">${charSVG()}</div>`;
+  const chr=a.stage.querySelector(".pz-chr");
+  function spawn(){
+    const W=a.stage.clientWidth, H=a.stage.clientHeight;
+    const s=document.createElement("button"); s.type="button"; s.className="pz-seed"; s.setAttribute("aria-label","たね");
+    s.style.left=(30+Math.random()*(W-60))+"px"; s.style.top=(30+Math.random()*(H-180))+"px";
+    s.addEventListener("pointerdown",e=>{ e.preventDefault(); if(s.classList.contains("fly")) return;
+      n++; a.score(n); s.classList.add("fly"); s.style.left=(W/2)+"px"; s.style.top=(H-80)+"px";
+      setTimeout(()=>{ s.remove(); chr.classList.remove("munch"); void chr.offsetWidth; chr.classList.add("munch"); },340); });
+    a.stage.appendChild(s);
+    later(()=>{ if(!s.classList.contains("fly")) s.remove(); },1700);
+  }
+  spawn(); every(spawn,650); later(spawn,300);
+  a.timer(20,()=>a.end(n));
+}
+
+// ---------- ハムスター：くるくる まわしぐるま ----------
+function wheel(a){
+  let ang=0, vel=0, turns=0; a.score(0);
+  a.stage.innerHTML=`<div class="pz-stand"></div><div class="pz-wheel"><div class="rim"></div><div class="spk"></div><div class="hub"></div></div><div class="pz-chr">${charSVG()}</div>`;
+  const wh=a.stage.querySelector(".pz-wheel"), chr=a.stage.querySelector(".pz-chr");
+  a.ctl.innerHTML=`<button type="button" class="pz-big" style="width:100%">まわす！</button>`;
+  const btn=a.ctl.querySelector("button");
+  const push=e=>{ e.preventDefault(); vel=Math.min(vel+9,46); };
+  btn.addEventListener("pointerdown",push); a.stage.addEventListener("pointerdown",push);
+  btn.addEventListener("keydown",e=>{ if(e.key===" "||e.key==="Enter") push(e); });
+  let prev=performance.now();
+  frame(t=>{ const dt=Math.min(50,t-prev)/16.7; prev=t;
+    ang+=vel*dt; vel*=Math.pow(.965,dt);
+    const nt=Math.floor(ang/360); if(nt!==turns){ turns=nt; a.score(turns); }
+    wh.style.transform=`rotate(${ang}deg)`;
+    chr.style.transform=`translate(-50%,-50%) translateY(${Math.sin(ang/18)*(vel>3?5:0)}px)`;
+  });
+  a.timer(12,()=>a.end(turns));
+}
+
+// ---------- しんけいすいじゃく ----------
+function yomiLabel(t){ const parts=String(t.yomi||"").split(/[・、,]/).map(s=>s.trim()).filter(Boolean); return parts.find(p=>/^[ぁ-ゖー（）()]+$/.test(p))||parts[0]||""; }
+function memory(a){
+  let P=[]; try{ P=(typeof ALL!=="undefined"&&ALL)||(typeof KANJI!=="undefined"&&KANJI)||pool0(); }catch(e){}
+  const seenK=new Set(Object.keys(state.st||{}));
+  let cand=shuffle(P.filter(t=>seenK.has(t.k))); if(cand.length<6) cand=cand.concat(shuffle(P.filter(t=>!seenK.has(t.k))));
+  const pick=[], used=new Set();
+  for(const t of cand){ const y=yomiLabel(t); if(!y||used.has(y)) continue; used.add(y); pick.push({k:t.k,y}); if(pick.length===6) break; }
+  const cards=shuffle(pick.flatMap((p,i)=>[{i,txt:p.k,kind:"k"},{i,txt:p.y,kind:"y"}]));
+  a.stage.innerHTML=`<div class="pz-mem">${cards.map((c,j)=>`<button type="button" class="pz-card" data-j="${j}" aria-label="カード">？</button>`).join("")}</div>`;
+  let open=[], tries=0, done=0, busy=false; a.score(0);
+  a.msg.textContent="かんじと その よみかたの カードを そろえよう";
+  a.stage.querySelectorAll(".pz-card").forEach(b=>b.addEventListener("click",()=>{
+    const c=cards[+b.dataset.j]; if(busy||b.classList.contains("open")) return;
+    b.classList.add("open",c.kind); b.textContent=c.txt; b.setAttribute("aria-label",c.txt); open.push([b,c]);
+    if(open.length<2) return;
+    tries++; a.score(tries);
+    const [[b1,c1],[b2,c2]]=open; open=[];
+    if(c1.i===c2.i){ b1.classList.add("done"); b2.classList.add("done"); done++;
+      a.msg.textContent=`「${pick[c1.i].k}」は「${pick[c1.i].y}」！`;
+      if(done===pick.length) later(()=>a.end(tries),700);
+    } else { busy=true; later(()=>{ [b1,b2].forEach((x,k)=>{ x.classList.add("bad"); }); },350);
+      later(()=>{ [b1,b2].forEach(x=>{ x.classList.remove("open","k","y","bad"); x.textContent="？"; x.setAttribute("aria-label","カード"); }); busy=false; },1000); }
+  }));
+}
+
+// ---------- ドラゴン：ほのおで まとあて ----------
+function target(a){
+  let n=0; a.score(0);
+  a.stage.innerHTML=`<div class="pz-chr">${charSVG()}</div>`;
+  const chr=a.stage.querySelector(".pz-chr");
+  function spawn(){
+    const W=a.stage.clientWidth, H=a.stage.clientHeight;
+    const s=document.createElement("button"); s.type="button"; s.className="pz-tgt"; s.setAttribute("aria-label","まと");
+    const x=40+Math.random()*(W-80), y=40+Math.random()*(H-190);
+    s.style.left=x+"px"; s.style.top=y+"px";
+    s.addEventListener("pointerdown",e=>{ e.preventDefault(); if(s.classList.contains("hit")) return;
+      n++; a.score(n); s.classList.add("hit");
+      const f=document.createElement("span"); f.className="pz-fire"; f.textContent=CH==="pirate"?"💥":"🔥"; f.style.left=x+"px"; f.style.top=y+"px"; a.stage.appendChild(f);
+      setTimeout(()=>{ s.remove(); f.remove(); },500);
+      chr.classList.remove("munch"); void chr.offsetWidth; chr.classList.add("munch"); });
+    a.stage.appendChild(s);
+    later(()=>{ if(!s.classList.contains("hit")) s.remove(); },1300);
+  }
+  spawn(); every(spawn,700);
+  a.timer(20,()=>a.end(n));
+}
+
+// ---------- かいぞく：たからさがし ----------
+function treasure(a){
+  const N=25, T=3, DIG=10; const gold=new Set(); while(gold.size<T) gold.add(rnd(N));
+  let digs=0, found=0; a.score(0);
+  a.stage.innerHTML=`<div class="pz-sand">${Array.from({length:N},(_,i)=>`<button type="button" data-i="${i}" aria-label="すな ${i+1}"></button>`).join("")}</div>`;
+  const near=i=>{ const x=i%5,y=Math.floor(i/5); for(const g of gold){ if(Math.abs(g%5-x)<=1&&Math.abs(Math.floor(g/5)-y)<=1) return true; } return false; };
+  a.msg.textContent=`のこり ${DIG}かい ほれるよ。オレンジの すなは たからの ちかく！`;
+  a.stage.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
+    if(b.classList.contains("dug")||digs>=DIG) return;
+    const i=+b.dataset.i; digs++; b.classList.add("dug");
+    if(gold.has(i)){ found++; b.classList.add("gold"); b.textContent="💰"; a.score(found); a.msg.textContent="たからを みつけた！"; }
+    else { const h=near(i); if(h) b.classList.add("hot"); b.textContent=h?"👀":""; a.msg.textContent=(h?"ちかいぞ！ ":"")+`のこり ${DIG-digs}かい`; }
+    if(found===T||digs>=DIG){ a.stage.querySelectorAll("button").forEach(x=>{ if(gold.has(+x.dataset.i)&&!x.classList.contains("gold")){ x.textContent="💰"; x.style.opacity=.5; } });
+      later(()=>a.end(found),900); }
+  }));
+}
+
+// ---------- あっちむいて ホイ ----------
+function hoi(a){
+  const DIR=[["up","⬆️","うえ"],["down","⬇️","した"],["left","⬅️","ひだり"],["right","➡️","みぎ"]];
+  const HAND={up:"👆",down:"👇",left:"👈",right:"👉"};
+  let round=0, pts=0; const R=6; a.score(0);
+  a.stage.innerHTML=`<div class="pz-hoi"><div class="pz-chr">${charSVG()}</div></div><div class="pz-hand" aria-hidden="true"></div>`;
+  const chr=a.stage.querySelector(".pz-chr"), hand=a.stage.querySelector(".pz-hand");
+  a.ctl.innerHTML=`<div class="pz-arrows">${DIR.map(d=>`<button type="button" data-d="${d[0]}" aria-label="${d[2]}">${d[1]}</button>`).join("")}</div>`;
+  const btns=[...a.ctl.querySelectorAll("button")];
+  const lock=v=>btns.forEach(b=>b.disabled=v);
+  function setup(){
+    chr.className="pz-chr"; hand.textContent="";
+    if(round>=R){ a.end(pts); return; }
+    const attack=round%2===0;
+    a.msg.textContent=`${round+1}かいめ：`+(attack?"きみが ゆびを さすばん。やじるしを えらんでね":NAME+"が ゆびを さすよ。ちがう ほうを むこう！");
+    lock(false);
+  }
+  btns.forEach(b=>b.addEventListener("click",()=>{
+    const me=b.dataset.d, dr=DIR[rnd(4)][0], attack=round%2===0; lock(true);
+    a.msg.textContent="あっち むいて……";
+    later(()=>{
+      if(attack){ hand.textContent=HAND[me]; chr.className="pz-chr "+dr;
+        const hit=me===dr; if(hit) pts++; a.msg.textContent=hit?"ホイ！ あたり！ 1てん":"ホイ！ ざんねん、はずれ"; }
+      else { hand.textContent=HAND[dr]; chr.className="pz-chr";
+        const safe=me!==dr; if(safe) pts++;
+        a.msg.textContent=safe?`ホイ！ ${NAME}は ${DIR.find(d=>d[0]===dr)[2]}。よけた！ 1てん`:"ホイ！ つられちゃった…";
+        hand.style.opacity=1; }
+      a.score(pts); round++; later(setup,1400);
+    },550);
+  }));
+  setup();
+}
+
+// ---------- パイレーツ・ユニコーン：ボス戦のかわりに、ぜんぶ みつけたら つぎへ ----------
+if((CH==="pirate"||CH==="unicorn") && typeof renderSea==="function"){
+  const PLACE=CH==="pirate"?"しま":"くに";
+  const css2=document.createElement("style"); css2.textContent=`.sea .bossrow.nb{display:block;text-align:center;padding:12px}.sea .bossrow.nb p{margin:0}`; document.head.appendChild(css2);
+  let justCleared=null;
+  const orig=renderSea;
+  renderSea=function(){
+    if(state.boss){ state.boss=null; save(); }
+    const i=state.sec, sec=SECS[i];
+    if(sec && secFound(i)>=sec.length && state.cleared<=i){ state.cleared=i+1; save(); justCleared=i; }
+    const r=orig.apply(this,arguments);
+    const row=document.querySelector("#sea .bossrow");
+    if(row && sec){
+      const n=secFound(i), clr=i<state.cleared, last=i>=SEC_N-1;
+      row.className="bossrow nb";
+      row.innerHTML=`<p>${clr?(last?"🎉 ぜんぶの "+PLACE+"を クリアした！ おめでとう！":"🎉 クリア！ つぎの "+PLACE+"へ いけるよ。うえの ちずから えらんでね"):`この ${PLACE}の かんじを ぜんぶ みつけると、つぎの ${PLACE}へ いけるよ（あと ${sec.length-n}じ）`}</p>`;
+    }
+    if(justCleared!=null){ const jc=justCleared; justCleared=null; setTimeout(()=>{ const fb=quiz.querySelector(".feedback .res.ok"); if(fb && !fb.parentNode.querySelector(".pz-clear")){ const d=document.createElement("div"); d.className="pz-get pz-clear"; d.textContent=`🎉 「${isleName(jc)}」を クリア！ ${jc>=SEC_N-1?"ぜんぶ クリア！":"つぎの "+PLACE+"へ いけるよ"}`; fb.after(d); } },0); }
+    return r;
+  };
+  if(state.boss){ state.boss=null; save(); try{ renderQuestion(); }catch(e){} }
+  try{ renderSea(); }catch(e){}
+}
+})();
+</script>
 
 <script>
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
