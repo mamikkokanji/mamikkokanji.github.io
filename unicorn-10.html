@@ -1,0 +1,1071 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#8A5CC2">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="漢字なかまたち">
+<style>.home-btn{display:inline-flex;align-items:center;gap:2px;font:inherit;font-size:.85rem;font-weight:700;color:var(--muted);text-decoration:none;border:2px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 12px 4px 8px;flex-basis:100%;max-width:max-content;margin-bottom:-4px}.home-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}</style>
+<script>try{localStorage.setItem("kanji-app-last","unicorn-10")}catch(e){}</script>
+<title>漢字ユニコーン10級</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<style>
+/* Layout: ユニコーンのへや（上）＋問題カード（下）の1列。スマホでもそのまま縦にならぶ */
+:root{
+  --bg:#F8F3FC; --surface:#FFFFFF; --ink:#2A2236; --muted:#6E6480; --line:#E4D8F0;
+  --acc:#8A5CC2; --acc-soft:#EEE4F8; --ok:#2E8656; --ok-soft:#D9F0E2; --bad:#C2413A; --bad-soft:#F8DEDB; --gold:#C9940E;
+  --uni:#FFFFFF; --mane:#F49AC1; --horn:#F2C14E; --hoof:#B69BE8; --wing:#EAF2FF; --snout:#FBE3EC; --pink:#F09AA4; --sea:#BFD9F6;
+  --f-ui:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;
+  --f-kanji:"Klee One","Hiragino Mincho ProN","Yu Mincho",serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17121F; --surface:#221B2D; --ink:#EEE8F5; --muted:#A99DBB; --line:#3A3049;
+  --acc:#B48BE8; --acc-soft:#352A4A; --ok:#4CC383; --ok-soft:#1E3A2A; --bad:#F07068; --bad-soft:#3E2220; --gold:#E8B63E;
+  --uni:#F4F0FA; --mane:#E98DB7; --horn:#E8B63E; --hoof:#A58ADB; --wing:#DCE6F7; --snout:#F3D6E2; --pink:#E98E99; --sea:#4A5F8F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17121F; --surface:#221B2D; --ink:#EEE8F5; --muted:#A99DBB; --line:#3A3049;
+  --acc:#B48BE8; --acc-soft:#352A4A; --ok:#4CC383; --ok-soft:#1E3A2A; --bad:#F07068; --bad-soft:#3E2220; --gold:#E8B63E;
+  --uni:#F4F0FA; --mane:#E98DB7; --horn:#E8B63E; --hoof:#A58ADB; --wing:#DCE6F7; --snout:#F3D6E2; --pink:#E98E99; --sea:#4A5F8F; color-scheme:dark}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.6;margin:0}
+.wrap{max-width:560px;margin:0 auto;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font-size:1.5rem;font-weight:900;margin:0;letter-spacing:.04em}
+.sub{color:var(--muted);font-size:.85rem}
+.room{background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:16px;display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center}
+.room svg{width:150px;height:150px;display:block}
+.stage-name{font-weight:900;font-size:1.25rem;margin:0;line-height:1.3}
+.stage-lv{font-size:.8rem;color:var(--muted);letter-spacing:.08em}
+.meter{height:14px;background:var(--acc-soft);border-radius:99px;overflow:hidden;margin-top:8px}
+.meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--acc));border-radius:99px;transition:width .4s}
+.meter-txt{font-size:.85rem;color:var(--muted);margin-top:6px;font-variant-numeric:tabular-nums}
+.meter-txt b{color:var(--ink)}
+.stats{display:flex;gap:14px;font-size:.8rem;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.road{display:flex;gap:4px;margin-top:8px}
+.road span{flex:1;height:6px;border-radius:99px;background:var(--line)}
+.road span.on{background:var(--acc)}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:20px 16px;display:flex;flex-direction:column;gap:14px}
+.qtype{align-self:flex-start;font-size:.75rem;font-weight:700;letter-spacing:.08em;background:var(--acc-soft);color:var(--acc);padding:2px 10px;border-radius:99px}
+.prompt{font-size:1.05rem;font-weight:700;margin:0}
+.big{font-family:var(--f-kanji);font-size:4.2rem;line-height:1.1;text-align:center;margin:4px 0;letter-spacing:.08em}
+.big .blank{display:inline-block;width:1em;height:1em;border:3px dashed var(--acc);border-radius:10px;vertical-align:-.12em}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choices button{font:inherit;font-weight:700;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:12px 8px;min-height:64px;cursor:pointer;transition:transform .08s,border-color .15s}
+.choices button.k{font-family:var(--f-kanji);font-size:2rem;font-weight:600}
+@media (hover:hover) and (pointer:fine){.choices button:hover:not(:disabled){border-color:var(--acc)}}
+.choices button:active:not(:disabled){transform:scale(.97)}
+.choices button:focus-visible,.btn:focus-visible,.chip:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.choices button.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.choices button.ng{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.choices button:disabled{cursor:default}
+.feedback{border-radius:14px;padding:12px 14px;background:var(--bg);display:flex;flex-direction:column;gap:6px}
+.feedback .res{font-weight:900;font-size:1.1rem}
+.feedback .res.ok{color:var(--ok)} .feedback .res.ng{color:var(--bad)}
+.info{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:start;margin:0}
+.info .kj{font-family:var(--f-kanji);font-size:3rem;line-height:1;grid-row:span 4}
+.info dt{display:none}
+.info dd{margin:0;font-size:.9rem}
+.info .lab{color:var(--muted);font-size:.75rem;margin-right:6px}
+.btn{font:inherit;font-weight:900;font-size:1.05rem;border:0;border-radius:14px;padding:14px;background:var(--acc);color:#fff;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--muted);border:2px solid var(--line);font-size:.85rem;padding:8px 12px;font-weight:700}
+.settings{display:flex;flex-direction:column;gap:8px}
+.settings h2{font-size:.85rem;margin:0;color:var(--muted);letter-spacing:.06em}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:.85rem;font-weight:700;border:2px solid var(--line);background:var(--surface);color:var(--muted);border-radius:99px;padding:4px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--acc);color:var(--acc);background:var(--acc-soft)}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.confirm{display:flex;gap:8px;align-items:center;font-size:.85rem;flex-wrap:wrap}
+.confirm .btn{font-size:.85rem;padding:8px 12px;background:var(--bad)}
+/* 書き取りパッド：漢字練習帳のマス目 */
+.kaki{display:flex;flex-direction:column;gap:12px}
+.hint{margin:0;font-size:.9rem}
+.hint .lab{color:var(--muted);font-size:.75rem;margin-right:4px}
+.pads{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.pad{box-sizing:border-box;container-type:inline-size;position:relative;width:min(100%,320px);aspect-ratio:1;max-width:100%;background:var(--surface);border:3px solid var(--acc);border-radius:6px;
+  background-image:linear-gradient(var(--line),var(--line)),linear-gradient(var(--line),var(--line));
+  background-size:100% 2px,2px 100%;background-position:center;background-repeat:no-repeat}
+.pad canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair;display:block}
+.pad.answer{border-color:var(--ok);display:flex;align-items:center;justify-content:center}
+.pad.answer[hidden]{display:none!important}
+.pad.answer span{font-family:var(--f-kanji);font-size:72cqw;line-height:1;color:var(--ink)}
+.padtools{display:grid;grid-template-columns:1fr 1fr 1.4fr;gap:8px}
+.padtools .btn{font-size:.9rem;padding:12px 8px}
+.selfcheck{display:flex;flex-direction:column;gap:10px}
+.selfcheck .choices button{font-size:1.1rem}
+.pads.both .pad{width:calc(50% - 6px)}
+/* 進化の画面 */
+.evo{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 88%,transparent);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+.evo-box{background:var(--surface);border:3px solid var(--gold);border-radius:24px;padding:24px 20px;text-align:center;max-width:360px;width:100%;display:flex;flex-direction:column;gap:10px;align-items:center}
+.evo-box svg{width:200px;height:200px;animation:pop .9s cubic-bezier(.2,1.6,.4,1)}
+.evo-box h2{margin:0;font-size:1.3rem;font-weight:900;color:var(--acc)}
+.evo-new{font-size:.85rem;color:var(--muted)}
+@keyframes pop{0%{transform:scale(.3) rotate(-12deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+.bob{animation:bob 2.4s ease-in-out infinite;transform-origin:50% 92%}
+@keyframes bob{50%{transform:translateY(-3px) scaleY(1.02)}}
+.munch .bob{animation:munch .7s ease-in-out}
+#pirBox{border-radius:16px;background:linear-gradient(color-mix(in srgb,var(--sea) 55%,var(--surface)),var(--acc-soft) 74%,color-mix(in srgb,var(--ok) 25%,var(--surface)) 74%)}
+@keyframes munch{20%{transform:scale(1.08,.92)}45%{transform:translateY(-10px) scale(.96,1.05)}70%{transform:scale(1.04,.96)}}
+@media (prefers-reduced-motion:reduce){.bob,.evo-box svg,.munch .bob.meter i{transition:none}}
+@media (max-width:420px){.room{grid-template-columns:110px 1fr;gap:12px}.room svg{width:110px;height:110px}.big{font-size:3.4rem}}
+/* 島（セクション）とボス戦 */
+.sea{background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.sea h2{margin:0;font-size:.85rem;color:var(--muted);letter-spacing:.06em}
+.isles{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.isle{font:inherit;font-size:.7rem;font-weight:700;line-height:1.25;border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:6px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:54px;justify-content:center}
+.isle b{font-size:1rem}
+.isle[aria-pressed="true"]{border-color:var(--acc);background:var(--acc-soft);color:var(--acc)}
+.isle.clear b{color:var(--gold)}
+.isle:disabled{opacity:.45;cursor:default}
+.isle:focus-visible,.btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.isle-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.isle-name{font-weight:900;font-size:1.1rem;margin:0}
+.tiles{display:flex;flex-wrap:wrap;gap:4px}
+.tiles span{font-family:var(--f-kanji);font-size:1.15rem;width:1.9rem;height:1.9rem;display:grid;place-items:center;border-radius:8px;background:var(--bg);color:var(--muted);border:1.5px dashed var(--line)}
+.tiles span.f{background:var(--acc-soft);color:var(--ink);border:1.5px solid var(--acc)}
+.bossrow{display:grid;grid-template-columns:84px 1fr;gap:12px;align-items:center;background:var(--bg);border-radius:14px;padding:10px}
+.bossrow svg{width:84px;height:84px;display:block}
+.bossrow p{margin:0;font-size:.85rem}
+.bossrow .bn{font-weight:900;font-size:1rem}
+.bossrow .btn{margin-top:6px;width:100%;padding:10px}
+.bossrow .btn:disabled{background:var(--line);color:var(--muted);cursor:default}
+.sea.in-battle{padding:0;border:0;background:none}
+.battle{background:linear-gradient(var(--acc-soft),color-mix(in srgb,var(--sea) 45%,var(--surface)));border:3px solid var(--bad);border-radius:20px;padding:14px 16px;display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center}
+.battle svg{width:120px;height:120px;display:block}
+.battle.hit svg{animation:hit .5s}
+@keyframes hit{20%{transform:translateX(-8px) rotate(-6deg)}40%{transform:translateX(8px) rotate(5deg)}60%{transform:translateX(-4px)}}
+.hp{height:14px;background:var(--surface);border-radius:99px;overflow:hidden;border:2px solid var(--bad)}
+.hp i{display:block;height:100%;background:var(--bad);transition:width .4s}
+.hearts{font-size:1.2rem;letter-spacing:.1em;color:var(--bad)}
+.hearts .off{color:var(--line)}
+.battle .bn{font-weight:900;font-size:1.05rem;margin:0}
+.battle .lab{font-size:.75rem;color:var(--muted)}
+.battle .btn.ghost{margin-top:6px;padding:4px 10px;font-size:.75rem}
+@media (max-width:420px){.battle{grid-template-columns:90px 1fr}.battle svg{width:90px;height:90px}}
+@media (prefers-reduced-motion:reduce){.battle.hit svg{animation:none}}
+
+/* チャプターの進み具合（50音順に7〜8字ずつ × 切り口べつの理解度） */
+.pg{background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.pg-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.pg-head h2{margin:0;font-size:.85rem;color:var(--muted);letter-spacing:.06em}
+.pg-head b{font-size:1.1rem;color:var(--gold)}
+.pg-axes{display:grid;grid-template-columns:auto 1fr 3.2em;gap:6px 10px;align-items:center;font-size:.8rem}
+.pg-axes .bar{height:10px;background:var(--bg);border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.pg-axes .bar i{display:block;height:100%;background:var(--ok);border-radius:99px}
+.pg-axes .n{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.pg-mini{display:grid;grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:4px}
+.pg-m{font:inherit;font-size:.75rem;font-weight:700;aspect-ratio:1;border-radius:8px;cursor:pointer;display:grid;place-items:center;padding:0;border:1.5px solid transparent}
+.pg-m.cur{outline:3px solid var(--acc);outline-offset:1px}
+.none{background:transparent;border:1.5px dashed var(--line)!important;color:var(--muted)}
+.l0{background:var(--bad-soft);color:var(--bad)}
+.l1{background:color-mix(in srgb,var(--ok) 22%,var(--surface));color:var(--ink)}
+.l2{background:color-mix(in srgb,var(--ok) 50%,var(--surface));color:var(--ink)}
+.l3{background:var(--ok);color:#fff}
+.l4{background:var(--gold);color:#fff}
+.pg-legend{display:flex;flex-wrap:wrap;gap:6px 10px;font-size:.7rem;color:var(--muted);align-items:center}
+.pg-legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-3px;margin-right:3px}
+.pg-btns{display:flex;gap:8px;flex-wrap:wrap}
+.pg-btns .btn{flex:1;padding:10px;font-size:.95rem}
+#chapBar:empty{display:none}
+#chapBar{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--acc-soft);color:var(--acc);border-radius:14px;padding:8px 12px;font-weight:700;font-size:.9rem;flex-wrap:wrap}
+#chapBar .btn{padding:4px 10px;font-size:.8rem}
+.pg-top{padding:4px 10px!important;font-size:.8rem!important}
+/* チャプター表（全画面） */
+.sheet{position:fixed;inset:0;background:var(--bg);z-index:15;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.sheet-box{max-width:620px;margin:0 auto;padding:16px max(12px,env(safe-area-inset-left,0px)) 40px;display:flex;flex-direction:column;gap:12px}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:8px;position:sticky;top:0;background:var(--bg);padding:6px 0;z-index:1}
+.sheet-head h2{margin:0;font-size:1.2rem;font-weight:900}
+.pg-table{display:flex;flex-direction:column;gap:4px}
+.pg-row{box-sizing:border-box;font:inherit;color:inherit;text-align:left;display:grid;grid-template-columns:minmax(100px,1.5fr) repeat(7,minmax(0,1fr));gap:2px;align-items:stretch;background:var(--surface);border:2px solid var(--line);border-radius:12px;padding:5px;cursor:pointer;width:100%}
+.pg-row.hd{background:none;border-color:transparent;cursor:default;position:sticky;top:44px;background:var(--bg);z-index:1}
+.pg-row.cur{border-color:var(--acc)}
+.pg-row[aria-expanded="true"]{border-color:var(--acc);border-bottom-left-radius:0;border-bottom-right-radius:0}
+.pg-row:focus-visible,.pg-m:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.pg-lab{display:flex;flex-direction:column;justify-content:center;line-height:1.2;min-width:0;padding-left:2px}
+.pg-lab b{font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pg-lab small{font-size:.62rem;color:var(--muted)}
+.pg-kj{font-family:var(--f-kanji);font-size:.8rem;letter-spacing:0;white-space:nowrap;overflow:hidden}
+.pg-c{display:grid;place-items:center;border-radius:7px;font-size:.72rem;font-weight:700;font-variant-numeric:tabular-nums;min-height:38px}
+.pg-c.hd{font-size:.62rem;color:var(--muted);line-height:1.15;text-align:center;min-height:0;word-break:keep-all}
+.pg-detail{background:var(--surface);border:2px solid var(--acc);border-top:0;border-radius:0 0 12px 12px;margin-top:-4px;padding:10px 8px;display:flex;flex-direction:column;gap:8px}
+.pg-dt{display:grid;grid-template-columns:minmax(100px,1.5fr) repeat(7,minmax(0,1fr));gap:2px;align-items:center;text-align:center}
+.pg-dt .k{font-family:var(--f-kanji);font-size:1.4rem;text-align:left;padding-left:6px;line-height:1.2}
+.pg-dt .k small{font-family:var(--f-ui);font-size:.6rem;color:var(--muted);margin-left:4px}
+.pg-dt .s{font-weight:900;font-size:1rem;border-radius:6px;padding:2px 0}
+.pg-dt .s.ok{color:var(--ok)} .pg-dt .s.half{color:var(--gold)} .pg-dt .s.ng{color:var(--bad)} .pg-dt .s.no{color:var(--line)}
+.pg-dt .hd{font-size:.6rem;color:var(--muted)}
+.pg-note{font-size:.72rem;color:var(--muted);margin:0}
+/* 書き順（KanjiVG） */
+.kvg-s{fill:none;stroke:var(--ink);stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
+.kvg-hi{fill:none;stroke:var(--bad);stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+.kvg-g{fill:none;stroke:var(--line);stroke-width:.8;stroke-dasharray:3 3}
+.big svg.kvg{width:min(56vw,200px);height:auto;display:block;margin:0 auto;border:3px solid var(--acc);border-radius:6px;background:var(--surface)}
+.jun-box{display:flex;flex-direction:column;gap:6px;font-size:.9rem}
+.jun-box summary{cursor:pointer;color:var(--acc);font-weight:700;font-size:.85rem}
+.jun-box .lab{color:var(--muted);font-size:.75rem}
+.jun-strip{display:flex;flex-wrap:wrap;gap:4px}
+.jun-strip figure{margin:0;display:flex;flex-direction:column;align-items:center;font-size:.6rem;color:var(--muted)}
+.jun-strip svg{width:44px;height:44px;background:var(--surface);border:1px solid var(--line);border-radius:4px}
+@media (max-width:400px){.pg-row,.pg-dt{grid-template-columns:minmax(96px,1.6fr) repeat(7,minmax(0,1fr))}.pg-kj{font-size:.74rem}.pg-c{font-size:.66rem}.pg-c.hd{font-size:.56rem}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="home-btn" href="./">‹ キャラをえらぶ</a>
+    <h1>漢字ユニコーン10級</h1>
+    <span class="sub" id="subTitle"></span>
+    <button type="button" class="btn ghost pg-top" id="pgTop">📊 進み具合</button>
+  </header>
+
+  <section class="room" aria-label="ユニコーンのようす">
+    <div id="pirBox"></div>
+    <div>
+      <div class="stage-lv" id="stageLv">LEVEL 1</div>
+      <p class="stage-name" id="stageName">あかちゃんユニコーン</p>
+      <div class="meter" aria-hidden="true"><i id="meterBar"></i></div>
+      <div class="meter-txt" id="meterTxt"></div>
+      <div class="road" id="road" aria-hidden="true"></div>
+      <div class="stats" id="stats"></div>
+    </div>
+  </section>
+
+  <section class="sea" id="sea" aria-live="polite"></section>
+
+  <div id="chapBar"></div>
+
+  <section class="card" id="quiz" aria-live="polite"></section>
+
+  <section class="pg" id="prog" aria-label="チャプターの進み具合"></section>
+
+  <section class="settings">
+    <h2>出題する問題</h2>
+    <div class="chips" id="chips"></div>
+  </section>
+
+  <div class="foot">
+    <span class="sub" id="note"></span>
+    <span class="sub" id="sync" style="flex-basis:100%"></span>
+    <div id="resetArea"><button class="btn ghost" id="resetBtn" type="button">記録をリセット</button></div>
+  </div>
+</div>
+
+<div class="evo" id="evo" hidden>
+  <div class="evo-box" role="dialog" aria-labelledby="evoTitle">
+    <div id="evoPir"></div>
+    <h2 id="evoTitle">進化した！</h2>
+    <div id="evoText"></div>
+    <div class="evo-new" id="evoNext"></div>
+    <button class="btn" type="button" id="evoClose" style="width:100%">つづける</button>
+  </div>
+</div>
+
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet-box">
+    <div class="sheet-head"><h2 id="sheetTitle">チャプター表</h2><button class="btn ghost" id="sheetClose" type="button">とじる</button></div>
+    <div id="sheetBody"></div>
+  </div>
+</div>
+
+<script>
+const KVG={"一":["M11,54.2c3.2,.6,6.2,.8,9.7,.5c20.6-1.5,50.4-5.1,68.6-5.2c3.6-0,5.8,.2,7.6,.5"],"右":["M53.5,21.5c.6,1.1,.7,2.2,.2,4C49.6,42,39.5,61,25.2,74.2","M13,42.1c1.9,.6,5.9,.5,7.8,.3c23.4-2.2,49.8-5.7,67.7-6.3c3.2-.1,6.5,.3,9.2,.8","M41.8,66.5c.8,.8,1.4,1.9,1.5,3c.9,5,2.4,16.7,3.1,22.8c.2,2.1,.4,2.8,.4,3.5","M43.2,68c5.2-.5,29.8-3.2,37-3.8c1.8-.1,3.2,1.5,3,2.8c-1,5.1-3.4,18-4.5,23.2","M47,93.2c5.8-.2,19.5-1.6,28.2-2.2c2.2-.2,4.2-.3,5.8-.3"],"雨":["M25.8,22.4c1.9,.4,4.5,.6,6.3,.4c11.7-1.4,28.3-3.8,41.2-4.6c2.5-.2,4.4-.1,7.2,.3","M15.5,41.2c1.2,1.5,1.7,3.3,1.9,5.2c1.2,10.7,2.2,26.6,2.7,36.3c.1,2.7,.2,5,.2,6","M18.2,44.2c1.4-.1,62.8-5.3,69.5-6c2.5-.2,4.6,1,4.5,3.8c-.5,12.8-1.8,28.1-6,44.8c-1.9,7.4-5.4,1.9-8.5-1.2","M52.2,23.5C53.3,24.6,54,26.2,54,28c0,.8-.2,37.8-.4,53c-0,3.4-.1,5.7-.1,6.2","M31,53.5c4.2,1.2,8.9,3.9,11.2,6","M30.5,68.8c3.8,1.3,9.7,5.9,11.8,8","M66.9,48.9c5,2,10.6,6,12.6,7.6","M67.2,66.5c2.8,1,9,5.5,11,7.8"],"円":["M21.8,19.8c.9,.9,1.5,3.2,1.5,5.5c.2,13.9,0,47.7,0,62.5c0,2-0,5-0,6","M24.1,21.6c15.1-1.7,49.5-5.6,57.9-6.3c2.9-.2,4.8,1.9,4.8,4.3c0,13.5,0,53.2,0,67.5c0,9.8-4.2,6.5-8.5,1.5","M52.2,20.8c.9,.9,1.5,2,1.5,3.7c0,6.8,0,27.5,0,31","M24.8,59.8c14.6-1.8,43-4.2,60.5-5.2"],"王":["M29.5,21.2c2.7,.6,5.5,.1,8.2-.3c10.6-1.4,22.6-2.8,33.3-3.8c3-.3,6.3-.6,9.2,.3","M52.4,22c1.9,2.4,1.9,3.8,1.9,5.8c0,12.1-0,57.7-0,59.8","M29.2,55c2.6,.5,5.2,.3,7.9,.1c10.3-.9,22.6-2.6,34.8-3.6c3-.2,5.8-.3,8.8,.1","M13.8,91c4.1,.7,8.1,.1,12.2-.3c17.4-1.9,39.2-3.8,59.5-4.6c3.5-.1,6.9-.2,10.2,.7"],"音":["M53,12.5c.8,.8,1.6,2.1,1.6,3.6c0,3.9-.1,4.6-.1,9.2","M29.1,28c1.5,.5,2.8,.6,4.6,.4c11.4-1.3,25.1-3.5,38.9-4.8c2.6-.2,5.6-.2,7.4,.1","M37.1,35.4c4.2,3.7,5,7.3,5.6,9.9","M67.8,27.5c.5,.9,.6,2,.2,3.1c-1.3,4.3-3.5,10.6-4.6,13","M12.8,50.5c3.6,.7,7.1,.4,10.8-0c20.2-2.2,40.5-4.5,63.4-5.4c3.4-.1,7.2-.5,10.5,.5","M34.5,59.1c.6,.7,1.1,2.2,1.1,3.2c0,1,.1,28.5,.1,29c0,.5,0,2,0,3.5","M36.1,60.8c9.5-1.2,26-3,32.1-3.7c3-.3,4.3,.3,4.3,3.2c0,1-.1,18-.2,27.7c-0,3-0,5.4-0,6.2","M36.7,74.8c5.4-.5,29.7-2.6,34.7-2.9","M37.1,90.4c6.6-.3,25.4-2.2,33.9-2.6"],"下":["M13.2,22.5c.9,.2,5.2,1,7.7,.8c17.9-1.5,46.5-4.8,66.4-4.8c2.9,0,6.4,.8,7.9,1.2","M53,23.2c.9,1.1,1.6,2.8,1.6,5.3c0,8.7-.2,39.4-.3,57.2c-0,3.9-0,5.9-0,8.2","M67.8,37.2C72.8,39.5,79.9,47.6,82,52.1"],"火":["M24.2,34c3.3,3.3,8.5,13,9.5,17.8","M83,27.2c.5,1.4,.2,2.7-.5,4.2c-2.4,5-7.5,12.1-12.8,17.2","M52.5,14.2c1,1.2,1.5,3.1,1.5,5C54,69,39.6,80,21,91.5","M52.8,50c12.5,14.1,25,28.4,33.6,36.1c2.7,2.4,4.9,4,8.4,4.9"],"花":["M17,29.8c3,.7,6.3,.5,9.4,.3c16.2-1.4,36.3-4.6,56.8-4.8c2.4-0,4.8,0,7.1,.5","M32.2,16c1.2,.5,2.2,1.6,2.5,2.8c1.3,6,4.9,19.9,5,20.8","M71.2,12.5c.4,1.2,.5,3,0,4.5c-2.2,6.8-6.1,19.1-6.8,20.8","M38.2,48.2c.2,1.8-.4,3.3-1,4.4C33.2,60,24.8,69.7,19.5,74.5","M30.8,65.5c.8,1,1.1,2,1.1,3c0,6.6-.1,16.5-.1,24c-0,2-0,3.8-0,5.5","M84.2,50.2c-.1,1.6-.8,2.9-2,3.8c-4.6,3.5-11,6.8-19,9.8","M58.2,43.8c1.1,1.1,1.5,2.5,1.5,4.8c0,3-.2,20.6-.2,31.2C59.5,93,63,94.2,77,94.2c16.2,0,18-2.6,18-11.2"],"貝":["M31.8,17.8c1.2,1.2,1.7,2.8,1.7,4.6c0,1.5-.2,33.3-.2,48.3c0,3.5-.1,3.6-.1,6.5","M33.8,19.9c7.3-.7,30.8-3.5,37.7-4.1c2.9-.3,4.5,1,4.5,3.7c0,3.1-.5,32.7-.7,47.8c-.1,4.9-.1,8.3-.1,8.6","M34.8,38.3c9-1.3,33.6-3.6,39.8-3.6","M34.8,55.2c10.9-1,27.9-3,39.5-3.2","M34.6,73.7C45.5,73,64.1,71,74.1,71","M42,80.5c.6,1.4-.4,3.3-1.5,4.3C37.2,87.9,28.6,94.1,22,97.8","M65.8,80C72.8,84.8,81.1,93.3,83,97.5"],"学":["M29.5,17.2c3.5,3,6.5,7.2,7.8,9.8","M49,12c1.2,2,4.8,8.2,5.2,11.5","M75,11c.2,1.8-.1,2.8-.8,4.2c-1.3,3.1-4.2,7.4-6.5,9.8","M21.2,33.8c-.1,4.8-2,12.5-3.8,16.2","M23.5,36.5c17-1.6,42.4-5.5,60-5.8c9.5-.1,4.1,5.1,0,9","M37.2,46.5c1,.2,3.8,.2,5.5-.2s18.2-4,20-4s2.8,.8,1,2.2S54.5,53.5,53,54.8","M50.8,55.8c4,8.8,7.2,24.7,1.8,38c-2.8,6.8-7.8,1.2-9.8-2","M15.8,67.8c1.8,1,4.6,1.4,7.5,1c15.9-2,44.4-6.2,61.4-5.5c2.5,.1,4.7,.2,6.4,1"],"気":["M37.8,9.2c.2,1.6-.2,2.8-1,4.2C35.6,15.7,28,25.2,24,29","M36.5,21.2c1.3-0,3.3-.1,4.8-.3c9.2-1.7,18.2-3.5,27-5.3c1.6-.3,3.7-.6,5.2-.9","M31.2,32.8c1.5,.4,3.3,.3,5,.1c7.7-.8,19.5-2.6,29.1-4.4c1.9-.4,3.6-.4,4.9-.5","M18.5,47c1.9,.8,4,.9,6.2,.5c15.1-2.5,35-5.6,48.2-8c4.7-.8,5.6,.5,4.5,6.2c-4,21,.7,40.3,11.5,50c7.2,6.5,6.5,.8,6-5.2","M57,51.8c.1,1.6-.2,3-1,4.8C49.5,70,40.2,82.8,25.8,93.2","M30,63.8C41.5,68,54.5,78,62.2,90.5"],"九":["M41.9,14.4c1,1.4,1.5,3.2,1.5,5.1c0,40.1-9.1,57.5-28.5,68.8","M13.5,45.8c2.9,.8,5.8,.1,8.6-.7c8.5-2.1,39.9-9.8,40.9-9.8c2.5-.1,4.8,.5,4.2,4.8c-.5,4.2-5.5,20.8-7,32.5c-2.2,17.5,2,19.4,18.2,19.4c13.8,0,19-1.1,19.3-10.1"],"休":["M35,16.5c.2,1.8,.2,4.2-.9,6.8C28.9,35,22.4,46,10.5,60.3","M26.3,42.5c.7,1.2,1.3,3.5,1.3,4.8c0,12.8-.1,29.9-.3,42.2c-0,1.5-0,3-0,4.2","M37.6,38.8c2.5,1,5.2,.8,7.7,.5c11.8-1,24.9-3.4,37.5-4c2.6-.1,5.4-.2,8,.4","M61.4,14c.8,.8,1.9,2.1,1.9,3.7c0,8.8,.1,53.7-.1,72c-0,2.9-.1,4.9-.1,5.8","M62.4,38.3c0,2.2-1.1,4.3-1.9,6C54.6,57.4,45,71.8,35,78.8","M64.1,38.1c4.5,8.4,16.2,25.3,25,33.2c2,1.8,4.3,4.2,6.9,5"],"玉":["M28.5,23.1c3,1,5.9,.5,8.9,.1c10.8-1.6,21.2-3.3,34.1-4.7c2.8-.3,5.3-.6,8,.3","M52,24.6c1,1.2,2,2.4,2,4.4c0,5.4,.2,50.2,.2,57.9","M28.2,56.1c2.9,.9,5.9,.5,8.8,.2c9.8-1.2,23.9-3.6,33.1-4.6c2.6-.3,5.5-.7,8.1,0","M16,90c4,1.2,8,.7,12,.4c21.1-1.8,38-4.1,56.6-4.4c3.9-.1,8.1-.2,11.9,1","M72,64c5.4,2.7,10.1,8.6,11.2,12"],"金":["M51.8,11.9c.2,1.5-.2,3.6-.8,4.8C47.7,23.8,33.1,47.1,14.5,58","M52.2,18.2c9.5,7.5,34.1,30.9,37.2,32.7c3.1,1.8,4.1,2.7,5.5,2.8","M34,47.1c1.7,.7,3.9,.4,5.6,.2c6.9-.6,14.3-1.7,24-2.6c2.1-.2,4.1-.4,6.2,.1","M30.2,65c1.9,.7,4.5,.3,6.5,.1c9.2-.9,17.4-1.6,31.4-2.5c2.3-.2,4.7-.4,7,.1","M51.5,48.8c.9,.8,.9,3.8,.9,4.4c0,3.6,.3,38.7,.2,39.8","M31,74.8c3.2,3,7.5,9.3,8.5,12","M73,72.1c.2,1.1,.1,2.5-.5,3.5C70.4,79,66.4,83.2,63,86","M18.5,94.9c2.9,1,6.4,.4,9.4,.1c16.6-1.4,33-2.1,51.5-3c3.1-.1,6.3-.3,9.4,.6"],"空":["M52.3,12c1,.8,1.7,2,1.7,3.6c0,3.4-.1,7.6-.1,10.7","M27.1,27.8c0,3.3-1.6,8.5-4.6,15.2","M27.6,30c18.9-2.8,40.6-5.1,53-5.8c9.9-.5,4.2,5-.6,8.8","M41.5,39c.2,1.5-0,2.4-.7,3.8C38.2,48.4,33.4,55.9,25,61.2","M59.8,33c.9,1,1.4,2.5,1.5,4c.1,3.5,.1,6.8,.1,9.5c0,5.8,1.7,7.3,11.4,7.3c5.5,0,10.5-1,12.2-1.6","M32.3,69c2.5,1,5.6,.5,8,.2c7.7-.8,18.1-2,27.4-2.8c2.5-.2,5.2-.5,7.6,.3","M53.1,70.5c.7,.8,1,2,1,3.5c0,5.6-.1,14.7-.1,16.3","M19.5,92.5c3.2,1.3,6.2,1,9.5,.7c13.6-1.2,37.7-3.5,54.1-4.3c3.2-.2,6.3-.3,9.4,.9"],"月":["M34.2,16.2c1,1,1.5,2.4,1.5,4c.4,33.6,2.4,59.4-11,73.2","M36.2,19c4.1-.6,31.5-4.8,33.2-5c4-.5,5.5,1.1,5.5,4.8c0,2.8-.5,49.2-.5,69.5c0,13-6.2,4-8.8,1.8","M37.2,38c10.2-1.5,27.2-3.8,36.2-4.5","M37,58.2c8.8-1.1,27-3.5,36.2-4"],"犬":["M18.4,46.4c2.4,.6,5.4,.7,7.7,.5c14.4-1.6,36.5-4.5,51.2-5.8c2.5-.2,6-.3,7.9,.4","M50.2,15.8c1,1.1,1.6,2.2,1.7,4.3C53.8,48.2,46.5,79.8,17,92.2","M51.5,45c8.3,12,23.8,31.6,35.2,41.9c2.4,2.1,4.6,4.2,8.1,5.4","M67.3,20.2c6.9,3.9,8.8,6.8,10.9,10.5"],"見":["M32.5,15.5c1,1,1.2,2.1,1.2,3.5c0,1.1,.1,27.4-0,39.3c-0,3.1-0,5.2,0,5.5","M34.6,17.1c9.2-1.3,22.2-2.6,31.1-3.6c3-.3,4.3,1,4.3,3.5c0,2.5-.1,28.1-.1,39c-0,2.9-0,4.8-0,4.8","M34.8,31.1c7.3-.6,25-3,33.9-3.4","M34.9,44.6C43.4,44,59,42.1,68.6,41.5","M34.7,59.7C44.5,59,58.4,57.5,68.5,57","M42,66.8c.3,1.5,0,3-.4,4c-2.7,6.8-13.8,20.8-28.4,27.9","M54.5,61.4c1.1,1.1,1.3,2.6,1.4,4.4c.2,8.2,0,6.2,0,18.2c0,10.1,1.2,11.5,18.5,11.5c18.8,0,19.8-1.5,19.8-10.1"],"五":["M31.8,23.1c2.8,.7,5.5,.4,8.4,.1c9.3-1,22.2-2.4,34.1-3.2c2.5-.2,5-.3,7.5,.2","M55.8,25.2c.6,1.2,1,3,.5,5c-3.1,11.9-14,44.1-19.8,59","M25.5,55.2c2.1,1.2,4.7,1,7,.8c15.5-1.4,29.9-3,42.2-4.1c3-.2,4.2,1.8,3.5,3.8c-2.2,6-6,20.8-7.8,31.5","M11.2,90.5c3,.8,6.5,.6,9.6,.4c15.7-1.1,43.9-2.8,67.8-3.8c3.4-.1,6.9-.4,10.2,.4"],"口":["M22.2,33.2c1.2,1.2,2,2.9,2.3,4.4c1.2,7,3.1,23.6,4.7,37.9C29.5,78.1,29.7,80.6,30,83","M25.3,35.7c17.5-2.2,41.6-5,55.5-5.9c3.9-.2,6.3,2.7,5.7,5.1c-2.2,8.9-6.6,26.5-9,38.9","M30.2,77.8c10.5-.5,30.5-2.3,45-3c2-.1,4-.2,5.8-.2"],"校":["M11.5,40.7c1.1,.3,2.6,.5,4.5,.3c5.4-.3,16.6-3,23.1-4c1.2-.2,2.3-.2,3.1,0","M29,17.2c1.1,1.1,1.8,3.2,1.8,5.2c0,.8-0,48.1-.2,65.2c-0,3-.1,5.2-.1,6","M30.2,40.8c0,1.2-.5,2.7-1,3.8C25.3,53.9,20.9,62.2,15,70","M33.8,51.2c2.8,1.5,6,5.2,7.2,7.8","M66.4,15.5c1,1,1.4,1.9,1.4,3.6c0,4.2-0,7.6-.1,10.4","M48.1,31.7c2.3,.3,3.9,.4,6.1,.2c10.3-1.2,20.3-2.7,32.5-3.5c2.4-.2,4-0,5.3,.3","M59.2,38.9c.2,.5,.1,2.3-.4,3.1C57,45.5,53.8,49.5,50,52.5","M79.3,38.5c4.3,3.1,8.7,8.7,10.9,12.4","M79.2,49.2c.3,1.3,.2,2.6-.5,4.2C72.2,67.2,58.8,83.2,44,91.2","M56,55.9c6.3,3.4,21.6,22.1,31.4,30.3c2.6,2.2,5.1,4.2,8.6,4.4"],"左":["M20.8,40.2c3,.5,5.7,.3,8.6-.1c14.5-1.7,29.8-4.5,47.2-6c2.8-.2,5.9-.6,8.6,.3","M55.5,12.5c.3,1.6,.2,4.2-.3,5.9C46.6,48.6,32.1,74.1,11.2,91","M43.2,64.6c1.2,.3,2.4,.3,3.9,.2c4.9-.4,17.9-2.2,26.9-3.8c1.9-.3,4-.5,6-.1","M58.5,66.8c1,1,1.9,2.6,1.9,4c0,6.8,0,13.2,0,18.7","M28.5,92.2c2.8,.8,5.9,.5,8.8,.3c14.5-.9,32.1-2.6,48.1-3.3c3.2-.1,6.4-.2,9.5,.9"],"三":["M27.5,23.6c3.1,.7,6.3,.4,9.4,.1c10.2-1,27-2.9,39-3.6c3.1-.2,6.1-.2,9.1,.2","M28.8,55.1c3.1,.8,6.5,.4,9.6,.2c10-.7,24-2.6,34.7-3.1c2.7-.1,5.5-.2,8.1,.3","M13,87.8c3.9,1,7.7,1,11.8,.7c18.4-1.1,41.3-3.4,61.1-4.1c3.6-.1,7.2-.1,10.8,.8"],"山":["M52.5,15.5c1.4,1.4,2.3,3.5,2.3,5.8c0,.8-.2,58.3-.2,59.2","M21.5,54.5c.9,.9,1.4,2.2,1.3,3.8c-.6,7-1,16-2.5,23c-.7,3.3,.1,4,2,3.8c17-2.2,47.1-5.1,65.5-6","M89.2,49c.9,.9,1.6,2.4,1.5,4.2c-.2,3.7-1.8,20.3-2.5,28.8c-.2,2.6-.4,4.5-.5,5"],"子":["M33.3,19c1.8,.7,3.7,.9,5.4,.6c5-.7,27.9-4.6,29.9-4.9c3.5-.6,4.1,1.4,2.1,3.6c-1.9,2.2-11.4,13.2-16.4,17.2","M52.5,37.7c6.4,3,11.8,30.7,5.2,52.6c-2.8,9.4-8.1,3-10.5,1","M12.2,51.5c3.8,1.1,8.8,1,12.5,.5c16.8-2.5,42.9-5.8,58.5-6.8c4.3-.2,9.1-.3,13.1,.6"],"四":["M14.5,31.5c1.5,1.5,2.2,3.3,2.5,5.2c1.1,7.9,2.6,25.2,4.4,40.8c.3,2.5,.3,3.8,.6,6.2","M17.9,34c21.6-1.9,51.5-3.9,67.8-4.3c4.8-.1,6.3,2.6,6,5.4c-.9,9-4.2,28.3-6.4,39.6c-.5,2.5-.9,4.6-1.3,6.1","M40.5,36c.1,.6,.1,1.6-.2,2.6c-2.2,7.3-5.1,14.6-13.3,22.7","M59.8,34.2c.8,1.1,1.4,2.3,1.5,3.9c.1,3.6,.1,7,.1,9.9c0,6.9,.7,7.5,9.5,7.5c5,0,8.9-.7,10.2-1.7","M22.7,79.3c13.8-.6,43.6-1.8,61.2-2.1"],"糸":["M51.2,11.5c.5,1.5,.3,2.9-.8,4.5C46,23,38.1,31.8,32.2,35.8c-2,1.4-.7,3.5,.2,3.8c5.2,1.5,10.8,4,15.2,6.8","M70.5,21c.6,1.4,.4,2.8-1,4.2c-11,12-22.2,23.8-36,37c-1.7,1.6-1,2.5,1,2c9.4-2.1,31.8-7,42.5-9","M72.2,47.2c3.7,2.8,9.6,11.4,10.5,15.8","M53,63c.8,.8,1.4,1.9,1.5,3.5c.3,5.7,0,19.2-.1,27.2c-.1,3-.1,5.3-.1,6","M33,74.7c.4,1.5,.3,2.6-.8,4.1c-2.9,4.2-10.8,11-15.5,14.3","M76.2,73.5c4.4,3.8,11.9,13.8,13.4,17.5"],"字":["M52.7,9.5c1,1,1.8,2.2,1.8,3.8c0,3.5-.1,5.7-.1,8.9","M21.9,24c0,3.4-4.1,14.2-5.6,16.5","M24.1,26.7c16.7-1.9,42.2-5.3,63-5.8c10.9-.3,4.7,5.4,.5,8.4","M34.9,36.2c2.1,1.1,4.3,1.5,6.9,1.3c4.7-.5,20-2.9,26.2-4.2c3.2-.7,4.9,.7,2.1,3.7c-2.1,2.3-9.3,9.5-14.2,12.7","M52.7,51c5.4,5.2,9.3,26.8,3.7,43.2c-2.6,7.5-8.5,2.8-10.6,.8","M14.4,63.5c3.9,1.2,8.7,.8,12.4,.5c15.2-1.5,43-4.9,59.8-5.4c3.5-.1,7.1-.2,10.4,1.1"],"耳":["M20.2,20c3,.8,6.2,.6,9.2,.2c14.6-1.8,31.4-4,48.1-5.1c3.3-.2,6.6-.2,9.9,.3","M36.7,22.5c1.1,1.1,1.6,2.7,1.6,4.7c0,1.6-.3,40-.3,41.5","M39.5,35.5c6.8-.9,24-2.8,32.2-3.2","M39.2,51.2c7-.5,24.6-2.8,32.2-3","M17.2,71c.8,1.1,2,1.8,3.8,1.5c7-1.2,48-8.8,58.8-10.8","M71,18.5c1,1,1.8,2.5,1.8,4.2c0,1.1,.2,44.7,.2,64.8c0,3.7,0,6.6,0,8.2"],"七":["M15.5,51.8c1.8,.5,4.4,.9,7,.5c16.9-2.5,50.9-8.1,64.4-8.7c3-.1,4.8,.2,6.3,.5","M43,20c1.4,1.4,2.1,3.2,2.1,5.3C45.1,29.5,45,71.8,45,76c0,10.5,2.2,12.2,20.2,12.2c18.8,0,20-3.8,20-2.8"],"車":["M26,26c2.9,.7,6.1,.1,9-.1c11.1-.9,25.8-2.6,38.9-3.5c2.7-.2,5.2-.2,7.9,.2","M27.5,37.9c.8,.5,1.8,2.4,2,3c.8,3.7,1.8,11.3,3,18.5c.3,2.1,.4,3.2,.8,5.2","M30.4,39.5c14.5-1.6,36.1-4.1,47.6-4.5c3.5-.1,4.2,1.6,4,3.1c-.4,4.3-2,13.8-3.5,20.2c-.2,.9-.5,1.9-.8,3","M32.5,51.2c13.8-1.5,34.2-3.8,47-4.2","M34.2,63.2C46,61.6,65,59.8,77,59.2","M16,77.9c3.6,.9,7.4,.8,10.6,.4c18.5-2.1,39.9-4.5,57.1-5.5c3-.2,6.5-.1,9.5,.6","M52.5,11.5c1.4,1.4,2.1,2.8,2.1,6c0,1.1-.1,48.8-.2,70.7c-0,4.3-.1,7.4-.1,8.7"],"手":["M61.5,11.5c0,1-.6,1.9-1.7,2.9c-3.3,3.1-13.7,8.2-28.6,11.8","M26.4,42.9c1.8,.5,3.6,.7,5.7,.4C46,41.4,58.4,39,71.4,37.8c1.9-.2,4.6-.4,7.2,0","M13.3,62.9c2.7,.6,4.9,.6,7.2,.4c22.6-2.1,46.1-5.6,67.7-7c2-.1,4.8,0,7.5,.4","M48.9,23.6C60.4,31,62.7,63.7,57.8,89.9c-2.1,11.1-8.6,2.3-9.9,1.2"],"十":["M11.9,51c3.2,.9,6.6,.6,9.9,.3c19.9-1.6,45.2-4.8,63.4-5.8c3.9-.2,7.2-.1,11,.6","M52.2,11.6c1.4,1.4,2.2,4,2.2,6.3c0,1.1-0,51.2-.2,73.4c-0,4-.1,6.8-.1,8.1"],"出":["M52.8,13.4c1.4,1.4,1.9,2.9,1.9,5.3c0,3.2,.2,61.8,.2,68.3","M29,36.1c1,1.1,1.2,2.9,1.1,4c-.4,2.8-1,7.7-2.8,13.4c-.4,1.4,.1,2.8,1.6,2.4c10.6-3.2,33.9-5.3,56-6.3","M86.3,30.6c.9,1.4,1.2,3,.9,4.9c-.6,5.1-.9,7.1-1.7,13.5c-.1,1.2-.3,1.9-.5,3.4","M25.3,71.1c1.1,1.1,1.6,2.7,1.3,4.3c-.5,2.8-1.3,8.9-3,14.7c-.4,1.4,.6,3.1,2,2.6c12.9-4.1,41.9-6.2,59.5-7","M85.1,66.9c1.1,1.5,1.6,3.1,1.4,5.4c-.3,4.8-.2,9.1-.5,13.5c-.1,1.5-.2,3.2-.3,5"],"女":["M53.2,18.4c.5,2.1,.3,3.4-.2,5.2C50.4,33,42.6,52.8,35.8,64c-1.4,2.3-1,3.5,1,3.5c11.6,0,28.5,7.5,38.8,16.4c2.6,2.2,4.7,4.5,6.2,6.8","M69.6,42.2c.5,1.7,.6,3.6-0,5.9C65.9,61.8,54.6,81.6,27,91.8","M13.9,50.4c3.5,1.4,7.3,.8,10.9,.5c19.5-1.7,42-4.1,60.6-4.6c3.7-.1,7.2-.1,10.6,1.4"],"小":["M54.7,18.4c1.4,1.4,2.3,3.1,2.3,5.8c0,14.6-.3,54.9-.3,59.9c0,11.2-7.2,1.5-8.7,.2","M31.9,47.7c.2,.8,.1,1.7-.3,2.9C29.5,56.4,24.4,66.2,16.8,73","M81,47.1C86.6,52,95.2,64.6,97,72"],"上":["M52.3,15.9c1.1,1.1,2,3.1,2,5.1c0,.8-.2,63.6-.2,64.6","M58,44.8c7-.6,14.2-2.5,17.8-3c1.4-.2,3.5-.4,4.8,0","M13.4,88.3c3.6,1.1,7.5,.6,11.1,.3c16.2-1.2,41.2-2.7,60.2-2.9c3.6-.1,7.5-.3,11,.8"],"森":["M30.1,23.7c.9,.2,4.4,.6,6.7,.3c11.4-1.4,20-2,36-3.2c2.3-.2,2.9-.2,4.4,0","M52.8,10C53.5,10.8,54,11.8,54,13.2c0,4.3,.1,22-.1,31.6c-0,1.5-.1,2.7-.1,3.5","M51.5,22.9c0,1.1-.3,1.8-.8,2.4C43,34.2,31.3,41.7,20.5,45.5","M56,24.4c5.2,4.3,22.2,15.3,29,17.6c1.8,.6,3.1,1.2,4.7,1.5","M12.5,61.1c.8,.2,3.1,.4,5.1,.2c6.7-.6,15.2-1.7,23.1-2.5c2-.2,3.9-.4,5.1-.2","M32.6,46.3c.9,.9,1.4,2,1.4,3.2c0,.8,.1,31.5-.1,44.1c-0,2.2-.1,3.8-.1,4.6","M33.1,60.7c0,1.2-.4,2-1,3.1C28,71.1,19.8,83,13.5,88","M37.6,67.2c2.1,1.4,4.7,4.1,6.5,6.3","M52.3,60c1.7,.1,2.8,.1,4.5-.1c8.9-.9,17.8-1.7,26.5-2.4c2-.2,3.8-.2,5,0","M68.1,42.8c1.1,1.1,1.4,2.6,1.4,3.9c0,.8,.1,35.3-.1,48.1c-0,2-.1,3.5-.1,4.2","M67.8,59.8c0,1-.2,1.6-.8,2.9c-4.5,9.2-14.6,21.7-21.8,26.1","M69.8,58.9c7,10.5,18.3,24,24.1,28.2c1.6,1.2,2.5,2,3.9,2.4"],"人":["M54.5,20c.4,2.1,.2,4-.2,6.3C51.7,39.5,38.2,72.2,16.5,87.2","M46,54.2c6.1,6,25.5,22.2,35.5,29.7c3.7,2.7,6.9,4.6,11.5,5.5"],"水":["M52.8,15.1c1.1,1.1,1.7,2.5,1.8,5.5c.4,14.6-.3,62.2-.3,67.1c0,9.8-7.5,0-9-1.2","M17.5,45.8c1.8,.6,3.7,.4,5.2,0C25.9,44.9,36.1,41,38.6,40s4.5,1.2,3.8,3.5C39,54,28.2,69,19,74.8","M81.2,27.5c-.2,1.2-.7,2.2-1.5,3c-5.6,5.1-12.4,9.8-22.4,13.8","M57,46c8.8,10.7,19.2,21.5,28.4,27.4c2.2,1.4,4.5,3,7.1,3.6"],"正":["M26.8,23.8c3.1,.6,6.3,.5,9.5,.2c11.8-1,25.8-2.6,39.8-3.3c2.8-.1,5.6-0,8.4,.3","M53,25.6c1.4,1.4,2,2.9,2,5.5c0,11.6-0,56.3-0,57.3","M56.4,53.5c7.1-.5,15.5-1.4,21.9-1.8c1.6-.1,2.5-0,3.6,.2","M27.5,56.4c1.2,1.2,2,2.6,2.1,5.2c.4,10.8,.4,20.3,.6,27.9","M14.2,90C18,91,21.4,91.2,25,91c14-.9,39.2-2.1,58.6-2.4c3.4-.1,6.8,.3,10,1.4"],"生":["M31.3,25.9c.4,1.4,.3,2.6-.1,3.8c-2.3,6.7-7.2,17.2-15,24.2","M31.1,40.7c2.4,.3,4,.1,5.6-.1c9.5-1.1,25.1-4.1,35.4-5.8c2.5-.4,4.9-.7,7.4-.3","M52.3,12.6c1.3,1.3,2,3.1,2,5.2c0,4,0,65.1,0,69.8","M29.4,64c2.6,.7,5.4,.3,8-0C49.5,62.5,62.2,61,72.5,59.9c2.4-.3,5-.8,7.4-.2","M15.8,90.2c3,.8,6.2,.9,8.4,.8C40.6,90,68.1,86.5,83.3,85.8c3.6-.2,7.7,0,10.1,.7"],"青":["M32.1,21.4c1.6,.4,4.6,.5,6.2,.4c9.2-.9,21.6-2.3,34.2-3.1c2.7-.2,3.8-.1,5.2-0","M52.8,8.6c1.1,1.1,1.8,2.6,1.8,4.4c0,.4-.1,28.6-.1,30.2","M34,33.4c2.4,.6,4.7,.4,7.1,.1c9.1-1.3,22.4-3,28.7-3.5c2.2-.2,3.9-.1,5-0","M13.5,47c2.5,.8,5.8,.9,8.9,.6c19.4-1.9,51.5-5,65.7-5.8c3.1-.2,7.1,0,9.3,.7","M36.3,54.2c1.1,1.1,1.6,2.9,1.6,3.5c0,4.9,0,20.4,0,34.6c0,2.2-.1,4.1-.1,6.2","M38.2,55.8c.6-0,29-2.7,30.6-2.8c2.5-.1,3.7,.9,3.7,3c0,3.7,.1,26.2,.1,38.1c0,10.6-7,1.3-7.9,.6","M39.2,67.6c5.9-.2,24.7-2.4,32.2-2.4","M39.1,79.2c5.9-.3,24.3-2,32.1-2.3"],"夕":["M53,13.1c.3,1.6,0,3.5-.5,4.6C49,26,41.4,39.2,27.6,49","M54,23.5c1.8,.5,3.5,.6,4.8,.3c5.2-1.1,11-2.6,17.6-4.6c4.3-1.3,6.1,.6,4.4,4.5C70,48.5,48.6,78.4,17.8,93","M45.2,42.6c4.8,2.4,12,9.2,13.2,12.9"],"石":["M19.9,26.6c3.2,.7,6.6,.6,8.9,.4c18.3-1.6,33.1-3.5,53-4.7c3.9-.2,6.4-0,8.1,.4","M42.4,29.4c.3,1.4,.2,2.7-.1,4.2C39.4,45,30.8,61.6,15,73.5","M34.5,56.2c.7,.6,1.6,2.1,1.8,3c.9,5.5,1.9,14.5,3.1,24.3c.2,1.7,.4,3.4,.6,5","M35,56.3c12.1-1.2,38.1-3.5,45.3-4.3c3-.3,4.5,2.3,3.9,4.1c-1.6,5.1-3.2,16.3-4.5,24.4","M40.8,84.4c7.2-.5,22.6-1.8,34.2-2.4c2.4-.1,4.6-.2,6.5-.2"],"赤":["M30.1,29.4c2.5,.6,5.2,.5,7.8,.1c9.5-1.2,23.1-3.9,31.6-4.5c2.5-.2,4.9-.1,7.4,.2","M52.2,12.4c1.5,1.5,2,3.5,2,5c0,3.3,0,25.2,0,26.2","M14.4,49.2c2.6,.6,5,.9,10.1,.1c18.5-2.8,40.3-6,58.2-7.5c3.3-.3,6.8-.7,10.1-.3","M42.8,49.9c1,1.2,1.2,3.1,1.2,4.5c-.2,15.8,.1,26.1-8.7,37.8","M61,46.8c1.4,1.4,2,2.9,2,5c0,13.5-.1,30.4-.1,35.4c0,12.2-3.7,5.8-6.7,2.8","M28.5,63.9c.3,1.2,.2,2.3-0,3.2c-1.6,5.4-4.4,9.9-9.3,15.9","M78.8,63.8c3.9,3.9,9.1,12.9,11,19.2"],"千":["M70.4,10.2c-.1,1.6-.8,2.6-2.2,3.7c-5.7,4.4-21.5,11.9-41.6,16.8","M12.1,50.8c3.4,.9,7.2,.8,10.6,.5c17.8-1.3,37.6-4.2,66.2-4.9c3.1-.1,6.1-.1,9.1,.4","M54.6,25.2c1,1,2,3,2,5.2c0,.9-.1,46.4-.2,63.6c-0,2.9-0,5-.1,6"],"川":["M27.2,25.7c.9,1.6,1.2,3.5,1.2,5.4C28.5,43.5,28.5,69,17.4,84.2","M53.8,23.6c.9,.9,1.4,2.4,1.4,3.9c0,.6-0,28.5-.1,41.7c-0,3.3-0,5.7-.1,6.6","M85.6,15.6c1.1,1.1,1.8,2.6,1.8,4.2c0,.7,.2,46.9,.1,66.1c-0,4.3-.1,7.6-.1,8.6"],"先":["M37.5,21c.1,.6,.1,1.6-.1,2.5C35.2,29.9,31.6,37.4,24.5,45","M38.1,32c1.5,.1,4-.2,4.6-.2c6.5-.6,20.4-1.8,27.8-2.9c1.6-.2,3.7-.1,5.2,.3","M52.8,12.4c1.3,1.3,2,3.1,2,4.8c0,.8-.1,31.9-.1,32.9","M15.9,53.3c3.4,1,7.2,.5,10.6,.2c16-1.3,39-3.5,59-4.4c2.9-.1,5.8-0,8.8,.5","M45.2,55.7c.3,1.4,.1,2.5-.1,3.9C43.2,67.7,35,86.6,20,96.4","M60.5,53.6c1.1,1.1,1.4,2.7,1.4,5c0,7.8-.2,14.9-.2,21.9c0,15.1,1.1,16,15.8,16c14.6,0,15.6-1.8,15.6-11.3"],"早":["M28,16c1.2,1.2,1.8,2,2.2,4c1,4.5,2.8,16.8,4.1,25c.3,1.9,.5,2.5,1,4.3","M30.5,17.2c.9-.1,42.8-4.5,46.3-4c1.7,.2,3.4,2.2,2.7,4.8c-1,3.9-2.9,13.9-4.7,22.1c-.4,1.9-.9,3.1-1.5,5.4","M33.6,31.8c9.1-1,34.5-3.1,42.2-3.5","M36,46.5C47.9,45.5,67,44,73,44","M14.1,66.2c1.9,.5,5.5,.6,7.5,.5c16.8-1.1,52-3.9,67.9-3.8c3.2,0,5.2,.2,6.8,.5","M53.2,47.8c1.1,1.1,1.5,2.9,1.5,4.5c0,.9-0,26.6-.1,39.5c-0,2.8-0,5-.1,6.2"],"草":["M19.6,24.1c2.8,.7,5.5,.5,8.2,.2c14.5-1.3,38.1-3.3,54-3.9c2.8-.1,5.6-.1,8.4,.4","M40,14.1c1,.9,1.6,2,1.7,2.8c1,6.7,1.6,12.9,1.9,15.4","M67.3,10.9c.5,.9,.6,2,.3,3.2c-1.2,6.5-2.5,11.8-3.4,15.9","M31.2,38.2c.8,.8,1.5,2,1.8,3.7c.8,4.1,2.3,13.2,3.3,19.8c.4,2.3,.6,2.5,.8,4","M33.3,39.5c12.1-1.3,38-4.5,41.3-4.5C76.9,35,78.5,36.4,78,39c-.9,4.2-2.3,12.1-3.9,19.4c-.3,1.5-.6,2.8-.9,3.8","M35.8,50.6c7.2-.6,30.8-3,39.2-3.3","M37.6,63c10.6-1,29.1-3,35.2-3.2","M17.6,77c3.1,.8,6.5,.6,9.7,.4c20.8-1.5,37.3-3.5,56.8-4c3.3-.1,6.6-.1,9.9,.4","M54.5,64.2c.8,.8,1.2,2,1.2,3.6c0,.6,0,17.1-.1,26.2c-0,2.5-0,4.5-.1,5.5"],"足":["M29.8,19c.8,.8,1.4,1.7,1.7,2.3c1.1,3.4,3.4,13.5,4.6,18.7c.3,1.5,.6,2.6,.7,3","M31.6,19.6c12.1-1.9,34.1-5,40.3-5.1c2.9-.1,4,2.4,3.7,3.9c-.7,3.8-3.9,15.2-4.5,17.3","M37.2,40.7c7.1-.4,20.8-2.5,31.5-3.7c1.7-.2,3.3-.1,4.9-.3","M52.8,41c.8,.8,1.4,1.8,1.4,3.6c0,5.1,.4,32.5,.3,33.9","M55.8,59.2C56.9,59.2,66.2,57.8,73.5,56.5C75.1,56.3,76.5,56.2,77.8,56.2","M36.5,55c.1,1.5,.1,3-.2,4.3c-2,7.8-10.2,24.1-17.8,30.9","M33.2,70.8C41.8,72.1,67,87.4,82,92.5c2.9,1,6.8,1.7,9.8,2"],"村":["M12.8,39.2c2,.4,3.2,.3,4.7,.2c6.9-.6,18.9-1.9,28.9-2.7c1.4-.1,1.8-.2,2.7,0","M34.1,13.5c1.1,1.1,2.3,3,2.3,5.3c0,.8-.1,49-.2,67.9c-0,3.5-.1,6.5-.1,7.5","M35.4,39.3c0,.9-.3,1.6-.6,2.4C30.4,51.8,23,63.5,15.1,72.8","M40.7,49c2.5,1.5,6.8,7.3,8.7,11.3","M52.6,41.5c2.3,.5,4.2,.6,6,.4c13.3-1.4,23.8-3.3,34.1-3.7c1.8-.1,4.3-.2,5.8,.1","M79.9,13.2c1.5,1.5,2.3,3.1,2.3,5.5c0,14.6,.3,65.9,.2,70.9c-.1,8.7-5.2,4.8-9.7,.2","M59.6,56.8c2.7,2.1,7.1,8.5,7.8,11.8"],"大":["M19.4,48.2c1.5,.5,5,.9,7.6,.5C41.1,46.5,63,43,77.2,42.4c2.7-.1,4.9-.1,7.3,.3","M49.5,18c.9,2.1,1,4.2,1,6.3C50,57,37.8,81.1,18,91.8","M49.5,46c9,10.5,28.5,36.2,37.5,43.3c3.1,2.4,5.6,3.8,7,4"],"男":["M26.5,14.2c.9,.9,1.6,2,1.7,3c.8,4.8,2.5,16.8,3.3,26c.2,1.9,.4,2.4,.6,4.2","M29,15.9c11.4-1.4,41.2-4.6,49.6-4.7c3.9-.1,5.4,1.5,4.9,5.3c-.5,3.2-3.1,15.2-4.9,22.2c-.4,1.6-.8,3-1.4,4.2","M54,16c.8,.8,1,1.9,1,2.8c0,6.3,.2,22,.2,22.8","M31,30.8C45,29.1,57.1,28,80.5,26.3","M32.9,44.7c11.4-1.2,28.4-3,44.1-3.7","M20,61c2.1,.7,4.6,.8,6.8,.5c13.5-1.5,42.2-5.7,51.9-6.9c5.3-.7,6.9,1,5.7,6.3c-1.9,8.8-9,27.4-15.7,33.2c-5.1,4.5-7.4,2.1-9.7-.9","M53.2,46.4c.3,1.3,.3,3-.2,4.6C49.1,63.1,38,81.2,17.1,92.1"],"竹":["M30.2,16.4c.2,.9,.2,2.1-.1,3.2c-1.7,7.1-7.3,22.6-15.5,31.7","M24.5,43.6c6.1,0,14.6-2.5,21.6-3.7c1.9-.3,3.4-.6,4.3-.6","M35.2,45.6c1,1,1.6,2.4,1.6,4.1c0,10.5-.1,29.9-.2,40.3c-0,3-.1,4.7-.1,5.6","M68.7,11.7c.4,1.2,.2,2.5-.1,3.8C66.2,24.8,59.8,38,51.1,49.4","M64.5,36.1c8.1,0,20.6-3.1,28.5-4.7c2.1-.4,3.8-.6,4.9-.6","M76.8,37.8c1.1,1.1,2,2.8,2,5c0,14.6-0,42.2-0,47.1c0,11-4.9,4.7-8,1"],"中":["M19.9,36.9c1,1,1.7,2.2,2,3.6c1.1,5.7,2.6,13.1,4.2,23c.3,1.7,.6,4.4,.8,6.3","M23.3,39.5C37.1,37.6,70.9,34,84,33.2c4.4-.2,6,1.1,5.1,4.4c-1.5,5.7-5.6,20.2-6.1,22.1","M27.7,64.8C40.1,63.6,61.9,62.2,79,60.8c2.4-.2,5.8-.3,7.2-.3","M52.5,11.5c1.4,1.4,2.2,3.5,2.2,5.1c0,.9,.1,56.6-.1,76.7c-0,3.3-.1,5.6-.1,6.5"],"虫":["M23.6,36.3c.8,.8,1.5,1.7,1.7,2.5c1.2,4.6,2.1,10.6,3.4,18.7c.2,1.5,.5,3.1,.8,4.8","M25.8,38c14.9-1.4,45-4.2,53.7-4.5c3.8-.2,4,1.8,3.6,4.2c-.7,4.5-2.5,12.1-4.1,17.3","M30,60c9.7-1,29.7-2.5,44.8-3.5c2-.1,4-.3,5.8-.4","M52.5,16.1c1,1,1.7,2.8,1.7,4c0,5.4,.1,62.6,0,63.6","M22.8,89.8c1.3,1.3,3,1.5,4.2,1.2s47-10.5,54.8-12.5","M75,69.9c5.1,3.6,12.4,14.4,14.5,20.5"],"町":["M11.2,30.5c1.1,1.1,1.5,2.1,1.6,3.3C13.7,40,14,58,14.5,71c.1,1.9,.2,2.5,.2,4.2","M13.8,32.3c7.4-.8,21-2.9,25.1-3c2-.1,3,1.9,2.9,3.9c-.3,6.5-1.5,24.7-2,36.3c-.1,1.5-.2,2.6-.4,3.8","M25.3,31.8c.9,.9,1.5,2.3,1.5,3.7c-0,6.5,.1,33.8,.1,34.5","M14.4,51.8c2.4-.4,23.4-2.6,25.4-2.6","M15.2,71.8c7-.4,15.8-1.4,24.1-1.9","M49,27.6c1.5,.4,4.2,.6,5.7,.4c11-1,25.7-2.9,37.2-3.6c2.5-.2,3.9-0,5.2,.4","M71.8,29.1c1.2,1.2,2,2.8,2,5.8c0,18,0,51.3,0,56.3c0,11.1-6,2.8-9.2-.2"],"天":["M21.6,24.8c1.8,.5,5.1,.4,6.9,.2c14.6-1.5,35.2-4.2,50.1-5.2c3-.2,4.8,.2,6.3,.5","M25.3,51.6c2.1,.3,3.5,.4,5.9,.1c10.6-1.2,35.9-4.4,46-4.9c1.7-.1,3.6,0,6,.5","M50.3,26c.7,1,1.3,3.4,1.3,5.4c-.2,30.5-14.9,50.9-33.9,60.2","M50.1,51.4C58.7,60,75.1,78.5,86.6,87c2.3,1.7,4.4,3.1,7.9,4.2"],"田":["M18.2,27.5c1.2,1.2,2.1,2.7,2.3,4C22,42.2,23.5,62.1,24.8,80c.2,2.4,.3,3.8,.5,6","M20.9,29.3c8.5-.5,50-3.2,61.6-4c4.8-.4,7.3,2,7,5.6c-.7,8.8-2.8,30.7-4,46.6c-.2,2.4-.3,4.8-.5,6.9","M53.2,29c.9,.9,1.2,2.1,1.2,3.5c0,9.5,.3,46.4,.3,47.2","M24,55.5c5.8-.5,55.1-3.2,62.5-3.5","M26,83.1c14.8-.8,39.4-2.1,58.2-2.8"],"土":["M26.6,50.9c1.6,.4,4.6,.6,6.3,.4C43.5,50,62.1,48,75.7,46.9c2.7-.2,4.4,.2,5.7,.4","M52.2,17.4c1.2,1.2,2,3.1,2,4.6c0,10.2,.1,61.1,.1,63.4","M15.4,87.7c2.1,.5,6,.7,8.1,.5C46,86.2,69,84.6,90.3,83.8c3.5-.1,5.7,.3,7.4,.5"],"二":["M25.2,32.4c1.8,.4,4.8,.6,6.5,.4c10.8-1.1,28.8-3.4,41.2-3.8c3-.1,4.7,.2,6.2,.4","M12,80.8c2.4,.5,6.7,.7,9.1,.5c23.8-1.8,45-4.1,67.5-4.7c4-.1,6.3,.2,8.3,.5"],"日":["M31.5,24.5c1.1,1.1,1.7,2.8,1.7,4.8c0,1.6-.2,38.1-.1,53.5c0,3.8,.1,6.3,.1,6.8","M33.5,26c.8-.1,37.7-3,40.8-3.2c3.2-.2,5,1.8,5,4.2c0,4-.2,40.8-.2,56c0,3.5,0,5.7,0,6","M34.2,55.2c7.8-.5,35.9-2.5,44.1-2.8","M34.2,86.5c10.5-.8,34.1-2.1,43.8-2.2"],"入":["M54.8,48.8c-.5,2-1.1,3.2-2.1,4.6C44.2,65.8,28,81.4,14.5,88","M36.5,20c8.2,1.4,15.1,34,48.8,62.1c2.7,2.3,5.6,4.8,9.4,6.4"],"年":["M40,11.9c.2,1.6-0,2.9-.8,4.5c-2.5,4.8-6.9,11.4-15.9,19.6","M39.1,23.6c2.2,.4,4.4,.2,5.8,0c11.7-1.3,21.3-2.9,33.2-4.1c2.3-.2,4.2,0,5.3,.3","M30.1,43.6c1.4,.3,3.9,.5,5.2,.3c10.9-1.1,28.5-3.4,40.8-4.3c2.3-.1,3.6,.2,4.8,.3","M33.8,44.5c1,1.2,1,2,1,3.5C34.8,52.3,35,65.3,35,66.2","M13.9,67.7c2,.5,5.6,.7,7.6,.5c20.2-2,36.4-4.6,66.7-5.3c3.3-.1,5.3,.2,6.9,.5","M56.6,25.5c1.1,1.1,1.8,3.5,1.8,4.9c0,.9-.1,44.3-.1,61.6c-0,3.1-0,5.4-.1,6.4"],"白":["M55,13c.4,1.5,0,3.2-.6,4.3C51.3,22.9,46,31.1,36.8,40.2","M25.5,40.5c1.1,1.1,1.6,2.8,1.6,4.6c0,1.6,.9,32.5,1.3,47.1c.1,2.6,.1,4.7,.2,6","M28.3,44c14-1.7,39.1-4.5,49.7-5.5c5.2-.5,7.4,.8,7.1,5.4c-.6,9.1-2.1,30.3-3.3,46.9c-.2,2.4-.3,4.7-.5,6.6","M29.1,67.4C42.2,66,72.4,63.6,82.6,63.4","M29.7,94.5C43,93.8,66.6,92,80.2,91.4"],"八":["M37.2,45c.3,1.5,.2,3.2-.9,5.5c-4.2,9-11.5,20.4-24.1,32","M48,27.2c9.4,.2,21.1,30,37.3,45.7c3.8,3.7,6.7,5.7,10,7"],"百":["M16.1,20.2c2.2,.5,6.3,.8,8.5,.5c21.5-2,41.9-4.4,59.2-5c3.7-.1,5.9,.3,7.8,.5","M52.3,21.8c.2,1.4,.2,2.5-.4,3.9c-1.6,4.2-4.8,9.2-8.7,14.7","M30.8,42.8c1,1,1.6,2.5,1.7,4.2c.4,8.7,1,32.9,1.2,43.7c.1,2.5,.1,4.1,.1,4.5","M33.5,44.8c10.3-1.4,35.7-4.4,38.8-4.6c3.1-.2,4.9,1.2,4.9,4.2c0,4.5-.7,32-.9,44.1c-.1,3-.1,5-.1,5.5","M34.1,67c10.2-1.1,32.1-3.2,41.4-3.6","M35,92.9c8.8-.9,30.5-2.1,40.1-2.4"],"文":["M51.6,12.8c1.1,1.1,1.7,2.5,1.7,4c0,4.3-.1,7.6-.1,12.2","M16.9,32.7c2.7,.7,5.7,.9,8.6,.5c15.8-1.8,40.1-5,56.4-6.1c3.7-.2,6.2,.1,8.9,.7","M69.9,32.5c.4,2.1,.1,3.8-.9,6.3C61.6,57,43.8,80.2,18.8,93.8","M31,43.8c6,0,27.3,26.8,49.3,42.1c4.1,2.9,7.5,4.8,11.5,6"],"木":["M19.5,39.9c2.5,.6,5.2,.8,8,.6C40.8,39.4,63,36.5,79.8,36.1c2.8-.1,4.5,.1,7.3,.5","M51.8,10.5c1.2,1.2,2,3,2,5c0,8.7,0,55.1-.1,74.8c-0,4.2-.1,7.2-.1,8.2","M50.8,39.5c0,1.1-.6,2.4-1.4,4C41.8,57.5,26.7,73.9,15.8,80.2","M54.5,39c4.6,6,23,25.8,31.8,34.6c2.3,2.3,4.6,4.4,7.5,5.6"],"本":["M20.5,33.5c1.9,.6,4.9,1.1,8.1,.8C42.4,32.9,66,30.8,79.6,30c3.2-.2,7.2,.2,9.2,.5","M52.1,11.1c1.2,1.2,2,3.2,2,5c0,.8,0,57.2-0,76.8c-0,4-0,6.4-0,6.6","M51.8,33.5c0,1-.4,2.2-1.3,3.9C43.6,50.2,30.1,65.5,13.2,75.5","M54.8,35.5c4.9,5.7,23.5,23.3,32.9,31.3c2.6,2.2,5.2,4.4,8.5,5.2","M33.9,73.9c1.5,.5,2.7,.8,5.3,.6c9.9-.6,21.2-2.1,28-3c1.9-.2,3.6-.3,6-0"],"名":["M54.2,12.6c.3,1.6-.1,3-.7,4.2c-3.5,7.1-13.3,19.3-26,27.5","M53.2,24.2c.9,.5,1.9,.5,3.3,.4c4.4-.4,12-2.5,17.8-4.1c4.2-1.2,5.5,1,4.4,3.5C72.2,39.4,43.9,69.6,16,77.5","M43.6,40.9c3.6,2,8,6,9.7,9.6","M42,67.8c.9,.9,1.6,2.2,1.8,3.3c.5,2.8,2.1,14.4,3,20.9c.3,2.1,.5,3.7,.6,4.2","M44.5,69.5c10.8-1.4,32.4-4.4,38-4.5c2.8-.1,4.1,1.6,3.2,4.6c-1.1,4.1-3.5,14-4.6,20.4","M48,94c7.3-.6,19.6-1.6,29.5-2.4c2.2-.2,4.2-.3,6-.3"],"目":["M29.8,19.1c1.4,1.4,1.9,3.2,1.9,5.5c0,1.8,.2,42.4,.1,60.2c-0,4.9-.1,8.1-.1,8.4","M32.5,21.4c10.9-1.2,38.3-4.1,41.4-4.4c3.2-.3,5.5,1.2,5.5,4.2c0,8.9-.3,39.9-.3,64.8c0,3,0,3.8,0,6","M33,43.6c12.4-1.5,34.8-3.5,45.2-4.1","M32.9,66C44.2,65,66,62.9,77.7,62.6","M33,90.5c9.8-.5,33.2-2.5,44.8-2.5"],"立":["M51.5,15c1.4,1.4,2.2,3.2,2.2,5.8c0,4.1,0,9.6,0,13.7","M22,37.9c2.6,.5,4.8,.3,7,.2c11.4-.9,36.1-3.4,50.6-4.3c2.4-.1,4.9-0,6.9,.4","M32,49c4.8,9.8,8.2,22.5,9.5,31.5","M74,39c.8,1.4,.8,3.3,.5,4.5c-2.9,11.1-8.5,30.4-12.8,42","M15.2,88.8c2.3,.5,5.9,.5,7.8,.4c18.3-1.3,40.3-1.9,64.8-2.8c3.2-.1,6.1,.1,8.5,.9"],"力":["M21.5,38.2c2.7,1.2,5.5,1.1,8.3,.7c14.4-2.1,39.4-6.2,53.2-8.2c4.5-.7,6.2,1.4,5.5,5.8c-2.8,16.4-9,38.8-20,53.2c-6.1,8.1-9.5,3-12.5-.8","M56.9,13.7c.6,2.6,.6,4.6,0,7.2c-4.1,19-16.5,49.3-43.5,68.8"],"林":["M11,40.8c.8,.2,3,.4,5,.2c5.9-.5,15.5-1.4,24-2.5c2-.3,3.2-.2,4.5,0","M30.8,15.8c1.1,1.1,1.8,2.8,1.8,4.8c0,5,.1,45.7-.1,65.5c-0,4.2-.1,7.2-.1,8.2","M31.2,40.5c0,1.6-.6,3.4-1.1,4.6C26.1,54.7,18.6,67,11.2,73.5","M35.2,48.8c3.5,2,7.2,6,9.2,9.5","M50.6,37.4c.9,.3,3,.6,5.4,.3c8.2-.8,18.7-2.6,28-3c2.5-.1,4.7-.3,6.2,0","M67,13.5c1.2,1.2,1.8,3,1.8,4.5c0,.8,.1,47.5-.1,67.8c-0,4.3-.1,7.4-.1,8.5","M68,38.2c0,1-.6,2.9-1.4,4.6C61.2,55,55.4,66.4,45.5,77","M69.5,37.8c6.6,12.6,15.9,25.7,22.3,32.5c1.8,1.9,4.1,4.6,6.7,5.5"],"六":["M51.9,17.5c1.8,1.8,2.7,3.5,2.7,6.5c0,6.5,.1,9.2,.1,14.3","M13.5,42.1c3.3,.7,7.1,.9,9.9,.6c21.6-1.9,41.8-5,61.4-5.5c4.8-.1,7.5,.3,11.1,1.1","M38.1,58.6c.5,1.4,.4,3.7-.5,5.3C33.4,71.4,24,82.4,15.4,88.8","M70.2,59.9c10,8.6,18.2,18.5,23.2,29"]};
+// 漢字|画数|部首|部首名|読み|意味|単語（/区切り）
+
+const RAW10=`一|1|一|いち|イチ・イツ・ひと・ひとつ|かずの1、はじめ|一つ/一人/一日/一番/一年生/同一
+右|5|口|くち|ウ・ユウ・みぎ|みぎがわ|右手/右足/右側/左右/右折/右上
+雨|8|雨|あめ|ウ・あめ・あま|空からふる水|大雨/雨水/雨天/雨上がり/雨雲/梅雨
+円|4|冂|どうがまえ|エン・まるい|まるい形、お金の単位|百円/円い/円形/半円/一円玉/円周
+王|4|王|おう|オウ|国をおさめる人|王様/女王/王子/国王/王国/王手
+音|9|音|おと|オン・イン・おと・ね|おと、こえ|音楽/足音/本音/発音/音読み/母音
+下|3|一|いち|カ・ゲ・した・しも・さげる・さがる・くだる・おりる|した、さがる|下校/上下/地下/下山/下手/川下
+火|4|火|ひ|カ・ひ・ほ|ひ、もえるもの|火山/火曜日/花火/火事/火力/火花
+花|7|艹|くさかんむり|カ・はな|はな|花火/草花/花びん/生け花/開花/花見
+貝|7|貝|かい|かい|かいがら|貝がら/ほら貝/まき貝/二枚貝/赤貝/貝塚
+学|8|子|こ|ガク・まなぶ|まなぶ|学校/学年/学生/入学/大学/学ぶ
+気|6|气|きがまえ|キ・ケ|心のはたらき、空気|元気/天気/空気/気持ち/人気/気配
+九|2|乙|おつ|キュウ・ク・ここの・ここのつ|かずの9|九月/九つ/九九/九人/九日/十中八九
+休|6|亻|にんべん|キュウ・やすむ・やすまる・やすめる|やすむ|休日/休み時間/休校/夏休み/連休/休息
+玉|5|玉|たま|ギョク・たま|まるいもの、宝石|玉入れ/目玉/十円玉/水玉/お年玉/玉石
+金|8|金|かね|キン・コン・かね・かな|かね、金属|お金/金曜日/金魚/料金/金色/金物
+空|8|穴|あなかんむり|クウ・そら・あく・あける・から|そら、からっぽ|空気/青空/空港/空き地/空手/空箱
+月|4|月|つき|ゲツ・ガツ・つき|つき、ひと月|月曜日/正月/満月/月見/三日月/毎月
+犬|4|犬|いぬ|ケン・いぬ|いぬ|子犬/番犬/愛犬/名犬/犬小屋/野犬
+見|7|見|みる|ケン・みる・みえる・みせる|みる|見学/花見/意見/見本/見物/見せる
+五|4|二|に|ゴ・いつ・いつつ|かずの5|五月/五つ/五人/五日/五十音/五円玉
+口|3|口|くち|コウ・ク・くち|くち、出入りするところ|入り口/出口/人口/早口/口笛/悪口
+校|10|木|きへん|コウ|まなぶところ|学校/校長/校歌/校庭/校門/下校
+左|5|工|たくみ|サ・ひだり|ひだりがわ|左手/左右/左足/左側/左折/左上
+三|3|一|いち|サン・み・みつ・みっつ|かずの3|三月/三つ/三日月/三角/三人/再三
+山|3|山|やま|サン・やま|やま|火山/山道/登山/富士山/山小屋/山登り
+子|3|子|こ|シ・ス・こ|こども|子ども/女子/様子/親子/子犬/王子
+四|5|囗|くにがまえ|シ・よ・よつ・よっつ・よん|かずの4|四月/四つ/四角/四人/四季/四方
+糸|6|糸|いと|シ・いと|いと|毛糸/糸車/糸口/生糸/絹糸/製糸
+字|6|子|こ|ジ・あざ|もじ|文字/漢字/数字/名字/字典/ローマ字
+耳|6|耳|みみ|ジ・みみ|みみ|耳たぶ/初耳/早耳/空耳/耳打ち/耳鼻科
+七|2|一|いち|シチ・なな・ななつ・なの|かずの7|七月/七つ/七日/七色/七夕/七五三
+車|7|車|くるま|シャ・くるま|くるま|電車/自動車/車道/水車/風車/車いす
+手|4|手|て|シュ・て・た|て|手紙/上手/手足/歌手/手本/拍手
+十|2|十|じゅう|ジュウ・ジッ・とお・と|かずの10|十日/十円/十分/十字路/十人/十人十色
+出|5|凵|うけばこ|シュツ・スイ・でる・だす|でる、だす|出口/外出/出発/出席/日の出/思い出
+女|3|女|おんな|ジョ・ニョ・ニョウ・おんな・め|おんな|女子/女王/少女/長女/女の子/女性
+小|3|小|しょう|ショウ・ちいさい・こ・お|ちいさい|小学校/小鳥/小石/小川/大小/小さい
+上|3|一|いち|ジョウ・ショウ・うえ・うわ・かみ・あげる・あがる・のぼる|うえ、あがる|上手/屋上/上下/川上/上着/上がる
+森|12|木|き|シン・もり|木がたくさんあるところ|森林/森林浴/森の中/青森県/深い森/鎮守の森
+人|2|人|ひと|ジン・ニン・ひと|ひと|人口/名人/大人/一人/日本人/人形
+水|4|水|みず|スイ・みず|みず|水曜日/水道/水泳/水玉/水着/香水
+正|5|止|とめる|セイ・ショウ・ただしい・ただす・まさ|ただしい|正月/正直/正門/正解/正方形/正しい
+生|5|生|うまれる|セイ・ショウ・いきる・うまれる・うむ・はえる・き・なま|うまれる、いきる|先生/生活/一生/誕生日/生まれる/生野菜
+青|8|青|あお|セイ・ショウ・あお・あおい|あおい|青空/青年/青虫/青信号/真っ青/青い
+夕|3|夕|ゆうべ|セキ・ゆう|ゆうがた|夕方/夕日/夕食/夕立/七夕/一朝一夕
+石|5|石|いし|セキ・シャク・コク・いし|いし|小石/石油/宝石/化石/磁石/石けん
+赤|7|赤|あか|セキ・シャク・あか・あかい|あかい|赤ちゃん/赤字/赤組/赤飯/赤道/真っ赤
+千|3|十|じゅう|セン・ち|かずの1000|千円/千人/千羽づる/千代紙/千葉県/一千
+川|3|川|かわ|セン・かわ|かわ|小川/河川/川岸/川上/天の川/川遊び
+先|6|儿|ひとあし|セン・さき|さき、まえ|先生/先月/先週/先頭/先日/指先
+早|6|日|ひ|ソウ・サッ・はやい・はやまる・はやめる|はやい|早朝/早口/早起き/早春/早速/早い
+草|9|艹|くさかんむり|ソウ・くさ|くさ|草原/草花/草木/雑草/草取り/草笛
+足|7|足|あし|ソク・あし・たりる・たる・たす|あし、たりる|足音/遠足/手足/満足/一足/足りる
+村|7|木|きへん|ソン・むら|むら|村長/村人/農村/山村/市町村/村祭り
+大|3|大|だい|ダイ・タイ・おお・おおきい・おおいに|おおきい|大人/大切/大会/大雨/大小/大好き
+男|7|田|た|ダン・ナン・おとこ|おとこ|男子/長男/男女/男性/男の子/山男
+竹|6|竹|たけ|チク・たけ|たけ|竹林/竹馬/竹とんぼ/竹の子/竹細工/松竹梅
+中|4|丨|たてぼう|チュウ・なか|なか、まんなか|中心/中学校/空中/中身/夜中/一日中
+虫|6|虫|むし|チュウ・むし|むし|昆虫/虫歯/毛虫/害虫/弱虫/虫めがね
+町|7|田|たへん|チョウ・まち|まち|町長/町内/下町/港町/城下町/町役場
+天|4|大|だい|テン・あめ・あま|そら、自然|天気/天才/天国/雨天/天井/天の川
+田|5|田|た|デン・た|たんぼ|田んぼ/水田/田植え/田畑/油田/田園
+土|3|土|つち|ド・ト・つち|つち、地面|土地/土曜日/粘土/土台/土足/土木
+二|2|二|に|ニ・ふた・ふたつ|かずの2|二月/二つ/二人/二日/二階/十二
+日|4|日|ひ|ニチ・ジツ・ひ・か|ひ、太陽、いちにち|日曜日/毎日/日記/休日/朝日/三日
+入|2|入|いる|ニュウ・いる・いれる・はいる|はいる、いれる|入学/入り口/入院/入場/記入/出入り
+年|6|干|いちじゅう|ネン・とし|とし、1年|学年/今年/少年/年上/年賀状/年号
+白|5|白|しろ|ハク・ビャク・しろ・しら・しろい|しろい|白鳥/白紙/白線/白黒/真っ白/告白
+八|2|八|はち|ハチ・や・やつ・やっつ・よう|かずの8|八月/八つ/八日/八百屋/八方/八重歯
+百|6|白|しろ|ヒャク|かずの100|百円/百点/百年/数百/百科事典/百人一首
+文|4|文|ぶん|ブン・モン・ふみ|ことば、もよう|文字/作文/文章/文化/注文/天文
+木|4|木|き|ボク・モク・き・こ|き|木曜日/大木/木材/植木/木の葉/土木
+本|5|木|き|ホン・もと|ほん、もと|本屋/日本/本当/絵本/本気/手本
+名|6|口|くち|メイ・ミョウ・な|なまえ|名前/有名/名人/名字/地名/名札
+目|5|目|め|モク・ボク・め・ま|め、めあて|目玉/目的/目次/注目/目上/一目
+立|5|立|たつ|リツ・リュウ・たつ・たてる|たつ|起立/国立/自立/立場/夕立/立派
+力|2|力|ちから|リョク・リキ・ちから|ちから|体力/協力/努力/全力/電力/力持ち
+林|8|木|き|リン・はやし|木が多いところ|森林/山林/林道/竹林/密林/松林
+六|4|八|はち|ロク・む・むつ・むっつ・むい|かずの6|六月/六つ/六日/六人/六年生/六角形`;
+
+const parse = (raw,kyu)=>raw.trim().split("\n").map(l=>{
+  const [k,s,r,rn,yomi,imi,w]=l.split("|");
+  return {k, s:+s, r, rn, yomi, imi, words:w.split("/"), kyu};
+});
+const APP_KYU = "10";
+const ALL = parse(RAW10,"10");
+const SUBTITLE = APP_KYU==="5" ? "漢検5級・6年生の191字" : "漢検10級・1年生の80字";
+const TYPES = [
+  {id:"kaki",  label:"書き取り（ペン）"},
+  {id:"jun",   label:"書き順"},
+  {id:"blank", label:"熟語の穴うめ"},
+  {id:"imi",   label:"意味から漢字"},
+  {id:"yomi",  label:"漢字の読み"},
+  {id:"bushu", label:"部首"},
+  {id:"kakusu",label:"画数"},
+];
+// 15だんかいの進化。PER問正解するごとに1つ進化する
+const STAGES = [
+  {name:"あかちゃんユニコーン", text:"ふわふわの雲の上で、すやすやねむるあかちゃん。"},
+  {name:"よちよちユニコーン", text:"目がぱっちり！雲の上でよちよち歩けるようになった。"},
+  {name:"ちびユニコーン", text:"おでこに小さなツノがはえてきた！"},
+  {name:"リボンのユニコーン", text:"たてがみに、かわいいリボンをつけた！"},
+  {name:"にじいろユニコーン", text:"たてがみとしっぽが、にじいろにかわった！"},
+  {name:"ほしのくびかざり", text:"きらきら光る、ほしのくびかざりをもらった！"},
+  {name:"おはなのユニコーン", text:"おはなのかんむりで、もっとかわいくなった！"},
+  {name:"ようせいのあいぼう", text:"小さなようせいが、なかまになった。「カンジ、がんばれ！」"},
+  {name:"つばさのユニコーン", text:"せなかに小さなつばさがはえた！"},
+  {name:"マントのユニコーン", text:"風にはためくマントで、空をかける！"},
+  {name:"大つばさのユニコーン", text:"つばさが大きくなって、高い空までとべるようになった！"},
+  {name:"ほうせきのユニコーン", text:"青いほうせきのくびかざりが、きらりと光る！"},
+  {name:"プリンセスユニコーン", text:"ティアラをつけた、ゆめの国のプリンセス！"},
+  {name:"きんいろユニコーン", text:"からだもツノも、きんいろにかがやきはじめた！"},
+  {name:"でんせつの漢字ユニコーン", text:"ゆめの国じゅうにその名がとどろく、でんせつのユニコーンになった！"},
+];
+
+// ---------- 島（セクション）とボス ----------
+const SEC_N = {"10":8,"9":10,"5":10}[APP_KYU];
+const BOSS_HP = {"10":5,"9":6,"5":8}[APP_KYU];
+const LIVES = 3;
+const SECS = Array.from({length:SEC_N},(_,i)=>ALL.slice(Math.round(i*ALL.length/SEC_N), Math.round((i+1)*ALL.length/SEC_N)));
+const ISLE_NAMES = ["はじまりの草原","おはなの国","にじの谷","きりの森","ほのおの山","こおりの国","かぜの丘","ほらあなの国","かみなりの空"];
+const isleName = i => i===SEC_N-1 ? "ゆめのお城" : ISLE_NAMES[i];
+const BOSS_NAMES = [["かみなりぐも","かみなり大王"],["いたずらコウモリ","やみコウモリ"],["いたずらキノコ","どくキノコ大王"],["もやもやおばけ","まじょおばけ"],["トゲトゲスライム","大スライム"]];
+const bossName = i => i===SEC_N-1 ? "やみの大まおう" : BOSS_NAMES[i%5][i>=5?1:0];
+const PER = 8;
+
+// ---------- 記録（この端末のブラウザに保存） ----------
+// 1) すぐ使えるブラウザ保存  2) claude.ai のアカウントに保存（ほかの端末でもつづきから）
+const KEY = "kanji-unicorn-"+APP_KYU+"kyu-v1";
+const DEFAULT = ()=>({correct:0, answered:0, streak:0, best:0, types:TYPES.map(t=>t.id), miss:{}, cur:null, savedAt:0, sec:0, found:{}, cleared:0, boss:null});
+function valid(v){ return v && typeof v.correct==="number" && typeof v.answered==="number"; }
+function loadLocal(){
+  try{ const v=JSON.parse(localStorage.getItem(KEY)||"null"); if(valid(v)) return v; }catch(e){}
+  return null;
+}
+// 開いたときにこの端末にあった記録の保存時刻（開いた直後の自動保存で「新しい」と見まちがえないように）
+const LOCAL0 = loadLocal(), BOOT_SAVED = (LOCAL0&&LOCAL0.savedAt)||0;
+const state = Object.assign(DEFAULT(), LOCAL0||{});
+if(!Array.isArray(state.types)||!state.types.length) state.types=TYPES.map(t=>t.id);
+function fixState(){ if(!state.found||typeof state.found!=="object") state.found={}; if(typeof state.cleared!=="number") state.cleared=0; if(typeof state.sec!=="number"||state.sec<0||state.sec>Math.min(state.cleared,SEC_N-1)) state.sec=Math.min(state.cleared||0,SEC_N-1); if(state.boss&&state.boss.sec!==state.sec) state.boss=null; }
+fixState();
+let cloudRef=null, cloudBusy=false, cloudAgain=false;
+function save(){
+  state.savedAt=Date.now();
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  cloudSave();
+}
+async function cloudSave(){
+  if(!cloudRef) return;
+  if(cloudBusy){ cloudAgain=true; return; }
+  cloudBusy=true;
+  try{ await cloudRef.set(JSON.parse(JSON.stringify(state))); setSync("ok"); }catch(e){ setSync("ng"); }
+  cloudBusy=false;
+  if(cloudAgain){ cloudAgain=false; cloudSave(); }
+}
+function setSync(k){
+  const el=$("sync"); if(!el) return;
+  el.textContent = k==="ok" ? "アカウントに保存ずみ（ほかの端末でもつづきから）" : k==="ng" ? "この端末にだけ保存しています" : "";
+}
+// アカウントの記録をつかうかどうか。からっぽの記録で、とちゅうの記録を上書きしない
+function useRemote(r){
+  if((r.answered||0)===0 && (state.answered||0)>0) return false;
+  if((state.answered||0)===0 && (r.answered||0)>0) return true;
+  return (r.savedAt||0) > BOOT_SAVED;
+}
+async function connectCloud(){
+  try{
+    if(!window.claude||!claude.use) return setSync("ng");
+    const [db,user]=await Promise.all([claude.use("db"),claude.use("user")]);
+    if(!db||!user) return setSync("ng");
+    const uid=await user.id(); if(!uid) return setSync("ng");
+    const ref=db.collection("data/users/"+uid).doc("unicorn-"+APP_KYU+"kyu");
+    const snap=await Promise.race([ref.get(), new Promise((_,rej)=>setTimeout(()=>rej(new Error("timeout")),10000))]);
+    cloudRef=ref;
+    const remote=snap.exists?snap.data():null;
+    if(valid(remote) && useRemote(remote)){
+      Object.assign(state, DEFAULT(), JSON.parse(JSON.stringify(remote)));
+      try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+      fixState(); renderChips(); renderAll(); resumeOrNew();
+      setSync("ok");
+    }else{ cloudSave(); }
+  }catch(e){ setSync("ng"); }
+}
+
+// ---------- helpers ----------
+const $ = id=>document.getElementById(id);
+const rnd = n=>Math.floor(Math.random()*n);
+const shuffle = a=>{ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];} return a; };
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function pool0(){ return SECS[state.sec]||SECS[0]; }
+// まちがいの選択肢は、同じ級の漢字からえらぶ
+function pickOthers(target, n, keyFn, okFn){
+  const seen=new Set([keyFn(target)]); const out=[];
+  for(const c of shuffle(ALL.filter(x=>x.kyu===target.kyu))){ const key=keyFn(c); if(seen.has(key)) continue; if(okFn&&!okFn(c)) continue; seen.add(key); out.push(c); if(out.length===n) break; }
+  return out;
+}
+// 正解がふたつ以上になる選択肢は出さない
+const NUMS="一二三四五六七八九十百千", YOUBI="月火水木金土日";
+const EXTRA_WORDS="小雨/大川/大石/赤い/白い/大きい/小さい/小木/一円/五円/十円/百円/千円";
+const NEAR_IMI=[["空","天"],["森","林"],["学","校"],["円","玉"],["火","日"]];
+let WORDSET=null;
+function wordSet(){ if(!WORDSET){ WORDSET=new Set(EXTRA_WORDS.split("/")); for(const c of ALL) for(const w of c.words) WORDSET.add(w); } return WORDSET; }
+// □にcを入れても正しいことばになるなら、まぎらわしいので出さない
+function blankOK(w,t,c){
+  if(NUMS.includes(t.k)&&NUMS.includes(c.k)) return false;
+  if(w.includes("曜")&&YOUBI.includes(t.k)&&YOUBI.includes(c.k)) return false;
+  return !wordSet().has(w.split(t.k).join(c.k));
+}
+// 意味がにている漢字はいっしょに出さない
+function imiOK(t,c){ return !NEAR_IMI.some(p=>p.includes(t.k)&&p.includes(c.k)); }
+// にがての漢字は多めに出す
+function pickTarget(){
+  const P=pool();
+  const missed=P.filter(c=>state.miss[c.k]>0);
+  if(missed.length && Math.random()<0.35) return missed[rnd(missed.length)];
+  // まだ正解していない漢字を多めに出す
+  const fresh=P.filter(c=>!state.found[c.k]);
+  if(fresh.length && Math.random()<0.6) return fresh[rnd(fresh.length)];
+  return P[rnd(P.length)];
+}
+const blankHTML=(w,k)=>esc(w).split(esc(k)).join('<span class="blank" aria-label="空らん"></span>');
+
+function makeQuestion(){
+  const type = state.types[rnd(state.types.length)];
+  let t = type==="jun" ? junTarget() : pickTarget();
+  if(!t){ t=pickTarget(); return Object.assign(buildQuestion("kakusu",t),{k:t.k}); }
+  return Object.assign(buildQuestion(type,t),{k:t.k});
+}
+function buildQuestion(type,t){
+  if(type==="jun") return junQ(t);
+  if(type==="kaki"||type==="blank"){
+    const words=t.words.filter(w=>w.includes(t.k) && w.length>1);
+    const w=words[rnd(words.length)];
+    if(!w) return makeQuestion();
+    if(type==="kaki") return {type, t, prompt:"□に入る漢字をペンで書こう", big:blankHTML(w,t.k), opts:[]};
+    const others=pickOthers(t,3,c=>c.k, c=>blankOK(w,t,c));
+    const opts=shuffle([t,...others]).map(c=>({label:c.k, ok:c.k===t.k}));
+    return {type, t, prompt:"□に入る漢字はどれ？", big:blankHTML(w,t.k), opts, kanjiOpts:true};
+  }
+  if(type==="imi"){
+    const others=pickOthers(t,3,c=>c.imi, c=>imiOK(t,c));
+    const opts=shuffle([t,...others]).map(c=>({label:c.k, ok:c.k===t.k}));
+    return {type, t, prompt:`「${t.imi}」という意味の漢字はどれ？`, big:"", opts, kanjiOpts:true};
+  }
+  if(type==="yomi"){
+    const others=pickOthers(t,3,c=>c.yomi);
+    const opts=shuffle([t,...others]).map(c=>({label:c.yomi, ok:c.k===t.k}));
+    return {type, t, prompt:"この漢字の読みはどれ？", big:esc(t.k), opts};
+  }
+  if(type==="bushu"){
+    const others=pickOthers(t,3,c=>c.r+c.rn);
+    const opts=shuffle([t,...others]).map(c=>({label:`${c.r}（${c.rn}）`, ok:c.r===t.r&&c.rn===t.rn}));
+    return {type, t, prompt:"この漢字の部首はどれ？", big:esc(t.k), opts};
+  }
+  const set=new Set([t.s]);
+  for(const d of shuffle([-3,-2,-1,1,2,3])){ if(set.size===4) break; if(t.s+d>0) set.add(t.s+d); }
+  const opts=shuffle([...set]).map(n=>({label:`${n}画`, ok:n===t.s}));
+  return {type, t, prompt:"この漢字は全部で何画？", big:esc(t.k), opts};
+}
+
+// ---------- ユニコーンの絵（オリジナルキャラクター） ----------
+function unicornSVG(st){
+  const sc = 0.66 + st*0.024;
+  const S = 'stroke="var(--ink)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
+  const S2 = 'stroke="var(--ink)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"';
+  const gold = st>=13, baby = st===0;
+  const body = gold ? "var(--gold)" : "var(--uni)";
+  const sparkle=(x,y,r,c="var(--gold)")=>`<path d="M${x} ${y-r}L${x+r*.3} ${y-r*.3}L${x+r} ${y}L${x+r*.3} ${y+r*.3}L${x} ${y+r}L${x-r*.3} ${y+r*.3}L${x-r} ${y}L${x-r*.3} ${y-r*.3}Z" fill="${c}"/>`;
+  const star=(x,y,r,c)=>{ let d=""; for(let k=0;k<10;k++){ const a=-Math.PI/2+k*Math.PI/5, rr=k%2?r*.45:r; d+=(k?"L":"M")+(x+rr*Math.cos(a)).toFixed(1)+" "+(y+rr*Math.sin(a)).toFixed(1); } return `<path d="${d}Z" fill="${c}" stroke="var(--ink)" stroke-width="1.2" stroke-linejoin="round"/>`; };
+  const RB = ["#F58A8A","#F7C46C","#9BD77E","#7EC3EC","#B69BE8"];
+  // たてがみ・しっぽ（4だんかい目から にじいろ）
+  const rainbow = st>=4;
+  const maneD = "M104 40Q90 44 92 58Q84 66 90 78Q82 88 90 98";
+  const tailD = "M40 96Q20 92 18 110Q16 124 28 132";
+  const band = (d,w)=> rainbow
+    ? RB.map((c,k)=>`<path d="${d}" fill="none" stroke="${c}" stroke-width="${w-k*(w/6)}" stroke-linecap="round" stroke-linejoin="round"/>`).join("")
+    : `<path d="${d}" fill="none" stroke="var(--mane)" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const maneOut = `<path d="${maneD}" fill="none" stroke="var(--ink)" stroke-width="${(baby?10:16)+5}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const tailOut = `<path d="${tailD}" fill="none" stroke="var(--ink)" stroke-width="${(baby?9:14)+5}" stroke-linecap="round" stroke-linejoin="round"/>`;
+  const mane = baby ? `<path d="M104 42Q96 44 96 54" fill="none" stroke="var(--ink)" stroke-width="13" stroke-linecap="round"/><path d="M104 42Q96 44 96 54" fill="none" stroke="var(--mane)" stroke-width="8" stroke-linecap="round"/>` : maneOut + band(maneD,16);
+  const tail = baby ? tailOut.replace(tailD,"M40 100Q28 100 28 112") + band("M40 100Q28 100 28 112",9) : tailOut + band(tailD,14);
+  // あし
+  const legs = baby
+    ? `<g fill="${body}" ${S2}><rect x="50" y="116" width="14" height="14" rx="6"/><rect x="82" y="116" width="14" height="14" rx="6"/></g>`
+    : `<g fill="${body}" ${S2}><rect x="48" y="110" width="12" height="34" rx="5"/><rect x="62" y="112" width="12" height="32" rx="5"/><rect x="80" y="112" width="12" height="32" rx="5"/><rect x="92" y="110" width="12" height="34" rx="5"/></g>
+       <g fill="var(--hoof)" ${S2}><rect x="48" y="138" width="12" height="7" rx="2"/><rect x="62" y="138" width="12" height="7" rx="2"/><rect x="80" y="138" width="12" height="7" rx="2"/><rect x="92" y="138" width="12" height="7" rx="2"/></g>`;
+  // つばさ
+  const wingBig = st>=10;
+  const wing = st>=8 ? `<path d="M70 96Q${wingBig?"28 46 44 30":"44 62 52 52"}Q${wingBig?"52 52 58 50":"58 64 62 64"}Q${wingBig?"56 34 72 30":"62 54 70 54"}Q${wingBig?"76 60 82 92":"76 74 80 94"}Z" fill="${gold?"#FFF3C4":"var(--wing)"}" ${S}/>
+       <path d="M${wingBig?"54 58Q62 74 70 90M66 46Q72 70 76 90":"58 70Q64 80 70 92"}" fill="none" stroke="var(--ink)" stroke-width="1.6" opacity=".45"/>` : "";
+  const cape = st>=9 && st<=11 ? `<path d="M88 84Q70 80 46 86Q34 108 40 124Q58 116 66 104Q80 110 94 102Z" fill="var(--bad)" ${S}/>` : st>=12 ? `<path d="M88 84Q70 80 46 86Q34 108 40 124Q58 116 66 104Q80 110 94 102Z" fill="${gold?"#FFF3C4":"var(--acc)"}" ${S}/>` : "";
+  // かお
+  const eye = baby
+    ? `<path d="M110 60q5 4 10 0" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>`
+    : `<ellipse cx="115" cy="59" rx="5" ry="6" fill="var(--ink)"/><circle cx="116.8" cy="56.8" r="2" fill="#fff"/>
+       <path d="M108 50q3-3 6-1M112 49q3-3 6-1" fill="none" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round"/>`;
+  const mouth = baby ? `<circle cx="128" cy="78" r="2.6" fill="var(--ink)"/>` : `<path d="M122 78q5 4 10 0" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/>`;
+  const hornLen = baby ? 0 : Math.min(30, 10 + st*2);
+  const hc = gold ? "#FFF3C4" : "var(--horn)";
+  const horn = hornLen ? `<path d="M106 42L${110+hornLen*.35} ${42-hornLen}L118 44Z" fill="${hc}" ${S2}/>
+       <path d="M108 38L116 36M110 32L${115+hornLen*.1} 30" stroke="var(--ink)" stroke-width="1.4" opacity=".5"/>` : "";
+  const ribbon = st>=3 && st<=5 ? `<g transform="translate(98 44)"><path d="M0 0l-10-7v14zM0 0l10-7v14z" fill="var(--pink)" ${S2}/><circle r="3.4" fill="var(--pink)" ${S2}/></g>` : "";
+  const flowers = st>=6 && st<=11 ? [[96,44,"#F7C46C"],[102,38,"#F58A8A"],[122,42,"#7EC3EC"]].map(([x,y,c])=>`<g><circle cx="${x}" cy="${y}" r="4.5" fill="${c}" ${S2}/><circle cx="${x}" cy="${y}" r="1.6" fill="#fff"/></g>`).join("") : "";
+  const necklace = st>=5 ? `<path d="M96 80Q104 90 114 84" fill="none" stroke="${st>=11?"var(--gold)":"var(--acc)"}" stroke-width="2.5"/>${st>=11?`<path d="M104 86l5 6 5-6-5-5z" fill="#7EC3EC" ${S2}/>`:star(105,88,6,"var(--gold)")}` : "";
+  const tiara = st>=12 ? `${st<14?`<path d="M98 44l4-12 5 7 5-11 5 11 4-7 3 12z" fill="var(--gold)" ${S2}/><circle cx="112" cy="36" r="2.4" fill="#F58A8A"/>`:""}${st>=14?`<path d="M94 34l6-16 7 9 6-14 6 14 7-9 5 16z" fill="var(--gold)" ${S2}/><circle cx="113" cy="25" r="3" fill="#F58A8A"/>`:""}` : "";
+  const fairy = st>=7 ? `<g transform="translate(24 46)"><ellipse cx="-6" cy="-4" rx="7" ry="5" fill="#EDE2FF" stroke="var(--ink)" stroke-width="1.2" opacity=".9"/><ellipse cx="6" cy="-4" rx="7" ry="5" fill="#EDE2FF" stroke="var(--ink)" stroke-width="1.2" opacity=".9"/><circle r="5" fill="#F7A8C8" stroke="var(--ink)" stroke-width="1.4"/><path d="M0 -5l-2-4 2 1 2-1z" fill="var(--gold)"/><circle cx="-1.5" cy="-.5" r=".9" fill="var(--ink)"/><circle cx="1.8" cy="-.5" r=".9" fill="var(--ink)"/></g>` : "";
+  const cloud = baby || st===1 ? `<path d="M30 146q-10-14 8-18q2-12 18-8q8-10 22-2q14-8 22 4q16-2 16 12q12 4 4 12z" fill="var(--wing)" ${S2}/>` : `<ellipse cx="76" cy="148" rx="46" ry="6" fill="var(--line)"/>`;
+  const headY = baby ? 26 : 0;
+  return `<svg viewBox="0 0 160 160" role="img" aria-label="${STAGES[st].name}"><g class="bob"><g transform="translate(80 150) scale(${sc}) translate(-80 -150)">
+    ${st>=14?`<circle cx="80" cy="88" r="74" fill="var(--gold)" opacity=".18"/>`:""}
+    ${cloud}
+    ${tail}
+    ${legs}
+    <ellipse cx="74" cy="${baby?112:102}" rx="${baby?32:36}" ry="${baby?18:22}" fill="${body}" ${S}/>
+    ${cape}
+    ${wing}
+    <g transform="translate(0 ${headY})">
+      ${baby?"":`<path d="M90 96Q92 74 104 62L122 70Q110 84 106 104Z" fill="${body}" ${S}/>
+      <path d="M92 96Q94 76 104 66L118 72Q108 86 104 102Z" fill="${body}"/>`}
+      ${mane}
+      <path d="M100 40l2-16 10 14z" fill="${body}" ${S2}/><path d="M102 36l1-7 5 6z" fill="var(--pink)"/>
+      <ellipse cx="114" cy="60" rx="18" ry="17" fill="${body}" ${S}/>
+      <ellipse cx="127" cy="72" rx="12" ry="10" fill="var(--snout)" ${S}/>
+      <path d="M118 66Q124 64 128 64" fill="none" stroke="${body}" stroke-width="5"/>
+      <circle cx="132" cy="70" r="1.6" fill="var(--ink)"/>
+      ${horn}
+      ${eye}
+      <ellipse cx="108" cy="70" rx="5" ry="3.4" fill="var(--pink)" opacity=".75"/>
+      ${mouth}
+      ${ribbon}${flowers}${tiara}
+      ${necklace}
+    </g>
+    ${fairy}
+    ${st>=2?sparkle(146,30,st>=13?7:4,st>=13?"var(--gold)":"#B69BE8"):""}
+    ${st>=13?sparkle(18,96,6)+sparkle(146,116,7)+sparkle(60,26,5):""}
+  </g></g></svg>`;
+}
+
+
+// ---------- ボスの絵（オリジナル） ----------
+function bossSVG(i, label){
+  const last = i===SEC_N-1, kind = last ? 5 : i%5, tier = i>=5 ? 1 : 0;
+  const COL = [["#8A93A6","#4E566A"],["#7A5AA8","#3F2E66"],["#D9534F","#8E3BA8"],["#CFE3F0","#9FB7E0"],["#6BBF59","#2E8C7A"],["#3B2E5A","#3B2E5A"]];
+  const c = COL[kind][tier];
+  const S = 'stroke="var(--ink)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
+  const S2 = 'stroke="var(--ink)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"';
+  const eye=(x,y,r=7)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" ${S2}/><circle cx="${x+1}" cy="${y+1}" r="${r*.45}" fill="var(--ink)"/>`;
+  const brows=(x1,x2,y)=>`<path d="M${x1-9} ${y-12}l14 5M${x2+9} ${y-12}l-14 5" stroke="var(--ink)" stroke-width="3.5" stroke-linecap="round"/>`;
+  const crown=(x,y,s=1)=>`<path d="M${x-14*s} ${y}l${3*s} ${-16*s} ${7*s} ${8*s} ${4*s} ${-12*s} ${4*s} ${12*s} ${7*s} ${-8*s} ${3*s} ${16*s}z" fill="var(--gold)" ${S2}/>`;
+  const ground=`<path d="M0 140q14-10 28-2q14-10 28-2q14-10 28-2q14-10 28-2q14-10 28-2q10-6 20 0V160H0z" fill="var(--wing)" stroke="var(--line)" stroke-width="2"/>`;
+  const cloudD="M30 96q-18-4-12-24q4-16 22-12q6-24 32-20q20-18 40 2q24-4 26 20q18 6 10 26q-6 12-24 10H44q-10 0-14-2z";
+  let body="";
+  if(kind===0){ // かみなりぐも
+    body=`<path d="M72 92l-10 22h12l-8 22 24-30H78l8-14z" fill="var(--gold)" ${S2}/>
+      ${tier?`<path d="M112 90l-8 16h9l-6 16 18-22h-10l6-10z" fill="var(--gold)" ${S2}/><path d="M40 90l-6 14h8l-5 14 15-19h-8l5-9z" fill="var(--gold)" ${S2}/>`:""}
+      <path d="${cloudD}" fill="${c}" ${S}/>
+      ${eye(64,66)}${eye(96,66)}${brows(64,96,66)}
+      <path d="M68 84q12-8 24 0" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+      ${tier?crown(80,40):""}`;
+  }else if(kind===1){ // コウモリ
+    body=`<path d="M64 74Q38 44 8 56q10 8 6 20q12-4 16 8q10-8 18 2q8-6 16 0z" fill="${c}" ${S}/>
+      <path d="M96 74Q122 44 152 56q-10 8-6 20q-12-4-16 8q-10-8-18 2q-8-6-16 0z" fill="${c}" ${S}/>
+      <path d="M62 46l4-18 10 12M98 46l-4-18-10 12" fill="${c}" ${S2}/>
+      <ellipse cx="80" cy="76" rx="24" ry="30" fill="${c}" ${S}/>
+      ${eye(70,66,6)}${eye(90,66,6)}${brows(70,90,66)}
+      <path d="M72 86l4 6 4-6 4 6 4-6" fill="#fff" ${S2}/>
+      ${tier?crown(80,42,.8):""}`;
+  }else if(kind===2){ // いたずらキノコ
+    body=`<path d="M60 84h40l6 42q-26 8-52 0z" fill="#F6E7D2" ${S}/>
+      <path d="M80 22c38 0 60 28 60 56q-60 14-120 0c0-28 22-56 60-56z" fill="${c}" ${S}/>
+      <g fill="#fff"><circle cx="58" cy="50" r="8"/><circle cx="96" cy="40" r="7"/><circle cx="118" cy="62" r="6"/><circle cx="40" cy="68" r="5"/><circle cx="80" cy="64" r="5"/></g>
+      ${eye(70,100,6)}${eye(90,100,6)}<path d="M60 88l14 5M100 88l-14 5" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M72 116q8-6 16 0" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+      ${tier?crown(80,24,.8):""}`;
+  }else if(kind===3){ // おばけ
+    body=`<path d="M80 22c32 0 46 26 46 56v52l-12-10-11 12-11-12-12 12-12-12-11 12-11-12-12 10V78c0-30 14-56 46-56z" fill="${c}" opacity=".95" ${S}/>
+      ${tier?`<path d="M44 40L80 4L116 40Q80 30 44 40z" fill="#3B2E5A" ${S}/><circle cx="80" cy="8" r="5" fill="var(--gold)" ${S2}/>`:""}
+      <ellipse cx="64" cy="70" rx="8" ry="10" fill="var(--ink)"/><ellipse cx="96" cy="70" rx="8" ry="10" fill="var(--ink)"/>
+      <circle cx="66" cy="66" r="2.5" fill="#fff"/><circle cx="98" cy="66" r="2.5" fill="#fff"/>
+      <path d="M66 94q14 10 28 0q-14 14-28 0z" fill="var(--ink)"/>
+      <path d="M36 92q-14 4-16 16M124 92q14 4 16 16" fill="none" stroke="${c}" stroke-width="9" stroke-linecap="round"/>`;
+  }else if(kind===4){ // トゲトゲスライム
+    body=`<path d="M24 132Q20 70 80 50Q140 70 136 132z" fill="${c}" ${S}/>
+      <path d="M44 74l-8-16 16 6M80 50l0-20 10 18M116 74l8-16-16 6" fill="${c}" ${S2}/>
+      <circle cx="56" cy="86" r="6" fill="#fff" opacity=".35"/>
+      ${eye(66,96,8)}${eye(96,96,8)}${brows(66,96,96)}
+      <path d="M66 118q14-10 28 0" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>
+      ${tier?crown(80,36,.8):""}`;
+  }else{ // やみの大まおう
+    body=`<path d="M20 130Q14 60 50 40Q80 20 110 40Q146 60 140 130z" fill="${c}" ${S}/>
+      <path d="M42 50L28 18L60 38M118 50L132 18L100 38" fill="#5B4A86" ${S}/>
+      <ellipse cx="62" cy="78" rx="11" ry="8" fill="var(--gold)" ${S2}/><ellipse cx="98" cy="78" rx="11" ry="8" fill="var(--gold)" ${S2}/>
+      <circle cx="62" cy="78" r="3.5" fill="var(--ink)"/><circle cx="98" cy="78" r="3.5" fill="var(--ink)"/>
+      ${brows(62,98,78)}
+      <path d="M58 104q22 14 44 0q-22 8-44 0z" fill="#fff" ${S2}/>
+      ${crown(80,36,1)}`;
+  }
+  const glow = last ? `<circle cx="80" cy="76" r="70" fill="var(--gold)" opacity=".15"/>` : "";
+  return `<svg viewBox="0 0 160 160" role="img" aria-label="${label||bossName(i)}">${glow}${body}${ground}</svg>`;
+}
+
+// ---------- 画面 ----------
+let current=null, locked=false;
+function stageOf(n){ return Math.min(STAGES.length-1, Math.floor(n/PER)); }
+
+function renderRoom(munch){
+  const st=stageOf(state.correct);
+  $("pirBox").innerHTML=unicornSVG(st);
+  if(munch){ $("pirBox").classList.remove("munch"); void $("pirBox").offsetWidth; $("pirBox").classList.add("munch"); }
+  $("stageLv").textContent=`LEVEL ${st+1} / ${STAGES.length}`;
+  $("stageName").textContent=STAGES[st].name;
+  if(st>=STAGES.length-1){
+    $("meterBar").style.width="100%";
+    $("meterTxt").innerHTML=`さいごまで進化した！ ほし <b>${state.correct}</b> こ`;
+  }else{
+    const inStage=state.correct%PER;
+    $("meterBar").style.width=(inStage/PER*100)+"%";
+    $("meterTxt").innerHTML=`ほし あと <b>${PER-inStage}</b> こで進化`;
+  }
+  $("road").innerHTML=STAGES.map((_,i)=>`<span class="${i<=st?"on":""}"></span>`).join("");
+  const rate=state.answered?Math.round(state.correct/state.answered*100):0;
+  $("stats").innerHTML=`<span>正解 ${state.correct}/${state.answered}（${rate}%）</span><span>連続 ${state.streak}</span><span>最高連続 ${state.best}</span>`;
+  const misses=pool().filter(c=>state.miss[c.k]>0).map(c=>c.k);
+  $("note").textContent = misses.length?`にがての漢字：${misses.slice(0,12).join(" ")}${misses.length>12?" …":""}`:"とちゅうでやめても、つづきから遊べます";
+}
+
+function renderQuestion(){ showQuestion(makeQuestion()); const {t,...q}=current; state.cur={q, done:false}; save(); }
+// とちゅうの問題をそのまま出しなおす
+function resumeOrNew(){
+  const c=state.cur;
+  if(c && !c.done && c.q && ALL.some(x=>x.k===c.q.k)){ const q=Object.assign({},c.q,{t:ALL.find(x=>x.k===c.q.k)}); showQuestion(q); }
+  else renderQuestion();
+}
+function showQuestion(q){
+  current=q; locked=false;
+  const tl=TYPES.find(x=>x.id===current.type).label;
+  $("quiz").innerHTML=`
+    <span class="qtype">${tl}</span>
+    <p class="prompt">${esc(current.prompt)}</p>
+    ${current.big?`<div class="big">${current.big}</div>`:""}
+    <div class="choices">${current.opts.map((o,i)=>`<button type="button" id="opt${i}" class="${current.kanjiOpts?"k":""}" data-i="${i}">${esc(o.label)}</button>`).join("")}</div>`;
+  if(current.type==="kaki"){ renderKaki(); return; }
+  $("quiz").querySelectorAll(".choices button").forEach(b=>b.addEventListener("click",()=>answer(+b.dataset.i)));
+}
+
+// ---------- 書き取り（手書きパッド・自分で○×） ----------
+function renderKaki(){
+  const t=current.t;
+  $("quiz").querySelector(".choices").remove();
+  const box=document.createElement("div"); box.className="kaki";
+  box.innerHTML=`
+    <p class="hint"><span class="lab">読み</span>${esc(t.yomi)}　<span class="lab">意味</span>${esc(t.imi)}</p>
+    <div class="pads">
+      <div class="pad"><canvas id="padCanvas" aria-label="ここに漢字を書く"></canvas></div>
+      <div class="pad answer" id="ansPad" hidden><span>${esc(t.k)}</span></div>
+    </div>
+    <div class="padtools" id="padTools">
+      <button type="button" class="btn ghost" id="undoBtn">1画もどす</button>
+      <button type="button" class="btn ghost" id="clearBtn">ぜんぶけす</button>
+      <button type="button" class="btn" id="showBtn">こたえを見る</button>
+    </div>
+    <div class="selfcheck" id="selfCheck" hidden>
+      <p class="prompt">こたえと見くらべて、正しく書けたかな？（全部で${t.s}画）</p>
+      <div class="choices">
+        <button type="button" id="selfOk" class="ok">○ 書けた</button>
+        <button type="button" id="selfNg" class="ng">× まちがえた</button>
+      </div>
+    </div>`;
+  $("quiz").append(box);
+  const pad=setupPad($("padCanvas"));
+  $("undoBtn").addEventListener("click",pad.undo);
+  $("clearBtn").addEventListener("click",pad.clear);
+  $("showBtn").addEventListener("click",()=>{
+    pad.lock(); box.querySelector(".pads").classList.add("both"); $("ansPad").hidden=false; $("padTools").hidden=true; $("selfCheck").hidden=false;
+    $("selfOk").focus({preventScroll:true});
+  });
+  $("selfOk").addEventListener("click",()=>grade(true));
+  $("selfNg").addEventListener("click",()=>grade(false));
+}
+
+let penSeen=false; // ペンを使い始めたら、手のひら（指）のタッチは無視する
+function setupPad(cv){
+  const strokes=[]; let cur=null, padLocked=false;
+  const ctx=cv.getContext("2d");
+  function size(){
+    const r=cv.getBoundingClientRect(), d=window.devicePixelRatio||1;
+    cv.width=Math.round(r.width*d); cv.height=Math.round(r.height*d);
+    ctx.setTransform(d,0,0,d,0,0); draw();
+  }
+  function ink(){ return getComputedStyle(document.documentElement).getPropertyValue("--ink").trim()||"#3A2A1E"; }
+  function draw(){
+    const r=cv.getBoundingClientRect(); ctx.clearRect(0,0,r.width,r.height);
+    ctx.lineCap="round"; ctx.lineJoin="round"; ctx.strokeStyle=ink();
+    for(const s of strokes){
+      if(s.length>1){
+        const avg=s.reduce((m,q)=>m+(q.p||0.5),0)/s.length;
+        ctx.lineWidth=Math.max(3, r.width*0.024*(0.6+0.8*avg));
+        ctx.beginPath(); ctx.moveTo(s[0].x*r.width,s[0].y*r.height);
+        for(let i=1;i<s.length;i++) ctx.lineTo(s[i].x*r.width,s[i].y*r.height);
+        ctx.stroke();
+      }
+      if(s.length===1){ ctx.fillStyle=ink(); ctx.beginPath(); ctx.arc(s[0].x*r.width,s[0].y*r.height,r.width*0.015,0,7); ctx.fill(); }
+    }
+  }
+  function pt(e){ const r=cv.getBoundingClientRect(); return {x:(e.clientX-r.left)/r.width, y:(e.clientY-r.top)/r.height, p:e.pressure||0.5}; }
+  cv.addEventListener("pointerdown",e=>{
+    if(padLocked) return;
+    if(e.pointerType==="pen") penSeen=true;
+    if(penSeen && e.pointerType==="touch") return;
+    e.preventDefault(); cv.setPointerCapture(e.pointerId);
+    cur={id:e.pointerId, pts:[pt(e)]}; strokes.push(cur.pts); draw();
+  });
+  cv.addEventListener("pointermove",e=>{
+    if(!cur||e.pointerId!==cur.id) return; e.preventDefault();
+    const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];
+    for(const ev of evs) cur.pts.push(pt(ev));
+    draw();
+  });
+  const end=e=>{ if(cur&&e.pointerId===cur.id) cur=null; };
+  cv.addEventListener("pointerup",end); cv.addEventListener("pointercancel",end);
+  new ResizeObserver(size).observe(cv);
+  return {
+    undo(){ if(!padLocked){ strokes.pop(); draw(); } },
+    clear(){ if(!padLocked){ strokes.length=0; draw(); } },
+    lock(){ padLocked=true; cur=null; }
+  };
+}
+
+function answer(i){
+  if(locked) return;
+  $("quiz").querySelectorAll(".choices button").forEach((b,j)=>{ b.disabled=true; if(current.opts[j].ok) b.classList.add("ok"); else if(j===i) b.classList.add("ng"); });
+  grade(current.opts[i].ok);
+}
+
+function grade(ok){
+  if(locked) return; locked=true;
+  const t=current.t, before=stageOf(state.correct);
+  state.answered++; rec(t.k,current.type,ok);
+  const B=state.boss; let bossEnd=null;
+  if(ok) state.found[t.k]=1;
+  if(B){ if(ok) B.hp--; else B.lives--; if(B.hp<=0) bossEnd="win"; else if(B.lives<=0) bossEnd="lose"; }
+  if(bossEnd){ const si=B.sec; state.boss=null; if(bossEnd==="win"){ state.cleared=Math.max(state.cleared,si+1); } state._end={r:bossEnd,sec:si}; }
+  if(ok){ state.correct++; state.streak++; state.best=Math.max(state.best,state.streak); if(state.miss[t.k]) state.miss[t.k]--; if(!state.miss[t.k]) delete state.miss[t.k]; }
+  else { state.streak=0; state.miss[t.k]=(state.miss[t.k]||0)+2; }
+  if(state.cur) state.cur.done=true;
+  save();
+  if(current.type==="kaki") $("selfCheck").hidden=true;
+  const fb=document.createElement("div"); fb.className="feedback";
+  fb.innerHTML=`<div class="res ${ok?"ok":"ng"}">${B?(ok?"こうげき！ ボスに1ダメージ（ほしも1こゲット）":"ボスのこうげき！ ハートが1つへった…"):(ok?"せいかい！ ほしを1こゲット":"ざんねん… この漢字はまた出てくるよ")}</div>
+    <dl class="info">
+      <dt>漢字</dt><dd class="kj">${esc(t.k)}</dd>
+      <dt>読み</dt><dd><span class="lab">読み</span>${esc(t.yomi)}</dd>
+      <dt>意味</dt><dd><span class="lab">意味</span>${esc(t.imi)}</dd>
+      <dt>部首・画数</dt><dd><span class="lab">部首</span>${esc(t.r)}（${esc(t.rn)}）　<span class="lab">画数</span>${t.s}画</dd>
+      <dt>熟語</dt><dd><span class="lab">熟語</span>${t.words.map(esc).join("・")}</dd>
+    </dl>${junStrip(t,current.type)}`;
+  const next=document.createElement("button"); next.type="button"; next.className="btn"; next.id="nextBtn"; next.textContent="つぎの問題";
+  next.addEventListener("click",()=>{ renderSea(); renderQuestion(); });
+  $("quiz").append(fb,next); next.focus({preventScroll:true});
+  renderRoom(ok); renderSea(B&&ok&&!bossEnd);
+  const end=state._end; delete state._end;
+  if(end){
+    const si=end.sec;
+    if(end.r==="win"){
+      const nx=si+1<SEC_N;
+      if(nx){ state.sec=si+1; }
+      save();
+      next.textContent = nx ? `つぎの国へ（${isleName(si+1)}）` : "つぎの問題";
+      pop({svg:bossSVG(si), title:`${bossName(si)}をたおした！`, text: nx?`${isleName(si)}をクリア！ ほしのかけらがきらきら。つぎは「${isleName(si+1)}」だ！`:`ゆめのお城までクリア！ きみはゆめの国でいちばんの漢字ユニコーンだ！`, next: nx?"":"ほかの国のボスとも、もう一度たたかえるよ"});
+    }else{
+      save();
+      pop({svg:bossSVG(si), title:"ざんねん… まけてしまった", text:`${bossName(si)}は強かった。この国の漢字をもう少し練習してから、また挑戦しよう！`, next:"ハートは元にもどったよ"});
+    }
+  }
+  const after=stageOf(state.correct);
+  if(after>before) showEvo(after);
+}
+
+function showEvo(st){
+  pop({svg:unicornSVG(st), title:`${STAGES[st].name}に進化した！`, text:`${STAGES[st].text}（ほし ${state.correct} こ）`, next: st<STAGES.length-1 ? `つぎの進化まで、あと${PER}問正解` : "さいごの進化だよ。おめでとう！"});
+}
+$("evoClose").addEventListener("click",nextPop);
+// ---------- 島のようす・ボス戦 ----------
+const maxOpen = ()=>Math.min(state.cleared, SEC_N-1);
+const secFound = i => SECS[i].filter(c=>state.found[c.k]).length;
+function renderSea(hit){
+  const i=state.sec, sec=SECS[i];
+  $("sea").classList.toggle("in-battle",!!state.boss);
+  if(state.boss){
+    const b=state.boss;
+    $("sea").innerHTML=`<div class="battle${hit?" hit":""}">${bossSVG(i)}
+      <div>
+        <div class="lab">ボス戦・${esc(isleName(i))}</div>
+        <p class="bn">${esc(bossName(i))}</p>
+        <div class="lab">ボスの体力 ${b.hp} / ${BOSS_HP}</div>
+        <div class="hp" aria-hidden="true"><i style="width:${b.hp/BOSS_HP*100}%"></i></div>
+        <div class="lab" style="margin-top:6px">きみのハート</div>
+        <div class="hearts" aria-label="ハート ${b.lives} / ${LIVES}">${Array.from({length:LIVES},(_,k)=>`<span class="${k<b.lives?"":"off"}">♥</span>`).join("")}</div>
+        <button type="button" class="btn ghost" id="fleeBtn">にげる</button>
+      </div></div>`;
+    $("fleeBtn").addEventListener("click",()=>{ state.boss=null; save(); renderSea(); renderQuestion(); });
+    return;
+  }
+  const n=secFound(i), all=n>=sec.length, cleared=i<state.cleared;
+  $("sea").innerHTML=`
+    <h2>地図（国をえらぶ）</h2>
+    <div class="isles">${SECS.map((_,k)=>{
+      const lock=k>maxOpen(), clr=k<state.cleared;
+      return `<button type="button" class="isle${clr?" clear":""}" data-i="${k}" aria-pressed="${k===i}" ${lock?"disabled":""} aria-label="${esc(isleName(k))}${clr?"（クリア）":lock?"（まだ行けない）":""}"><b>${clr?"★":lock?"🔒":k+1}</b>${esc(isleName(k))}</button>`;
+    }).join("")}</div>
+    <div class="isle-head"><p class="isle-name">${i+1}. ${esc(isleName(i))}</p><span class="sub">見つけた漢字 <b>${n}</b> / ${sec.length}</span></div>
+    <div class="tiles" aria-label="この国の漢字">${sec.map(c=>`<span class="${state.found[c.k]?"f":""}">${state.found[c.k]?esc(c.k):"？"}</span>`).join("")}</div>
+    <div class="bossrow">${bossSVG(i)}
+      <div>
+        <p class="bn">ボス：${esc(bossName(i))}</p>
+        <p>${cleared?"たおした！ もう一度たたかうこともできるよ。":all?"ボスがあらわれた！ たたかって国をクリアしよう。":`この国の漢字を全部正解すると、ボスがあらわれるよ（あと${sec.length-n}字）。`}</p>
+        <button type="button" class="btn" id="bossBtn" ${all?"":"disabled"}>ボスとたたかう</button>
+      </div></div>`;
+  $("sea").querySelectorAll(".isle").forEach(b=>b.addEventListener("click",()=>{
+    const k=+b.dataset.i; if(k===state.sec) return;
+    state.sec=k; state.boss=null; state.chap=null; save(); renderAll(); renderQuestion();
+  }));
+  $("bossBtn").addEventListener("click",()=>{
+    state.boss={sec:i, hp:BOSS_HP, lives:LIVES}; save(); renderSea(); renderQuestion();
+    $("sea").scrollIntoView({behavior:"smooth",block:"start"});
+  });
+}
+function renderAll(hit){ renderRoom(); renderSea(hit); }
+
+// ポップアップを順番に出す
+const popQ=[];
+function pop(p){ popQ.push(p); if($("evo").hidden) nextPop(); }
+function nextPop(){
+  const p=popQ.shift(); if(!p){ $("evo").hidden=true; const n=$("nextBtn"); if(n) n.focus(); return; }
+  $("evoPir").innerHTML=p.svg; $("evoTitle").textContent=p.title; $("evoText").textContent=p.text; $("evoNext").textContent=p.next||"";
+  $("evo").hidden=false; $("evoClose").focus();
+}
+
+
+function renderChips(){
+  $("chips").innerHTML=TYPES.map(t=>`<button type="button" class="chip" data-id="${t.id}" aria-pressed="${state.types.includes(t.id)}">${t.label}</button>`).join("");
+  $("chips").querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>{
+    const id=c.dataset.id, on=state.types.includes(id);
+    if(on && state.types.length===1) return;
+    state.types = on ? state.types.filter(x=>x!==id) : [...state.types,id];
+    save(); renderChips(); renderQuestion();
+  }));
+}
+
+function bindReset(){
+  $("resetBtn").addEventListener("click",()=>{
+    $("resetArea").innerHTML=`<div class="confirm"><span>ユニコーンがあかちゃんにもどり、国もさいしょからになります。</span><button class="btn" type="button" id="resetYes">リセットする</button><button class="btn ghost" type="button" id="resetNo">やめる</button></div>`;
+    $("resetYes").addEventListener("click",()=>{ Object.assign(state,{correct:0,answered:0,streak:0,best:0,miss:{},cur:null,st:{},chap:null,sec:0,found:{},cleared:0,boss:null}); restoreReset(); renderAll(); renderQuestion(); });
+    $("resetNo").addEventListener("click",restoreReset);
+  });
+}
+function restoreReset(){ $("resetArea").innerHTML=`<button class="btn ghost" id="resetBtn" type="button">記録をリセット</button>`; bindReset(); }
+
+// ---------- チャプター（50音順に7〜8字ずつ）と、切り口べつの理解度 ----------
+// state.st[漢字][切り口] = [正解の数, まちがいの数, いまの連続正解]
+const CH_N = Math.ceil(ALL.length/8);
+const CHAPS = Array.from({length:CH_N},(_,i)=>ALL.slice(Math.round(i*ALL.length/CH_N), Math.round((i+1)*ALL.length/CH_N)));
+const AXES = [["yomi","読み"],["kaki","書き"],["jun","書き順"],["blank","熟語"],["imi","意味"],["bushu","部首"],["kakusu","画数"]];
+const firstYomi = c => c.yomi.split("・")[0];
+const chapRange = i => `${firstYomi(CHAPS[i][0])}〜${firstYomi(CHAPS[i][CHAPS[i].length-1])}`;
+function progInit(){
+  if(!state.st||typeof state.st!=="object") state.st={};
+  if(typeof state.chap!=="number"||!CHAPS[state.chap]) state.chap=null;
+  // 前からあそんでいる人：問題をぜんぶえらんでいたら「書き順」も出す
+  if(!state.junOn){ const old=["kaki","blank","imi","yomi","bushu","kakusu"]; if(Array.isArray(state.types)&&old.every(x=>state.types.includes(x))&&!state.types.includes("jun")) state.types.push("jun"); state.junOn=1; }
+}
+function rec(k,type,ok){
+  if(!AXES.some(a=>a[0]===type)) return;
+  progInit();
+  const r=(state.st[k]=state.st[k]||{}), v=Array.isArray(r[type])?r[type]:[0,0,0];
+  if(ok){ v[0]++; v[2]++; } else { v[1]++; v[2]=0; }
+  r[type]=v;
+}
+// 1字・1切り口の点数：まだ=null、にがて=0、もう少し=0.5、おぼえた（2回つづけて正解）=1
+function score(k,type){ const v=state.st&&state.st[k]&&state.st[k][type]; if(!Array.isArray(v)) return null; return v[2]>=2?1:v[2]===1?.5:0; }
+function cellPct(list,type){ let s=0,tried=0; for(const c of list){ const x=score(c.k,type); if(x!==null){ tried++; s+=x; } } return {pct:Math.round(s/list.length*100), tried}; }
+function chapInfo(i){ let sum=0,tried=0; for(const a of AXES){ const r=cellPct(CHAPS[i],a[0]); sum+=r.pct; tried+=r.tried; } return {pct:Math.round(sum/AXES.length), tried}; }
+const lv=(p,tried)=>!tried?"none":p>=100?"l4":p>=80?"l3":p>=40?"l2":p>0?"l1":"l0";
+const LEGEND=`<div class="pg-legend"><span><i class="none"></i>まだ</span><span><i class="l0"></i>にがて</span><span><i class="l1"></i>1〜39%</span><span><i class="l2"></i>40〜79%</span><span><i class="l3"></i>80%〜</span><span><i class="l4"></i>100%</span></div>`;
+
+function renderProg(){
+  progInit();
+  const el=$("prog"); if(!el) return;
+  const infos=CHAPS.map((_,i)=>chapInfo(i));
+  const stars=infos.filter(x=>x.pct>=80).length;
+  el.innerHTML=`
+    <div class="pg-head"><h2>チャプターの進み具合（50音順・${CH_N}チャプター）</h2><span class="sub">★ <b>${stars}</b> / ${CH_N}</span></div>
+    <div class="pg-axes">${AXES.map(a=>{ const r=cellPct(ALL,a[0]); return `<span>${a[1]}</span><span class="bar" aria-hidden="true"><i style="width:${r.pct}%"></i></span><span class="n">${r.pct}%</span>`; }).join("")}</div>
+    <div class="pg-mini">${infos.map((x,i)=>`<button type="button" class="pg-m ${lv(x.pct,x.tried)}${state.chap===i?" cur":""}" data-i="${i}" aria-label="チャプター${i+1}（${esc(chapRange(i))}）${x.tried?x.pct+"%":"まだ"}">${x.pct>=80?"★":i+1}</button>`).join("")}</div>
+    ${LEGEND}
+    <div class="pg-btns"><button type="button" class="btn" id="pgOpen">チャプター表をひらく</button></div>`;
+  el.querySelectorAll(".pg-m").forEach(b=>b.addEventListener("click",()=>openSheet(+b.dataset.i)));
+  $("pgOpen").addEventListener("click",()=>openSheet(null));
+  const bar=$("chapBar");
+  if(bar){
+    if(state.chap!=null && !state.boss){
+      bar.innerHTML=`<span>📖 チャプター${state.chap+1}（${esc(chapRange(state.chap))}）を練習中</span><button type="button" class="btn ghost" id="chapStop">練習をやめる</button>`;
+      $("chapStop").addEventListener("click",()=>{ state.chap=null; save(); renderRoom(); renderQuestion(); });
+    }else bar.innerHTML="";
+  }
+  if(!$("sheet").hidden) renderSheet();
+}
+
+let openChap=null;
+const MARK=x=>x===null?["no","・"]:x===1?["ok","◎"]:x===.5?["half","○"]:["ng","×"];
+function chapDetail(i){
+  return `<div class="pg-detail">
+    <div class="pg-dt"><span></span>${AXES.map(a=>`<span class="hd">${a[1]}</span>`).join("")}
+    ${CHAPS[i].map(c=>`<span class="k">${esc(c.k)}<small>${esc(firstYomi(c))}</small></span>${AXES.map(a=>{ const m=MARK(score(c.k,a[0])); return `<span class="s ${m[0]}">${m[1]}</span>`; }).join("")}`).join("")}
+    </div>
+    <p class="pg-note">◎ おぼえた（2回つづけて正解）　○ もう少し　× にがて　・ まだ</p>
+    <button type="button" class="btn" data-practice="${i}">${state.chap===i?"このチャプターを練習中":"このチャプターを練習する"}</button>
+  </div>`;
+}
+function renderSheet(){
+  const rows=CHAPS.map((c,i)=>{
+    const x=chapInfo(i);
+    const cells=AXES.map(a=>{ const r=cellPct(c,a[0]); return `<span class="pg-c ${lv(r.pct,r.tried)}">${r.tried?r.pct:"—"}</span>`; }).join("");
+    return `<button type="button" class="pg-row${state.chap===i?" cur":""}" data-i="${i}" aria-expanded="${openChap===i}"><span class="pg-lab"><b>${x.pct>=80?"★ ":""}${i+1} <small>${esc(chapRange(i))}</small></b><span class="pg-kj">${c.map(z=>esc(z.k)).join("")}</span></span>${cells}</button>${openChap===i?chapDetail(i):""}`;
+  }).join("");
+  $("sheetBody").innerHTML=`
+    <p class="pg-note">漢字を50音順（音読み）に7〜8字ずつ分けました。数字は理解度（%）です。チャプターをタップすると、1字ずつの ◎○× が見られます。</p>
+    ${LEGEND}
+    <div class="pg-table">
+      <div class="pg-row hd" aria-hidden="true"><span class="pg-lab"><small>チャプター</small></span>${AXES.map(a=>`<span class="pg-c hd">${a[1]}</span>`).join("")}</div>
+      ${rows}
+    </div>
+    <p class="pg-note">書き順のデータ：KanjiVG（Ulrich Apel, CC BY-SA 3.0）</p>`;
+}
+function openSheet(i){
+  if(i!=null) openChap=i;
+  $("sheet").hidden=false; document.body.style.overflow="hidden";
+  renderSheet(); $("sheetClose").focus({preventScroll:true});
+  if(i!=null){ const r=$("sheetBody").querySelector(`.pg-row[data-i="${i}"]`); if(r) r.scrollIntoView({block:"center"}); }
+}
+function closeSheet(){ $("sheet").hidden=true; document.body.style.overflow=""; }
+$("sheetClose").addEventListener("click",closeSheet);
+$("pgTop").addEventListener("click",()=>openSheet(null));
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("sheet").hidden) closeSheet(); });
+$("sheetBody").addEventListener("click",e=>{
+  const p=e.target.closest("[data-practice]");
+  if(p){
+    state.chap=+p.dataset.practice; save(); closeSheet(); renderRoom(); renderQuestion();
+    $("chapBar").scrollIntoView({behavior:"smooth",block:"start"}); return;
+  }
+  const r=e.target.closest(".pg-row[data-i]");
+  if(r){ const i=+r.dataset.i; openChap = openChap===i?null:i; renderSheet(); }
+});
+// チャプター練習中は、そのチャプターの漢字から出す（ボス戦のときは島の漢字）
+function pool(){ if(state.chap!=null && !state.boss && CHAPS[state.chap]) return CHAPS[state.chap]; return pool0(); }
+
+// ---------- 書き順の問題（KanjiVG のデータ） ----------
+function kvgSVG(k,hi,upto,cls){
+  const ps=KVG[k]||[], n=upto==null?ps.length:upto;
+  return `<svg class="${cls||"kvg"}" viewBox="0 0 109 109" aria-hidden="true"><path d="M54.5 3V106M3 54.5H106" class="kvg-g"/>${ps.slice(0,n).map((d,i)=>`<path d="${d}" class="${i===hi?"kvg-hi":"kvg-s"}"/>`).join("")}</svg>`;
+}
+function junTarget(){
+  for(let i=0;i<10;i++){ const c=pickTarget(); if((KVG[c.k]||[]).length>=4) return c; }
+  const P=pool().filter(c=>(KVG[c.k]||[]).length>=4); return P.length?P[rnd(P.length)]:null;
+}
+function junQ(t){
+  const n=(KVG[t.k]||[]).length, h=rnd(n), set=new Set([h+1]);
+  for(const x of shuffle([-1,1,-2,2,-3,3].map(d=>h+1+d).filter(x=>x>=1&&x<=n))){ if(set.size===4) break; set.add(x); }
+  for(let x=1;set.size<4&&x<=n;x++) set.add(x);
+  const opts=[...set].sort((a,b)=>a-b).map(x=>({label:`${x}画目`, ok:x===h+1}));
+  return {type:"jun", t, prompt:"赤いところは、何画目に書く？", big:kvgSVG(t.k,h), opts};
+}
+function junStrip(t,type){
+  const ps=KVG[t.k]; if(!ps||!ps.length) return "";
+  const body=`<div class="jun-strip">${ps.map((_,i)=>`<figure>${kvgSVG(t.k,i,i+1,"kvg-mini")}<figcaption>${i+1}</figcaption></figure>`).join("")}</div>`;
+  return (type==="kaki"||type==="jun") ? `<div class="jun-box"><span class="lab">書き順</span>${body}</div>` : `<details class="jun-box"><summary>書き順を見る</summary>${body}</details>`;
+}
+const _renderRoom=renderRoom; renderRoom=function(m){ _renderRoom(m); renderProg(); };
+const _renderChips=renderChips; renderChips=function(){ progInit(); _renderChips(); };
+
+$("subTitle").textContent=SUBTITLE;
+renderChips(); renderAll(); resumeOrNew(); bindReset(); connectCloud();
+</script>
+
+<script>
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
+</script>
+</body>
+</html>
