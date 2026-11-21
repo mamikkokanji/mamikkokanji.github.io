@@ -82,11 +82,11 @@ h1{font-size:1.7rem;font-weight:900;margin:0;letter-spacing:.06em;text-align:cen
 <script>
 const CHARS = [
   {id:"pirate",  name:"漢字パイレーツ",  who:"海賊の男の子",   kyus:["10","9","5"], key:k=>`kanji-pirate-${k}kyu-v1`},
-  {id:"dragon",  name:"漢字ドラゴン",    who:"ドラゴン",       kyus:["9","5"],      key:k=>k==="5"?"kanji-dragon-v1":`kanji-dragon-${k}kyu-v1`},
+  {id:"dragon",  name:"漢字ドラゴン",    who:"ドラゴン",       kyus:["10","9","5"], key:k=>k==="5"?"kanji-dragon-v1":`kanji-dragon-${k}kyu-v1`},
   {id:"hamster", name:"漢字ハムスター",  who:"ハムスター",     kyus:["10","9","5"], key:k=>`kanji-hamster-${k}kyu-v2`},
   {id:"unicorn", name:"漢字ユニコーン",  who:"ユニコーン",     kyus:["10","9","5"], key:k=>`kanji-unicorn-${k}kyu-v1`},
 ];
-const KYU_TXT = {"10":"1年生の80字","9":"2年生の160字","5":"6年生の191字"};
+const KYU_TXT = {"10":"1年生の80字","9":"1・2年生の240字","5":"6年生の191字"};
 const $ = id=>document.getElementById(id);
 function read(key){ try{ const v=JSON.parse(localStorage.getItem(key)||"null"); return v&&typeof v.correct==="number"?v:null; }catch(e){ return null; } }
 function last(){ try{ return localStorage.getItem("kanji-app-last"); }catch(e){ return null; } }
