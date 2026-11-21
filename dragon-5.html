@@ -35,6 +35,9 @@
 .kjump svg{animation:kjump .85s cubic-bezier(.3,.7,.4,1)}
 @keyframes kjump{0%{transform:translateY(0)}12%{transform:translateY(4px) scale(1.08,.9)}42%{transform:translateY(-30px) scale(.94,1.07)}68%{transform:translateY(0) scale(1.06,.94)}82%{transform:translateY(-7px)}100%{transform:none}}
 @media (prefers-reduced-motion:reduce){.kjump svg{animation:none}}
+#bossBtn.bosscall{animation:bosscall 1s ease-in-out 4}
+@keyframes bosscall{50%{transform:scale(1.08);box-shadow:0 0 0 6px rgba(201,148,14,.35)}}
+@media (prefers-reduced-motion:reduce){#bossBtn.bosscall{animation:none}}
 @media (max-width:420px){.wrap>.room,.wrap>.nest{grid-template-columns:80px 1fr;gap:10px;padding:6px 12px;border-radius:16px}.wrap>.room svg,.wrap>.nest svg{width:80px;height:80px}.wrap>.room .stats span:nth-child(3),.wrap>.nest .stats span:nth-child(3){display:none}.wrap>.room .stage-name,.wrap>.nest .stage-name{font-size:.98rem}}
 .wrap>.room .stats,.wrap>.nest .stats{flex-wrap:nowrap;white-space:nowrap;overflow:hidden}
 </style>
@@ -915,8 +918,14 @@ renderChips(); renderNest(); renderQuestion(); bindReset();
       const card=document.querySelector(".wrap>.room,.wrap>.nest");
       const top=card?(parseFloat(getComputedStyle(card).top)||0)+card.offsetHeight:0;
       const r=fb.getBoundingClientRect();
-      const y=window.scrollY+r.top-top-12;
-      if(r.top<top+8 || r.bottom>window.innerHeight-8) window.scrollTo({top:Math.max(0,y),behavior:calm?"auto":"smooth"});
+      const nb=document.getElementById("nextBtn");
+      const end=(nb&&nb.offsetParent?nb:fb).getBoundingClientRect().bottom;
+      const vh=(window.visualViewport&&visualViewport.height)||window.innerHeight;
+      const cap=window.scrollY+r.top-top-12;
+      let y=null;
+      if(r.top<top+8) y=cap;
+      else if(end>vh-80) y=Math.min(cap,window.scrollY+end-(vh-80));
+      if(y!=null) window.scrollTo({top:Math.max(0,y),behavior:calm?"auto":"smooth"});
     });
   }
   let touched=false; ["pointerdown","keydown"].forEach(t=>window.addEventListener(t,()=>{touched=true},{capture:true,passive:true}));
@@ -927,6 +936,25 @@ renderChips(); renderNest(); renderQuestion(); bindReset();
       const r=q.getBoundingClientRect();
       if(r.top<top+4 || r.top>window.innerHeight*0.6) window.scrollTo({top:Math.max(0,window.scrollY+r.top-top-10),behavior:calm?"auto":"smooth"});
     });
+  }
+  const sea=document.getElementById("sea");
+  if(sea){
+    const st=()=>{ const b=document.getElementById("bossBtn"), n=sea.querySelector(".isle-name"); return {on:!!(b&&!b.disabled), isle:n?n.textContent:""}; };
+    let prev=st();
+    new MutationObserver(()=>{
+      const cur=st();
+      if(touched && cur.on && !prev.on && cur.isle===prev.isle){
+        const row=sea.querySelector(".bossrow"), b=document.getElementById("bossBtn");
+        setTimeout(()=>{
+          const card=document.querySelector(".wrap>.room,.wrap>.nest");
+          const top=card?(parseFloat(getComputedStyle(card).top)||0)+card.offsetHeight:0;
+          const r=(row||b).getBoundingClientRect();
+          window.scrollTo({top:Math.max(0,window.scrollY+r.top-top-16),behavior:calm?"auto":"smooth"});
+          if(b){ b.classList.add("bosscall"); }
+        },700);
+      }
+      prev=cur;
+    }).observe(sea,{childList:true,subtree:true});
   }
   new MutationObserver(ms=>{
     for(const m of ms) for(const n of m.addedNodes){
