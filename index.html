@@ -86,7 +86,7 @@ const CHARS = [
   {id:"hamster", name:"漢字ハムスター",  who:"ハムスター",     kyus:["10","9","5"], key:k=>`kanji-hamster-${k}kyu-v2`},
   {id:"unicorn", name:"漢字ユニコーン",  who:"ユニコーン",     kyus:["10","9","5"], key:k=>`kanji-unicorn-${k}kyu-v1`},
 ];
-const KYU_TXT = {"10":"1年生の80字","9":"1・2年生の240字","5":"6年生の191字"};
+const KYU_TXT = {"10":"1年生の80字","9":"2年生の160字","5":"6年生の191字"};
 const $ = id=>document.getElementById(id);
 function read(key){ try{ const v=JSON.parse(localStorage.getItem(key)||"null"); return v&&typeof v.correct==="number"?v:null; }catch(e){ return null; } }
 function last(){ try{ return localStorage.getItem("kanji-app-last"); }catch(e){ return null; } }
