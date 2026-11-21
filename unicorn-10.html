@@ -9,20 +9,37 @@
 <meta property="og:title" content="漢字なかまたち">
 <meta property="og:description" content="パイレーツ・ドラゴン・ハムスター・ユニコーンといっしょに、漢字検定10級・9級・5級の漢字を楽しくおぼえるゲーム">
 <meta property="og:url" content="https://mamiariumi-oss.github.io/-app/unicorn-10.html">
-<meta property="og:image" content="https://mamiariumi-oss.github.io/-app/og-image.png?v=2">
+<meta property="og:image" content="https://mamiariumi-oss.github.io/-app/og-image.png?v=3">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-192.png?v=2" type="image/png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+<link rel="icon" href="icon-192.png?v=3" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="漢字なかまたち">
-<style>.home-btn{display:inline-flex;align-items:center;gap:2px;font:inherit;font-size:.85rem;font-weight:700;color:var(--muted);text-decoration:none;border:2px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 12px 4px 8px;flex-basis:100%;max-width:max-content;margin-bottom:-4px}.home-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}</style>
+<style>
+.home-btn{display:inline-flex;align-items:center;gap:2px;font:inherit;font-size:.85rem;font-weight:700;color:var(--muted);text-decoration:none;border:2px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 12px 4px 8px;flex-basis:100%;max-width:max-content;margin-bottom:-4px}
+.home-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wrap>header{order:0}.wrap>.room,.wrap>.nest{order:1}.wrap>#chapBar{order:2}.wrap>.sea.in-battle{order:3}.wrap>#quiz{order:4}.wrap>.sea{order:5}.wrap>.pg{order:6}.wrap>.settings{order:7}.wrap>.foot{order:8}
+.wrap>.room,.wrap>.nest{position:sticky;top:max(6px,env(safe-area-inset-top,0px));z-index:30;grid-template-columns:104px 1fr;gap:12px;padding:8px 14px;box-shadow:0 8px 20px -8px rgba(0,0,0,.25);overflow:visible}
+.wrap>.room svg,.wrap>.nest svg{width:104px;height:104px;overflow:visible}
+.wrap>.room .stage-name,.wrap>.nest .stage-name{font-size:1.05rem}
+.wrap>.room .stage-lv,.wrap>.nest .stage-lv{font-size:.7rem}
+.wrap>.room .meter,.wrap>.nest .meter{margin-top:4px;height:12px}
+.wrap>.room .meter-txt,.wrap>.nest .meter-txt{font-size:.8rem;margin-top:2px}
+.wrap>.room .road{display:none}
+.wrap>.room .stats,.wrap>.nest .stats{font-size:.72rem;gap:10px;margin-top:0}
+.kjump svg{animation:kjump .85s cubic-bezier(.3,.7,.4,1)}
+@keyframes kjump{0%{transform:translateY(0)}12%{transform:translateY(4px) scale(1.08,.9)}42%{transform:translateY(-30px) scale(.94,1.07)}68%{transform:translateY(0) scale(1.06,.94)}82%{transform:translateY(-7px)}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){.kjump svg{animation:none}}
+@media (max-width:420px){.wrap>.room,.wrap>.nest{grid-template-columns:80px 1fr;gap:10px;padding:6px 12px;border-radius:16px}.wrap>.room svg,.wrap>.nest svg{width:80px;height:80px}.wrap>.room .stats span:nth-child(3),.wrap>.nest .stats span:nth-child(3){display:none}.wrap>.room .stage-name,.wrap>.nest .stage-name{font-size:.98rem}}
+.wrap>.room .stats,.wrap>.nest .stats{flex-wrap:nowrap;white-space:nowrap;overflow:hidden}
+</style>
 <script>try{localStorage.setItem("kanji-app-last","unicorn-10")}catch(e){}</script>
-<title>漢字ユニコーン10級</title>
+<title>かんじユニコーン 10きゅう</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
 <style>
@@ -234,7 +251,7 @@ html,body{overscroll-behavior-y:none}
 <div class="wrap">
   <header>
     <a class="home-btn" href="./">‹ キャラをえらぶ</a>
-    <h1>漢字ユニコーン10級</h1>
+    <h1>かんじユニコーン 10きゅう</h1>
     <span class="sub" id="subTitle"></span>
     <button type="button" class="btn ghost pg-top" id="pgTop">📊 進み具合</button>
   </header>
@@ -260,21 +277,21 @@ html,body{overscroll-behavior-y:none}
   <section class="pg" id="prog" aria-label="チャプターの進み具合"></section>
 
   <section class="settings">
-    <h2>出題する問題</h2>
+    <h2>だす もんだい</h2>
     <div class="chips" id="chips"></div>
   </section>
 
   <div class="foot">
     <span class="sub" id="note"></span>
     <span class="sub" id="sync" style="flex-basis:100%"></span>
-    <div id="resetArea"><button class="btn ghost" id="resetBtn" type="button">記録をリセット</button></div>
+    <div id="resetArea"><button class="btn ghost" id="resetBtn" type="button">きろくを リセット</button></div>
   </div>
 </div>
 
 <div class="evo" id="evo" hidden>
   <div class="evo-box" role="dialog" aria-labelledby="evoTitle">
     <div id="evoPir"></div>
-    <h2 id="evoTitle">進化した！</h2>
+    <h2 id="evoTitle">しんかした！</h2>
     <div id="evoText"></div>
     <div class="evo-new" id="evoNext"></div>
     <button class="btn" type="button" id="evoClose" style="width:100%">つづける</button>
@@ -379,33 +396,31 @@ const parse = (raw,kyu)=>raw.trim().split("\n").map(l=>{
 });
 const APP_KYU = "10";
 const ALL = parse(RAW10,"10");
-const SUBTITLE = APP_KYU==="5" ? "漢検5級・6年生の191字" : "漢検10級・1年生の80字";
+const SUBTITLE = APP_KYU==="5" ? "漢検5級・6年生の191字" : "かんけん10きゅう・1ねんせいの 80じ";
 const TYPES = [
-  {id:"kaki",  label:"書き取り（ペン）"},
-  {id:"jun",   label:"書き順"},
-  {id:"blank", label:"熟語の穴うめ"},
-  {id:"imi",   label:"意味から漢字"},
-  {id:"yomi",  label:"漢字の読み"},
-  {id:"bushu", label:"部首"},
-  {id:"kakusu",label:"画数"},
+  {id:"kaki",  label:"かきとり（ペン）"},
+  {id:"jun",   label:"かきじゅん"},
+  {id:"blank", label:"よみから かんじ"},
+  {id:"yomi",  label:"かんじの よみ"},
+  {id:"kakusu",label:"かくすう"},
 ];
 // 15だんかいの進化。PER問正解するごとに1つ進化する
 const STAGES = [
-  {name:"あかちゃんユニコーン", text:"ふわふわの雲の上で、すやすやねむるあかちゃん。"},
-  {name:"よちよちユニコーン", text:"目がぱっちり！雲の上でよちよち歩けるようになった。"},
-  {name:"ちびユニコーン", text:"おでこに小さなツノがはえてきた！"},
-  {name:"リボンのユニコーン", text:"たてがみに、かわいいリボンをつけた！"},
-  {name:"にじいろユニコーン", text:"たてがみとしっぽが、にじいろにかわった！"},
-  {name:"ほしのくびかざり", text:"きらきら光る、ほしのくびかざりをもらった！"},
-  {name:"おはなのユニコーン", text:"おはなのかんむりで、もっとかわいくなった！"},
-  {name:"ようせいのあいぼう", text:"小さなようせいが、なかまになった。「カンジ、がんばれ！」"},
-  {name:"つばさのユニコーン", text:"せなかに小さなつばさがはえた！"},
-  {name:"マントのユニコーン", text:"風にはためくマントで、空をかける！"},
-  {name:"大つばさのユニコーン", text:"つばさが大きくなって、高い空までとべるようになった！"},
-  {name:"ほうせきのユニコーン", text:"青いほうせきのくびかざりが、きらりと光る！"},
-  {name:"プリンセスユニコーン", text:"ティアラをつけた、ゆめの国のプリンセス！"},
-  {name:"きんいろユニコーン", text:"からだもツノも、きんいろにかがやきはじめた！"},
-  {name:"でんせつの漢字ユニコーン", text:"ゆめの国じゅうにその名がとどろく、でんせつのユニコーンになった！"},
+  {name:"あかちゃんユニコーン", text:"ふわふわの くもの うえで、すやすや ねむる あかちゃん。"},
+  {name:"よちよちユニコーン", text:"めが ぱっちり！ くもの うえで よちよち あるけるように なった。"},
+  {name:"ちびユニコーン", text:"おでこに ちいさな ツノが はえてきた！"},
+  {name:"リボンのユニコーン", text:"たてがみに、かわいい リボンを つけた！"},
+  {name:"にじいろユニコーン", text:"たてがみと しっぽが、にじいろに かわった！"},
+  {name:"ほしの くびかざり", text:"きらきら ひかる、ほしの くびかざりを もらった！"},
+  {name:"おはなのユニコーン", text:"おはなの かんむりで、もっと かわいく なった！"},
+  {name:"ようせいの あいぼう", text:"ちいさな ようせいが、なかまに なった。「カンジ、がんばれ！」"},
+  {name:"つばさのユニコーン", text:"せなかに ちいさな つばさが はえた！"},
+  {name:"マントのユニコーン", text:"かぜに はためく マントで、そらを かける！"},
+  {name:"おおつばさのユニコーン", text:"つばさが おおきく なって、たかい そらまで とべるように なった！"},
+  {name:"ほうせきのユニコーン", text:"あおい ほうせきの くびかざりが、きらりと ひかる！"},
+  {name:"プリンセスユニコーン", text:"ティアラを つけた、ゆめの くにの プリンセス！"},
+  {name:"きんいろユニコーン", text:"からだも ツノも、きんいろに かがやきはじめた！"},
+  {name:"でんせつの かんじユニコーン", text:"ゆめの くにじゅうに その なが とどろく、でんせつの ユニコーンに なった！"},
 ];
 
 // ---------- 島（セクション）とボス ----------
@@ -413,10 +428,10 @@ const SEC_N = {"10":8,"9":10,"5":10}[APP_KYU];
 const BOSS_HP = {"10":5,"9":6,"5":8}[APP_KYU];
 const LIVES = 3;
 const SECS = Array.from({length:SEC_N},(_,i)=>ALL.slice(Math.round(i*ALL.length/SEC_N), Math.round((i+1)*ALL.length/SEC_N)));
-const ISLE_NAMES = ["はじまりの草原","おはなの国","にじの谷","きりの森","ほのおの山","こおりの国","かぜの丘","ほらあなの国","かみなりの空"];
-const isleName = i => i===SEC_N-1 ? "ゆめのお城" : ISLE_NAMES[i];
-const BOSS_NAMES = [["かみなりぐも","かみなり大王"],["いたずらコウモリ","やみコウモリ"],["いたずらキノコ","どくキノコ大王"],["もやもやおばけ","まじょおばけ"],["トゲトゲスライム","大スライム"]];
-const bossName = i => i===SEC_N-1 ? "やみの大まおう" : BOSS_NAMES[i%5][i>=5?1:0];
+const ISLE_NAMES = ["はじまりのそうげん","おはなのくに","にじのたに","きりのもり","ほのおのやま","こおりのくに","かぜのおか","ほらあなのくに","かみなりのそら"];
+const isleName = i => i===SEC_N-1 ? "ゆめのおしろ" : ISLE_NAMES[i];
+const BOSS_NAMES = [["かみなりぐも","かみなりだいおう"],["いたずらコウモリ","やみコウモリ"],["いたずらキノコ","どくキノコだいおう"],["もやもやおばけ","まじょおばけ"],["トゲトゲスライム","おおスライム"]];
+const bossName = i => i===SEC_N-1 ? "やみのだいまおう" : BOSS_NAMES[i%5][i>=5?1:0];
 const PER = 8;
 
 // ---------- 記録（この端末のブラウザに保存） ----------
@@ -531,6 +546,7 @@ function nearNums(ans,lo,hi){
   const s=st[rnd(st.length)];
   return Array.from({length:K},(_,i)=>s+i);
 }
+const IMI_KANA={"雨": "そらから ふる みず", "円": "まるい かたち、おかねの たんい", "王": "くにを おさめる ひと", "気": "こころの はたらき、くうき", "玉": "まるい もの、ほうせき", "金": "かね、きんぞく", "口": "くち、でいりする ところ", "森": "きが たくさん ある ところ", "天": "そら、しぜん", "土": "つち、じめん", "日": "ひ、たいよう、いちにち", "年": "とし、1ねん", "林": "きが おおい ところ"};
 function makeQuestion(){
   const type = state.types[rnd(state.types.length)];
   let t = type==="jun" ? junTarget() : pickTarget();
@@ -543,10 +559,10 @@ function buildQuestion(type,t){
     const words=t.words.filter(w=>w.includes(t.k) && w.length>1);
     const w=words[rnd(words.length)];
     if(!w) return makeQuestion();
-    if(type==="kaki") return {type, t, prompt:"□に入る漢字をペンで書こう", big:blankHTML(w,t.k)+yomiHTML(w), opts:[]};
+    if(type==="kaki") return {type, t, prompt:"□に はいる かんじを ペンで かこう", big:blankHTML(w,t.k)+yomiHTML(w), opts:[]};
     const others=pickOthers(t,3,c=>c.k, c=>blankOK(w,t,c)&&!wordNG(w,c));
     const opts=shuffle([t,...others]).map(c=>({label:c.k, ok:c.k===t.k}));
-    return {type, t, prompt:"□に入る漢字はどれ？", big:blankHTML(w,t.k)+yomiHTML(w), opts, kanjiOpts:true};
+    return {type, t, prompt:"□に はいる かんじは どれ？", big:blankHTML(w,t.k)+yomiHTML(w), opts, kanjiOpts:true};
   }
   if(type==="imi"){
     const others=pickOthers(t,3,c=>c.imi, c=>imiOK(t,c));
@@ -556,15 +572,15 @@ function buildQuestion(type,t){
   if(type==="yomi"){
     const others=pickOthers(t,3,c=>c.yomi);
     const opts=shuffle([t,...others]).map(c=>({label:c.yomi, ok:c.k===t.k}));
-    return {type, t, prompt:"この漢字の読みはどれ？", big:esc(t.k), opts};
+    return {type, t, prompt:"この かんじの よみかたは どれ？", big:esc(t.k), opts};
   }
   if(type==="bushu"){
     const others=pickOthers(t,3,c=>c.r+c.rn);
     const opts=shuffle([t,...others]).map(c=>({label:`${c.r}（${c.rn}）`, ok:c.r===t.r&&c.rn===t.rn}));
     return {type, t, prompt:"この漢字の部首はどれ？", big:esc(t.k), opts};
   }
-  const opts=nearNums(t.s,1,Infinity).map(n=>({label:`${n}画`, ok:n===t.s}));
-  return {type, t, prompt:"この漢字は全部で何画？", big:esc(t.k), opts};
+  const opts=nearNums(t.s,1,Infinity).map(n=>({label:`${n}かく`, ok:n===t.s}));
+  return {type, t, prompt:"この かんじは ぜんぶで なんかく？", big:esc(t.k), opts};
 }
 
 // ---------- ユニコーンの絵（オリジナルキャラクター） ----------
@@ -720,17 +736,17 @@ function renderRoom(munch){
   $("stageName").textContent=STAGES[st].name;
   if(st>=STAGES.length-1){
     $("meterBar").style.width="100%";
-    $("meterTxt").innerHTML=`さいごまで進化した！ ほし <b>${state.correct}</b> こ`;
+    $("meterTxt").innerHTML=`さいごまで しんかした！ ほし <b>${state.correct}</b> こ`;
   }else{
     const inStage=state.correct%PER;
     $("meterBar").style.width=(inStage/PER*100)+"%";
-    $("meterTxt").innerHTML=`ほし あと <b>${PER-inStage}</b> こで進化`;
+    $("meterTxt").innerHTML=`ほし あと <b>${PER-inStage}</b> こで しんか`;
   }
   $("road").innerHTML=STAGES.map((_,i)=>`<span class="${i<=st?"on":""}"></span>`).join("");
   const rate=state.answered?Math.round(state.correct/state.answered*100):0;
-  $("stats").innerHTML=`<span>正解 ${state.correct}/${state.answered}（${rate}%）</span><span>連続 ${state.streak}</span><span>最高連続 ${state.best}</span>`;
+  $("stats").innerHTML=`<span>せいかい ${state.correct}/${state.answered}（${rate}%）</span><span>れんぞく ${state.streak}</span><span>さいこう れんぞく ${state.best}</span>`;
   const misses=pool().filter(c=>state.miss[c.k]>0).map(c=>c.k);
-  $("note").textContent = misses.length?`にがての漢字：${misses.slice(0,12).join(" ")}${misses.length>12?" …":""}`:"とちゅうでやめても、つづきから遊べます";
+  $("note").textContent = misses.length?`にがての かんじ：${misses.slice(0,12).join(" ")}${misses.length>12?" …":""}`:"とちゅうで やめても、つづきから あそべます";
 }
 
 function renderQuestion(){ showQuestion(makeQuestion()); const {t,...q}=current; state.cur={q, done:false}; save(); }
@@ -758,20 +774,20 @@ function renderKaki(){
   $("quiz").querySelector(".choices").remove();
   const box=document.createElement("div"); box.className="kaki";
   box.innerHTML=`
-    <p class="hint"><span class="lab">読み</span>${esc(t.yomi)}　<span class="lab">意味</span>${esc(t.imi)}</p>
+    <p class="hint"><span class="lab">よみ</span>${esc(t.yomi)}　<span class="lab">いみ</span>${esc(IMI_KANA[t.k]||t.imi)}</p>
     <div class="pads">
       <div class="pad"><canvas id="padCanvas" aria-label="ここに漢字を書く"></canvas></div>
       <div class="pad answer" id="ansPad" hidden><span>${esc(t.k)}</span></div>
     </div>
     <div class="padtools" id="padTools">
-      <button type="button" class="btn ghost" id="undoBtn">1画もどす</button>
+      <button type="button" class="btn ghost" id="undoBtn">1かく もどす</button>
       <button type="button" class="btn ghost" id="clearBtn">ぜんぶけす</button>
-      <button type="button" class="btn" id="showBtn">こたえを見る</button>
+      <button type="button" class="btn" id="showBtn">こたえを みる</button>
     </div>
     <div class="selfcheck" id="selfCheck" hidden>
-      <p class="prompt">こたえと見くらべて、正しく書けたかな？（全部で${t.s}画）</p>
+      <p class="prompt">こたえと みくらべて、ただしく かけたかな？（ぜんぶで ${t.s}かく）</p>
       <div class="choices">
-        <button type="button" id="selfOk" class="ok">○ 書けた</button>
+        <button type="button" id="selfOk" class="ok">○ かけた</button>
         <button type="button" id="selfNg" class="ng">× まちがえた</button>
       </div>
     </div>`;
@@ -860,15 +876,15 @@ function grade(ok){
   save();
   if(current.type==="kaki") $("selfCheck").hidden=true;
   const fb=document.createElement("div"); fb.className="feedback";
-  fb.innerHTML=`<div class="res ${ok?"ok":"ng"}">${B?(ok?"こうげき！ ボスに1ダメージ（ほしも1こゲット）":"ボスのこうげき！ ハートが1つへった…"):(ok?"せいかい！ ほしを1こゲット":"ざんねん… この漢字はまた出てくるよ")}</div>
+  fb.innerHTML=`<div class="res ${ok?"ok":"ng"}">${B?(ok?"こうげき！ ボスに1ダメージ（ほしも1こゲット）":"ボスのこうげき！ ハートが1つへった…"):(ok?"せいかい！ ほしを1こゲット":"ざんねん… この かんじは また でてくるよ")}</div>
     <dl class="info">
-      <dt>漢字</dt><dd class="kj">${esc(t.k)}</dd>
-      <dt>読み</dt><dd><span class="lab">読み</span>${esc(t.yomi)}</dd>
-      <dt>意味</dt><dd><span class="lab">意味</span>${esc(t.imi)}</dd>
-      <dt>部首・画数</dt><dd><span class="lab">部首</span>${esc(t.r)}（${esc(t.rn)}）　<span class="lab">画数</span>${t.s}画</dd>
-      <dt>熟語</dt><dd><span class="lab">熟語</span>${t.words.map(esc).join("・")}</dd>
+      <dt>かんじ</dt><dd class="kj">${esc(t.k)}</dd>
+      <dt>よみ</dt><dd><span class="lab">よみ</span>${esc(t.yomi)}</dd>
+      <dt>いみ</dt><dd><span class="lab">いみ</span>${esc(IMI_KANA[t.k]||t.imi)}</dd>
+      <dt>ぶしゅ・かくすう</dt><dd><span class="lab">ぶしゅ</span>${esc(t.r)}（${esc(t.rn)}）　<span class="lab">かくすう</span>${t.s}かく</dd>
+      <dt>ことば</dt><dd><span class="lab">ことば</span>${t.words.map(esc).join("・")}</dd>
     </dl>${junStrip(t,current.type)}`;
-  const next=document.createElement("button"); next.type="button"; next.className="btn"; next.id="nextBtn"; next.textContent="つぎの問題";
+  const next=document.createElement("button"); next.type="button"; next.className="btn"; next.id="nextBtn"; next.textContent="つぎの もんだい";
   next.addEventListener("click",()=>{ renderSea(); renderQuestion(); });
   $("quiz").append(fb,next); next.focus({preventScroll:true});
   renderRoom(ok); renderSea(B&&ok&&!bossEnd);
@@ -879,11 +895,11 @@ function grade(ok){
       const nx=si+1<SEC_N;
       if(nx){ state.sec=si+1; }
       save();
-      next.textContent = nx ? `つぎの国へ（${isleName(si+1)}）` : "つぎの問題";
-      pop({svg:bossSVG(si), title:`${bossName(si)}をたおした！`, text: nx?`${isleName(si)}をクリア！ ほしのかけらがきらきら。つぎは「${isleName(si+1)}」だ！`:`ゆめのお城までクリア！ きみはゆめの国でいちばんの漢字ユニコーンだ！`, next: nx?"":"ほかの国のボスとも、もう一度たたかえるよ"});
+      next.textContent = nx ? `つぎの くにへ（${isleName(si+1)}）` : "つぎの もんだい";
+      pop({svg:bossSVG(si), title:`${bossName(si)}をたおした！`, text: nx?`${isleName(si)}を クリア！ ほしの かけらが きらきら。つぎは「${isleName(si+1)}」だ！`:`ゆめの おしろまで クリア！ きみは ゆめの くにで いちばんの かんじユニコーンだ！`, next: nx?"":"ほかの くにの ボスとも、もういちど たたかえるよ"});
     }else{
       save();
-      pop({svg:bossSVG(si), title:"ざんねん… まけてしまった", text:`${bossName(si)}は強かった。この国の漢字をもう少し練習してから、また挑戦しよう！`, next:"ハートは元にもどったよ"});
+      pop({svg:bossSVG(si), title:"ざんねん… まけてしまった", text:`${bossName(si)}は つよかった。この くにの かんじを もうすこし れんしゅうしてから、また ちょうせんしよう！`, next:"ハートは もとに もどったよ"});
     }
   }
   const after=stageOf(state.correct);
@@ -891,7 +907,7 @@ function grade(ok){
 }
 
 function showEvo(st){
-  pop({svg:unicornSVG(st), title:`${STAGES[st].name}に進化した！`, text:`${STAGES[st].text}（ほし ${state.correct} こ）`, next: st<STAGES.length-1 ? `つぎの進化まで、あと${PER}問正解` : "さいごの進化だよ。おめでとう！"});
+  pop({svg:unicornSVG(st), title:`${STAGES[st].name}に しんかした！`, text:`${STAGES[st].text}（ほし ${state.correct} こ）`, next: st<STAGES.length-1 ? `つぎの しんかまで、あと ${PER}もん せいかい` : "さいごの しんかだよ。おめでとう！"});
 }
 $("evoClose").addEventListener("click",nextPop);
 // ---------- 島のようす・ボス戦 ----------
@@ -904,9 +920,9 @@ function renderSea(hit){
     const b=state.boss;
     $("sea").innerHTML=`<div class="battle${hit?" hit":""}">${bossSVG(i)}
       <div>
-        <div class="lab">ボス戦・${esc(isleName(i))}</div>
+        <div class="lab">ボスせん・${esc(isleName(i))}</div>
         <p class="bn">${esc(bossName(i))}</p>
-        <div class="lab">ボスの体力 ${b.hp} / ${BOSS_HP}</div>
+        <div class="lab">ボスの たいりょく ${b.hp} / ${BOSS_HP}</div>
         <div class="hp" aria-hidden="true"><i style="width:${b.hp/BOSS_HP*100}%"></i></div>
         <div class="lab" style="margin-top:6px">きみのハート</div>
         <div class="hearts" aria-label="ハート ${b.lives} / ${LIVES}">${Array.from({length:LIVES},(_,k)=>`<span class="${k<b.lives?"":"off"}">♥</span>`).join("")}</div>
@@ -917,17 +933,17 @@ function renderSea(hit){
   }
   const n=secFound(i), all=n>=sec.length, cleared=i<state.cleared;
   $("sea").innerHTML=`
-    <h2>地図（国をえらぶ）</h2>
+    <h2>ちず（くにを えらぶ）</h2>
     <div class="isles">${SECS.map((_,k)=>{
       const lock=k>maxOpen(), clr=k<state.cleared;
-      return `<button type="button" class="isle${clr?" clear":""}" data-i="${k}" aria-pressed="${k===i}" ${lock?"disabled":""} aria-label="${esc(isleName(k))}${clr?"（クリア）":lock?"（まだ行けない）":""}"><b>${clr?"★":lock?"🔒":k+1}</b>${esc(isleName(k))}</button>`;
+      return `<button type="button" class="isle${clr?" clear":""}" data-i="${k}" aria-pressed="${k===i}" ${lock?"disabled":""} aria-label="${esc(isleName(k))}${clr?"（クリア）":lock?"（まだ いけない）":""}"><b>${clr?"★":lock?"🔒":k+1}</b>${esc(isleName(k))}</button>`;
     }).join("")}</div>
-    <div class="isle-head"><p class="isle-name">${i+1}. ${esc(isleName(i))}</p><span class="sub">見つけた漢字 <b>${n}</b> / ${sec.length}</span></div>
+    <div class="isle-head"><p class="isle-name">${i+1}. ${esc(isleName(i))}</p><span class="sub">みつけた かんじ <b>${n}</b> / ${sec.length}</span></div>
     <div class="tiles" aria-label="この国の漢字">${sec.map(c=>`<span class="${state.found[c.k]?"f":""}">${state.found[c.k]?esc(c.k):"？"}</span>`).join("")}</div>
     <div class="bossrow">${bossSVG(i)}
       <div>
         <p class="bn">ボス：${esc(bossName(i))}</p>
-        <p>${cleared?"たおした！ もう一度たたかうこともできるよ。":all?"ボスがあらわれた！ たたかって国をクリアしよう。":`この国の漢字を全部正解すると、ボスがあらわれるよ（あと${sec.length-n}字）。`}</p>
+        <p>${cleared?"たおした！ もういちど たたかう ことも できるよ。":all?"ボスが あらわれた！ たたかって くにを クリアしよう。":`この くにの かんじを ぜんぶ せいかいすると、ボスが あらわれるよ（あと ${sec.length-n}じ）。`}</p>
         <button type="button" class="btn" id="bossBtn" ${all?"":"disabled"}>ボスとたたかう</button>
       </div></div>`;
   $("sea").querySelectorAll(".isle").forEach(b=>b.addEventListener("click",()=>{
@@ -963,18 +979,18 @@ function renderChips(){
 
 function bindReset(){
   $("resetBtn").addEventListener("click",()=>{
-    $("resetArea").innerHTML=`<div class="confirm"><span>ユニコーンがあかちゃんにもどり、国もさいしょからになります。</span><button class="btn" type="button" id="resetYes">リセットする</button><button class="btn ghost" type="button" id="resetNo">やめる</button></div>`;
+    $("resetArea").innerHTML=`<div class="confirm"><span>ユニコーンが あかちゃんに もどり、くにも さいしょからに なります。</span><button class="btn" type="button" id="resetYes">リセットする</button><button class="btn ghost" type="button" id="resetNo">やめる</button></div>`;
     $("resetYes").addEventListener("click",()=>{ Object.assign(state,{correct:0,answered:0,streak:0,best:0,miss:{},cur:null,st:{},chap:null,sec:0,found:{},cleared:0,boss:null}); restoreReset(); renderAll(); renderQuestion(); });
     $("resetNo").addEventListener("click",restoreReset);
   });
 }
-function restoreReset(){ $("resetArea").innerHTML=`<button class="btn ghost" id="resetBtn" type="button">記録をリセット</button>`; bindReset(); }
+function restoreReset(){ $("resetArea").innerHTML=`<button class="btn ghost" id="resetBtn" type="button">きろくを リセット</button>`; bindReset(); }
 
 // ---------- チャプター（50音順に7〜8字ずつ）と、切り口べつの理解度 ----------
 // state.st[漢字][切り口] = [正解の数, まちがいの数, いまの連続正解]
 const CH_N = Math.ceil(ALL.length/8);
 const CHAPS = Array.from({length:CH_N},(_,i)=>ALL.slice(Math.round(i*ALL.length/CH_N), Math.round((i+1)*ALL.length/CH_N)));
-const AXES = [["yomi","読み"],["kaki","書き"],["jun","書き順"],["blank","熟語"],["imi","意味"],["bushu","部首"],["kakusu","画数"]];
+const AXES = [["yomi","読み"],["kaki","書き"],["blank","えらぶ"],["jun","書き順"],["kakusu","画数"]];
 const firstYomi = c => c.yomi.split("・")[0];
 const chapRange = i => `${firstYomi(CHAPS[i][0])}〜${firstYomi(CHAPS[i][CHAPS[i].length-1])}`;
 function progInit(){
@@ -1079,19 +1095,37 @@ function junTarget(){
 }
 function junQ(t){
   const n=(KVG[t.k]||[]).length, h=rnd(n);
-  const opts=nearNums(h+1,1,n).map(x=>({label:`${x}画目`, ok:x===h+1}));
-  return {type:"jun", t, prompt:"赤いところは、何画目に書く？", big:kvgSVG(t.k,h), opts};
+  const opts=nearNums(h+1,1,n).map(x=>({label:`${x}かくめ`, ok:x===h+1}));
+  return {type:"jun", t, prompt:"あかい ところは、なんかくめに かく？", big:kvgSVG(t.k,h), opts};
 }
 function junStrip(t,type){
   const ps=KVG[t.k]; if(!ps||!ps.length) return "";
   const body=`<div class="jun-strip">${ps.map((_,i)=>`<figure>${kvgSVG(t.k,i,i+1,"kvg-mini")}<figcaption>${i+1}</figcaption></figure>`).join("")}</div>`;
-  return (type==="kaki"||type==="jun") ? `<div class="jun-box"><span class="lab">書き順</span>${body}</div>` : `<details class="jun-box"><summary>書き順を見る</summary>${body}</details>`;
+  return (type==="kaki"||type==="jun") ? `<div class="jun-box"><span class="lab">かきじゅん</span>${body}</div>` : `<details class="jun-box"><summary>かきじゅんを みる</summary>${body}</details>`;
 }
 const _renderRoom=renderRoom; renderRoom=function(m){ _renderRoom(m); renderProg(); };
 const _renderChips=renderChips; renderChips=function(){ progInit(); _renderChips(); };
 
+// KYU_TYPES_FIX: 10級・9級は漢検の出題（読み・書き取り・筆順・画数）に合わせ、意味と部首の問題は出さない
+state.types=(Array.isArray(state.types)?state.types:[]).filter(id=>TYPES.some(t=>t.id===id)); if(!state.types.length) state.types=TYPES.map(t=>t.id);
+if(state.cur&&state.cur.q&&!TYPES.some(t=>t.id===state.cur.q.type)) state.cur=null;
 $("subTitle").textContent=SUBTITLE;
 renderChips(); renderAll(); resumeOrNew(); bindReset(); connectCloud();
+</script>
+<script>
+// 正解したら、キャラがピョンととぶ
+(function(){
+  const box=()=>document.querySelector("#pirBox,#hamBox,#dragonBox");
+  const q=document.getElementById("quiz"); if(!q) return;
+  new MutationObserver(ms=>{
+    for(const m of ms) for(const n of m.addedNodes){
+      if(n.nodeType===1 && (n.matches(".feedback")||n.querySelector&&n.querySelector(".res")) && (n.querySelector(".res.ok")||n.matches(".res.ok"))){
+        const b=box(); if(!b) return; b.classList.remove("kjump"); void b.offsetWidth; b.classList.add("kjump");
+        setTimeout(()=>b.classList.remove("kjump"),900); return;
+      }
+    }
+  }).observe(q,{childList:true,subtree:true});
+})();
 </script>
 
 <script>

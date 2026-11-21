@@ -9,18 +9,35 @@
 <meta property="og:title" content="漢字なかまたち">
 <meta property="og:description" content="パイレーツ・ドラゴン・ハムスター・ユニコーンといっしょに、漢字検定10級・9級・5級の漢字を楽しくおぼえるゲーム">
 <meta property="og:url" content="https://mamiariumi-oss.github.io/-app/pirate-5.html">
-<meta property="og:image" content="https://mamiariumi-oss.github.io/-app/og-image.png?v=2">
+<meta property="og:image" content="https://mamiariumi-oss.github.io/-app/og-image.png?v=3">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-192.png?v=2" type="image/png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+<link rel="icon" href="icon-192.png?v=3" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="漢字なかまたち">
-<style>.home-btn{display:inline-flex;align-items:center;gap:2px;font:inherit;font-size:.85rem;font-weight:700;color:var(--muted);text-decoration:none;border:2px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 12px 4px 8px;flex-basis:100%;max-width:max-content;margin-bottom:-4px}.home-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}</style>
+<style>
+.home-btn{display:inline-flex;align-items:center;gap:2px;font:inherit;font-size:.85rem;font-weight:700;color:var(--muted);text-decoration:none;border:2px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 12px 4px 8px;flex-basis:100%;max-width:max-content;margin-bottom:-4px}
+.home-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wrap>header{order:0}.wrap>.room,.wrap>.nest{order:1}.wrap>#chapBar{order:2}.wrap>.sea.in-battle{order:3}.wrap>#quiz{order:4}.wrap>.sea{order:5}.wrap>.pg{order:6}.wrap>.settings{order:7}.wrap>.foot{order:8}
+.wrap>.room,.wrap>.nest{position:sticky;top:max(6px,env(safe-area-inset-top,0px));z-index:30;grid-template-columns:104px 1fr;gap:12px;padding:8px 14px;box-shadow:0 8px 20px -8px rgba(0,0,0,.25);overflow:visible}
+.wrap>.room svg,.wrap>.nest svg{width:104px;height:104px;overflow:visible}
+.wrap>.room .stage-name,.wrap>.nest .stage-name{font-size:1.05rem}
+.wrap>.room .stage-lv,.wrap>.nest .stage-lv{font-size:.7rem}
+.wrap>.room .meter,.wrap>.nest .meter{margin-top:4px;height:12px}
+.wrap>.room .meter-txt,.wrap>.nest .meter-txt{font-size:.8rem;margin-top:2px}
+.wrap>.room .road{display:none}
+.wrap>.room .stats,.wrap>.nest .stats{font-size:.72rem;gap:10px;margin-top:0}
+.kjump svg{animation:kjump .85s cubic-bezier(.3,.7,.4,1)}
+@keyframes kjump{0%{transform:translateY(0)}12%{transform:translateY(4px) scale(1.08,.9)}42%{transform:translateY(-30px) scale(.94,1.07)}68%{transform:translateY(0) scale(1.06,.94)}82%{transform:translateY(-7px)}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){.kjump svg{animation:none}}
+@media (max-width:420px){.wrap>.room,.wrap>.nest{grid-template-columns:80px 1fr;gap:10px;padding:6px 12px;border-radius:16px}.wrap>.room svg,.wrap>.nest svg{width:80px;height:80px}.wrap>.room .stats span:nth-child(3),.wrap>.nest .stats span:nth-child(3){display:none}.wrap>.room .stage-name,.wrap>.nest .stage-name{font-size:.98rem}}
+.wrap>.room .stats,.wrap>.nest .stats{flex-wrap:nowrap;white-space:nowrap;overflow:hidden}
+</style>
 <script>try{localStorage.setItem("kanji-app-last","pirate-5")}catch(e){}</script>
 <title>漢字パイレーツ5級</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1191,6 +1208,21 @@ const _renderChips=renderChips; renderChips=function(){ progInit(); _renderChips
 
 $("subTitle").textContent=SUBTITLE;
 renderChips(); renderAll(); resumeOrNew(); bindReset(); connectCloud();
+</script>
+<script>
+// 正解したら、キャラがピョンととぶ
+(function(){
+  const box=()=>document.querySelector("#pirBox,#hamBox,#dragonBox");
+  const q=document.getElementById("quiz"); if(!q) return;
+  new MutationObserver(ms=>{
+    for(const m of ms) for(const n of m.addedNodes){
+      if(n.nodeType===1 && (n.matches(".feedback")||n.querySelector&&n.querySelector(".res")) && (n.querySelector(".res.ok")||n.matches(".res.ok"))){
+        const b=box(); if(!b) return; b.classList.remove("kjump"); void b.offsetWidth; b.classList.add("kjump");
+        setTimeout(()=>b.classList.remove("kjump"),900); return;
+      }
+    }
+  }).observe(q,{childList:true,subtree:true});
+})();
 </script>
 
 <script>
