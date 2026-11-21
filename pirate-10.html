@@ -1184,7 +1184,7 @@ renderChips(); renderAll(); resumeOrNew(); bindReset(); connectCloud();
 (function(){
 const CH=window.PLAY_CH, PID=window.PLAY_ID;
 if(!CH || typeof state!=="object") return;
-const EVERY=10, KEYP="kanji-play-"+PID;
+const EVERY=15, KEYP="kanji-play-"+PID;
 const calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
 let ps=null; try{ ps=JSON.parse(localStorage.getItem(KEYP)||"null"); }catch(e){}
 if(!ps||typeof ps.used!=="number") ps={used:0,best:{}};
