@@ -1129,6 +1129,15 @@ renderChips(); renderAll(); resumeOrNew(); bindReset(); connectCloud();
       if(r.top<top+8 || r.bottom>window.innerHeight-8) window.scrollTo({top:Math.max(0,y),behavior:calm?"auto":"smooth"});
     });
   }
+  let touched=false; ["pointerdown","keydown"].forEach(t=>window.addEventListener(t,()=>{touched=true},{capture:true,passive:true}));
+  function showQuestion(){
+    requestAnimationFrame(()=>{
+      const card=document.querySelector(".wrap>.room,.wrap>.nest");
+      const top=card?(parseFloat(getComputedStyle(card).top)||0)+card.offsetHeight:0;
+      const r=q.getBoundingClientRect();
+      if(r.top<top+4 || r.top>window.innerHeight*0.6) window.scrollTo({top:Math.max(0,window.scrollY+r.top-top-10),behavior:calm?"auto":"smooth"});
+    });
+  }
   new MutationObserver(ms=>{
     for(const m of ms) for(const n of m.addedNodes){
       if(n.nodeType!==1) continue;
@@ -1137,6 +1146,7 @@ renderChips(); renderAll(); resumeOrNew(); bindReset(); connectCloud();
       if(fb.querySelector(".res.ok")){ const b=box(); if(b){ b.classList.remove("kjump"); void b.offsetWidth; b.classList.add("kjump"); setTimeout(()=>b.classList.remove("kjump"),900); } }
       showResult(fb); return;
     }
+    if(touched && ms.some(m=>m.target===q && m.addedNodes.length)) showQuestion();
   }).observe(q,{childList:true,subtree:true});
 })();
 </script>
