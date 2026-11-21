@@ -1113,16 +1113,27 @@ $("subTitle").textContent=SUBTITLE;
 renderChips(); renderAll(); resumeOrNew(); bindReset(); connectCloud();
 </script>
 <script>
-// 正解したら、キャラがピョンととぶ
+// 答えたら：正解ならキャラがピョンととぶ。けっか（せいかい／ざんねん）が見えるところまで自動でスクロール（キャラは上に見えたまま）
 (function(){
   const box=()=>document.querySelector("#pirBox,#hamBox,#dragonBox");
   const q=document.getElementById("quiz"); if(!q) return;
+  const calm=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function showResult(fb){
+    requestAnimationFrame(()=>{
+      const card=document.querySelector(".wrap>.room,.wrap>.nest");
+      const top=card?(parseFloat(getComputedStyle(card).top)||0)+card.offsetHeight:0;
+      const r=fb.getBoundingClientRect();
+      const y=window.scrollY+r.top-top-12;
+      if(r.top<top+8 || r.bottom>window.innerHeight-8) window.scrollTo({top:Math.max(0,y),behavior:calm?"auto":"smooth"});
+    });
+  }
   new MutationObserver(ms=>{
     for(const m of ms) for(const n of m.addedNodes){
-      if(n.nodeType===1 && (n.matches(".feedback")||n.querySelector&&n.querySelector(".res")) && (n.querySelector(".res.ok")||n.matches(".res.ok"))){
-        const b=box(); if(!b) return; b.classList.remove("kjump"); void b.offsetWidth; b.classList.add("kjump");
-        setTimeout(()=>b.classList.remove("kjump"),900); return;
-      }
+      if(n.nodeType!==1) continue;
+      const fb=n.matches(".feedback")?n:(n.querySelector&&n.querySelector(".feedback"));
+      if(!fb) continue;
+      if(fb.querySelector(".res.ok")){ const b=box(); if(b){ b.classList.remove("kjump"); void b.offsetWidth; b.classList.add("kjump"); setTimeout(()=>b.classList.remove("kjump"),900); } }
+      showResult(fb); return;
     }
   }).observe(q,{childList:true,subtree:true});
 })();
