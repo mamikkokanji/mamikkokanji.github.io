@@ -644,6 +644,17 @@ const WORD_YOMI={"胃腸":"いちょう","胃液":"いえき","胃薬":"いぐ�
 const BLANK_NG={"遺伝":"異","沿線":"延","物干し":"欲","書簡":"巻","貴い":"尊","敬語":"警","急激":"劇","激しい":"劇","人絹":"権","人権":"絹","立憲":"券","改憲":"権","利己":"呼","后妃":"皇","天皇":"納","鋼線":"紅","決済":"裁","短冊":"尺","至上":"誌","姿勢":"至","雄姿":"視","無視":"私","歌詞":"誌","就学":"宗","処方":"諸","署長":"処","除く":"臨","傷む":"痛","障害":"傷","蒸気":"承","盛大":"聖","至誠":"聖","宣伝":"泉","銭湯":"洗","独奏":"創","創業":"操","変装":"奏","地層":"宗","高層":"宗","上層":"奏","層雲":"奏","節操":"奏","操業":"創","内臓":"蔵","尊い":"貴","庁内":"腸","頂上":"潮","痛手":"傷","検討":"糖","討議":"党","否決":"秘","批点":"秘","来訪":"宝","郵政":"優","一覧":"乱"};
 const wordNG=(w,c)=>(BLANK_NG[w]||"").includes(c.k);
 const yomiHTML=w=>WORD_YOMI[w]?`<span class="wyomi">（${esc(WORD_YOMI[w])}）</span>`:"";
+// 書き順・画数の選択肢：正解をふくむ6つの連続した数。正解の前後（±1）はかならず入れ、正解の位置はランダム（はしにも来る）
+function nearNums(ans,lo,hi){
+  const K=6;
+  if(hi-lo+1<=K) return Array.from({length:hi-lo+1},(_,i)=>lo+i);
+  const st=[];
+  for(let s=Math.max(lo,ans-K+1); s<=Math.min(ans,hi-K+1); s++){
+    if(ans>lo && s>ans-1) continue; if(ans<hi && s+K-1<ans+1) continue; st.push(s);
+  }
+  const s=st[rnd(st.length)];
+  return Array.from({length:K},(_,i)=>s+i);
+}
 function makeQuestion(){
   const type = state.types[rnd(state.types.length)];
   let t = type==="jun" ? junTarget() : pickTarget();
@@ -676,9 +687,7 @@ function buildQuestion(type,t){
     const opts=shuffle([t,...others]).map(c=>({label:`${c.r}（${c.rn}）`, ok:c.r===t.r&&c.rn===t.rn}));
     return {type, t, prompt:"この漢字の部首はどれ？", big:esc(t.k), opts};
   }
-  const set=new Set([t.s]);
-  for(const d of [-1,1,...shuffle([-3,-2,2,3])]){ if(set.size===4) break; if(t.s+d>0) set.add(t.s+d); }
-  const opts=shuffle([...set]).map(n=>({label:`${n}画`, ok:n===t.s}));
+  const opts=nearNums(t.s,1,Infinity).map(n=>({label:`${n}画`, ok:n===t.s}));
   return {type, t, prompt:"この漢字は全部で何画？", big:esc(t.k), opts};
 }
 
@@ -1029,10 +1038,8 @@ function junTarget(){
   const P=pool().filter(c=>(KVG[c.k]||[]).length>=4); return P.length?P[rnd(P.length)]:null;
 }
 function junQ(t){
-  const n=(KVG[t.k]||[]).length, h=rnd(n), set=new Set([h+1]);
-  for(const x of [-1,1,...shuffle([-2,2,-3,3])].map(d=>h+1+d).filter(x=>x>=1&&x<=n)){ if(set.size===4) break; set.add(x); }
-  for(let x=1;set.size<4&&x<=n;x++) set.add(x);
-  const opts=[...set].sort((a,b)=>a-b).map(x=>({label:`${x}画目`, ok:x===h+1}));
+  const n=(KVG[t.k]||[]).length, h=rnd(n);
+  const opts=nearNums(h+1,1,n).map(x=>({label:`${x}画目`, ok:x===h+1}));
   return {type:"jun", t, prompt:"赤いところは、何画目に書く？", big:kvgSVG(t.k,h), opts};
 }
 function junStrip(t,type){

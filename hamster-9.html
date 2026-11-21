@@ -546,6 +546,17 @@ const WORD_YOMI={"引力":"いんりょく","引用":"いんよう","字引":"�
 const BLANK_NG={"何日":"南","科学":"家歌","理科":"夏歌","画家":"科","大家":"谷矢","作家":"歌","国歌":"家","大会":"海","絵本":"画","昼間":"馬","汽船":"帰","記入":"帰","強風":"京","近道":"親","長兄":"形計","手形":"方","家計":"兄","言語":"原","高原":"光","原始":"元","正午":"後語","工作":"公広光考","工事":"後","公園":"後","公平":"工広光考黄","広告":"公","広大":"工高","外交":"公光","交流":"後公","光線":"交","日光":"工交","光年":"後高","発光":"行","考案":"公","銀行":"光","行進":"後高","高速":"光","黄葉":"後広光","才能":"西","一矢":"思","寺院":"自","寺社":"自","自分":"時","各自":"寺","時代":"地","同時":"寺","時刻":"自","当時":"寺","今週":"秋","毎週":"秋","来週":"秋","場所":"馬","中心":"新","親友":"心新","北西":"星","晴天":"星","快晴":"星","知人":"地","未知":"地","昼休み":"午","兄弟":"妹","点数":"店","名刀":"東答","短刀":"頭","初冬":"頭","立冬":"刀","本当":"東","東西":"遠","関東":"頭","回答":"頭","先頭":"東","頭上":"図","音頭":"戸","合同":"道","不買":"売","見聞":"分","万能":"番","野鳥":"夜","日曜":"用","土曜":"用","千里":"理"};
 const wordNG=(w,c)=>(BLANK_NG[w]||"").includes(c.k);
 const yomiHTML=w=>WORD_YOMI[w]?`<span class="wyomi">（${esc(WORD_YOMI[w])}）</span>`:"";
+// 書き順・画数の選択肢：正解をふくむ6つの連続した数。正解の前後（±1）はかならず入れ、正解の位置はランダム（はしにも来る）
+function nearNums(ans,lo,hi){
+  const K=6;
+  if(hi-lo+1<=K) return Array.from({length:hi-lo+1},(_,i)=>lo+i);
+  const st=[];
+  for(let s=Math.max(lo,ans-K+1); s<=Math.min(ans,hi-K+1); s++){
+    if(ans>lo && s>ans-1) continue; if(ans<hi && s+K-1<ans+1) continue; st.push(s);
+  }
+  const s=st[rnd(st.length)];
+  return Array.from({length:K},(_,i)=>s+i);
+}
 function makeQuestion(){
   const type = state.types[rnd(state.types.length)];
   let t = type==="jun" ? junTarget() : pickTarget();
@@ -578,9 +589,7 @@ function buildQuestion(type,t){
     const opts=shuffle([t,...others]).map(c=>({label:`${c.r}（${c.rn}）`, ok:c.r===t.r&&c.rn===t.rn}));
     return {type, t, prompt:"この漢字の部首はどれ？", big:esc(t.k), opts};
   }
-  const set=new Set([t.s]);
-  for(const d of [-1,1,...shuffle([-3,-2,2,3])]){ if(set.size===4) break; if(t.s+d>0) set.add(t.s+d); }
-  const opts=shuffle([...set]).map(n=>({label:`${n}画`, ok:n===t.s}));
+  const opts=nearNums(t.s,1,Infinity).map(n=>({label:`${n}画`, ok:n===t.s}));
   return {type, t, prompt:"この漢字は全部で何画？", big:esc(t.k), opts};
 }
 
@@ -931,10 +940,8 @@ function junTarget(){
   const P=pool().filter(c=>(KVG[c.k]||[]).length>=4); return P.length?P[rnd(P.length)]:null;
 }
 function junQ(t){
-  const n=(KVG[t.k]||[]).length, h=rnd(n), set=new Set([h+1]);
-  for(const x of [-1,1,...shuffle([-2,2,-3,3])].map(d=>h+1+d).filter(x=>x>=1&&x<=n)){ if(set.size===4) break; set.add(x); }
-  for(let x=1;set.size<4&&x<=n;x++) set.add(x);
-  const opts=[...set].sort((a,b)=>a-b).map(x=>({label:`${x}画目`, ok:x===h+1}));
+  const n=(KVG[t.k]||[]).length, h=rnd(n);
+  const opts=nearNums(h+1,1,n).map(x=>({label:`${x}画目`, ok:x===h+1}));
   return {type:"jun", t, prompt:"赤いところは、何画目に書く？", big:kvgSVG(t.k,h), opts};
 }
 function junStrip(t,type){
