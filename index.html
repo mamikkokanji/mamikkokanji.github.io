@@ -59,7 +59,7 @@ h1{font-size:1.5rem;font-weight:900;margin:0;letter-spacing:.04em}
 .choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .choices button{font:inherit;font-weight:700;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:12px 8px;min-height:64px;cursor:pointer;transition:transform .08s,border-color .15s}
 .choices button.k{font-family:var(--f-kanji);font-size:2rem;font-weight:600}
-.choices button:hover:not(:disabled){border-color:var(--acc)}
+@media (hover:hover) and (pointer:fine){.choices button:hover:not(:disabled){border-color:var(--acc)}}
 .choices button:active:not(:disabled){transform:scale(.97)}
 .choices button:focus-visible,.btn:focus-visible,.chip:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .choices button.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
