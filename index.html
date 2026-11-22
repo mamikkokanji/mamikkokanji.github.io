@@ -5,13 +5,13 @@
 <title>かんじフレンズ</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#8A5CC2">
-<meta name="description" content="パイレーツ・ドラゴン・ハムスター・ユニコーンといっしょに、漢字検定の漢字を楽しくおぼえるゲーム">
+<meta name="description" content="パイレーツ・ドラゴン・ハムスター・ユニコーンといっしょに、小学校で習う漢字を楽しくおぼえるゲーム">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="かんじフレンズ">
 <meta property="og:title" content="かんじフレンズ">
-<meta property="og:description" content="パイレーツ・ドラゴン・ハムスター・ユニコーンといっしょに、漢字検定10級・9級・5級の漢字を楽しくおぼえるゲーム">
+<meta property="og:description" content="パイレーツ・ドラゴン・ハムスター・ユニコーンといっしょに、小学1年生・2年生・6年生の漢字を楽しくおぼえるゲーム">
 <meta property="og:url" content="https://mamiariumi-oss.github.io/-app/">
-<meta property="og:image" content="https://mamiariumi-oss.github.io/-app/og-image.png?v=5">
+<meta property="og:image" content="https://mamiariumi-oss.github.io/-app/og-image.png?v=6">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -96,7 +96,7 @@ h1 .spk{color:#F2C230;font-size:1.3rem}
   <a class="cont" id="cont" hidden></a>
   <div class="grid" id="grid"></div>
   <section class="panel" id="panel" hidden aria-live="polite"></section>
-  <p class="note">記録はこのスマホ（ブラウザ）に保存されます。キャラや級ごとに、べつべつに進みます。</p>
+  <p class="note">記録はこのスマホ（ブラウザ）に保存されます。キャラや学年ごとに、べつべつに進みます。</p>
 </div>
 <script>
 const CHARS = [
@@ -105,7 +105,8 @@ const CHARS = [
   {id:"hamster", name:"漢字ハムスター",  who:"ハムスター",     kyus:["10","9","5"], key:k=>`kanji-hamster-${k}kyu-v2`},
   {id:"unicorn", name:"漢字ユニコーン",  who:"ユニコーン",     kyus:["10","9","5"], key:k=>`kanji-unicorn-${k}kyu-v1`},
 ];
-const KYU_TXT = {"10":"1年生の80字","9":"2年生の160字","5":"6年生の191字"};
+const KYU_TXT = {"10":"漢字 80字","9":"漢字 160字","5":"漢字 191字"};
+const GR = {"10":"1","9":"2","5":"6"};
 const $ = id=>document.getElementById(id);
 function read(key){ try{ const v=JSON.parse(localStorage.getItem(key)||"null"); return v&&typeof v.correct==="number"?v:null; }catch(e){ return null; } }
 function last(){ try{ return localStorage.getItem("kanji-app-last"); }catch(e){ return null; } }
@@ -115,19 +116,19 @@ function info(c,k){
 }
 function render(open){
   $("grid").innerHTML = CHARS.map(c=>`<button type="button" class="chara ${c.id}" data-id="${c.id}" aria-expanded="${open===c.id}">
-      <img src="chara-${c.id}.png?v=4" alt="" width="366" height="322"><b>${c.name}</b><small>${c.kyus.map(k=>k+"級").join("・")}</small></button>`).join("");
+      <img src="chara-${c.id}.png?v=4" alt="" width="366" height="322"><b>${c.name}</b><small>${c.kyus.map(k=>GR[k]+"年生").join("・")}</small></button>`).join("");
   $("grid").querySelectorAll(".chara").forEach(b=>b.addEventListener("click",()=>{ const id=b.dataset.id; render(open===id?null:id); if(open!==id) $("panel").scrollIntoView({behavior:"smooth",block:"nearest"}); }));
   const c=CHARS.find(x=>x.id===open);
   $("panel").hidden=!c;
   if(c){
     $("panel").className="panel "+c.id;
-    $("panel").innerHTML=`<h2>${c.name}：級をえらぶ</h2>`+c.kyus.map(k=>`<a class="kyu" href="${c.id}-${k}.html"><span class="k">${k}級</span><span class="d">${KYU_TXT[k]}<br>${info(c,k)}</span><i>›</i></a>`).join("");
+    $("panel").innerHTML=`<h2>${c.name}：学年をえらぶ</h2>`+c.kyus.map(k=>`<a class="kyu" href="${c.id}-${k}.html"><span class="k">${GR[k]}年生</span><span class="d">${KYU_TXT[k]}<br>${info(c,k)}</span><i>›</i></a>`).join("");
   }
 }
 const L=last(), m=L&&L.match(/^(pirate|dragon|hamster|unicorn)-(10|9|5)$/), lc=m&&CHARS.find(c=>c.id===m[1]&&c.kyus.includes(m[2]));
 if(lc){
   $("cont").hidden=false; $("cont").href=L+".html"; $("cont").className="cont "+lc.id;
-  $("cont").innerHTML=`<img src="chara-${lc.id}.png?v=4" alt="" width="84" height="68"><div><b>つづきから：${lc.name} ${m[2]}級</b><span>${info(lc,m[2]).replace(/<\/?b>/g,"")}</span></div><i>›</i>`;
+  $("cont").innerHTML=`<img src="chara-${lc.id}.png?v=4" alt="" width="84" height="68"><div><b>つづきから：${lc.name} ${GR[m[2]]}年生</b><span>${info(lc,m[2]).replace(/<\/?b>/g,"")}</span></div><i>›</i>`;
 }
 render(null);
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
