@@ -2,16 +2,16 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<title>漢字なかまたち</title>
+<title>かんじフレンズ</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#8A5CC2">
 <meta name="description" content="パイレーツ・ドラゴン・ハムスター・ユニコーンといっしょに、漢字検定の漢字を楽しくおぼえるゲーム">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="漢字なかまたち">
-<meta property="og:title" content="漢字なかまたち">
+<meta property="og:site_name" content="かんじフレンズ">
+<meta property="og:title" content="かんじフレンズ">
 <meta property="og:description" content="パイレーツ・ドラゴン・ハムスター・ユニコーンといっしょに、漢字検定10級・9級・5級の漢字を楽しくおぼえるゲーム">
 <meta property="og:url" content="https://mamiariumi-oss.github.io/-app/">
-<meta property="og:image" content="https://mamiariumi-oss.github.io/-app/og-image.png?v=3">
+<meta property="og:image" content="https://mamiariumi-oss.github.io/-app/og-image.png?v=4">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -21,7 +21,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="漢字なかまたち">
+<meta name="apple-mobile-web-app-title" content="かんじフレンズ">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
 <style>
@@ -68,12 +68,31 @@ h1{font-size:1.7rem;font-weight:900;margin:0;letter-spacing:.06em;text-align:cen
 .note{font-size:.78rem;color:var(--muted);text-align:center;margin:0}
 .pirate{--c:var(--pirate);--soft:var(--pirate-soft)} .dragon{--c:var(--dragon);--soft:var(--dragon-soft)}
 .hamster{--c:var(--hamster);--soft:var(--hamster-soft)} .unicorn{--c:var(--unicorn);--soft:var(--unicorn-soft)}
+
+/* かんじフレンズ トップ（MAさんのデザイン画像に合わせる） */
+body{background:linear-gradient(180deg,#FFF9F0,#FBF1E3)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) body{background:var(--bg)}}
+:root[data-theme="dark"] body{background:var(--bg)}
+h1{font-size:2.05rem;display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:.04em}
+h1 .spk{color:#F2C230;font-size:1.3rem}
+.lead{display:flex;align-items:center;justify-content:center;gap:6px;font-weight:700;font-size:clamp(.72rem,3.4vw,.92rem);white-space:nowrap;margin-top:-10px}
+.lead .ray{color:#F2C230;font-weight:900}
+.cont{border-width:3px;border-radius:22px;padding:10px 14px;background:var(--surface)}
+.cont img{width:84px;height:68px;object-fit:cover;border-radius:12px}
+.grid{gap:14px}
+.chara{border:3px solid #F1E2CE;border-radius:26px;padding:12px 8px 12px;gap:4px;box-shadow:0 4px 0 rgba(160,120,70,.06)}
+.chara img{width:100%;max-width:200px;aspect-ratio:auto;height:auto;border-radius:0;background:none}
+.chara b{font-size:clamp(.95rem,4.6vw,1.2rem);letter-spacing:0;white-space:nowrap}
+.chara small{font-size:.88rem}
+@media (max-width:380px){h1{font-size:1.7rem}}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chara{border-color:var(--line)}}
+:root[data-theme="dark"] .chara{border-color:var(--line)}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>漢字なかまたち</h1>
-  <p class="lead">なかまをえらんで、漢字の冒険にでかけよう！</p>
+  <h1><span class="spk" aria-hidden="true">✦</span>かんじフレンズ<span class="spk" aria-hidden="true">✦</span></h1>
+  <p class="lead"><span class="ray" aria-hidden="true">＼</span>なかまを えらんで、かんじの ぼうけんに でかけよう！<span class="ray" aria-hidden="true">／</span></p>
   <a class="cont" id="cont" hidden></a>
   <div class="grid" id="grid"></div>
   <section class="panel" id="panel" hidden aria-live="polite"></section>
@@ -96,7 +115,7 @@ function info(c,k){
 }
 function render(open){
   $("grid").innerHTML = CHARS.map(c=>`<button type="button" class="chara ${c.id}" data-id="${c.id}" aria-expanded="${open===c.id}">
-      <img src="chara-${c.id}.png" alt="" width="130" height="130"><b>${c.name}</b><small>${c.kyus.map(k=>k+"級").join("・")}</small></button>`).join("");
+      <img src="chara-${c.id}.png?v=4" alt="" width="366" height="322"><b>${c.name}</b><small>${c.kyus.map(k=>k+"級").join("・")}</small></button>`).join("");
   $("grid").querySelectorAll(".chara").forEach(b=>b.addEventListener("click",()=>{ const id=b.dataset.id; render(open===id?null:id); if(open!==id) $("panel").scrollIntoView({behavior:"smooth",block:"nearest"}); }));
   const c=CHARS.find(x=>x.id===open);
   $("panel").hidden=!c;
@@ -108,7 +127,7 @@ function render(open){
 const L=last(), m=L&&L.match(/^(pirate|dragon|hamster|unicorn)-(10|9|5)$/), lc=m&&CHARS.find(c=>c.id===m[1]&&c.kyus.includes(m[2]));
 if(lc){
   $("cont").hidden=false; $("cont").href=L+".html"; $("cont").className="cont "+lc.id;
-  $("cont").innerHTML=`<img src="chara-${lc.id}.png" alt="" width="64" height="64"><div><b>つづきから：${lc.name} ${m[2]}級</b><span>${info(lc,m[2]).replace(/<\/?b>/g,"")}</span></div><i>›</i>`;
+  $("cont").innerHTML=`<img src="chara-${lc.id}.png?v=4" alt="" width="84" height="68"><div><b>つづきから：${lc.name} ${m[2]}級</b><span>${info(lc,m[2]).replace(/<\/?b>/g,"")}</span></div><i>›</i>`;
 }
 render(null);
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
