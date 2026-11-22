@@ -982,7 +982,11 @@ css.textContent=`
 .pz-rule h3{margin:0;text-align:center;font-size:1.1rem}
 .pz-rule p{margin:0}
 .pz-rule .pz-big{margin-top:4px}
-.pz-arrows{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pz-arrows{display:grid;grid-template-columns:repeat(3,minmax(0,96px));grid-template-areas:". up ." "left mid right" ". down .";justify-content:center;gap:6px}
+.pz-arrows button[data-d=up]{grid-area:up}.pz-arrows button[data-d=down]{grid-area:down}.pz-arrows button[data-d=left]{grid-area:left}.pz-arrows button[data-d=right]{grid-area:right}
+.pz-arrows .mid{grid-area:mid;display:flex;align-items:center;justify-content:center;font-size:1.8rem}
+.pz-box:has(.pz-arrows) .pz-stage{height:min(44vh,300px);min-height:220px}
+@media (max-height:600px){.pz-arrows button{padding:3px 0 4px}.pz-arrows button b{font-size:1.4rem}.pz-box:has(.pz-arrows) .pz-stage{height:220px}.pz-hoi{padding:6px;gap:5px}.pz-mode small{display:none}.pz-side .face{font-size:48px}.pz-side .mini{width:76px;height:76px}}
 .pz-arrows button{font:inherit;font-weight:900;font-size:.85rem;line-height:1.2;border:3px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:6px 0 8px;cursor:pointer;touch-action:manipulation;display:flex;flex-direction:column;align-items:center;gap:2px}
 .pz-arrows button b{font-size:1.7rem;line-height:1.1}
 .pz-arrows button:disabled{opacity:.4}
@@ -1215,8 +1219,8 @@ function hoi(a){
       <button type="button" class="pz-big">はじめる</button></div>`;
   const $q=sel=>a.stage.querySelector(sel);
   const mode=$q(".pz-mode"), me=$q(".me"), mew=$q(".mew"), cw=$q(".cw"), cb=$q(".cb"), mini=$q(".mini"), dots=[...a.stage.querySelectorAll(".pz-dots i")];
-  a.ctl.innerHTML=`<div class="pz-arrows">${KEYS.map(k=>`<button type="button" data-d="${k}" disabled><b>${DIR[k][0]}</b>${DIR[k][1]}</button>`).join("")}</div>`;
-  const btns=[...a.ctl.querySelectorAll("button")];
+  a.ctl.innerHTML=`<div class="pz-arrows">${KEYS.map(k=>`<button type="button" data-d="${k}" disabled><b>${DIR[k][0]}</b>${DIR[k][1]}</button>`).join("")}<span class="mid" aria-hidden="true"></span></div>`;
+  const btns=[...a.ctl.querySelectorAll("button")], mid=a.ctl.querySelector(".mid");
   const lock=v=>btns.forEach(b=>b.disabled=v);
   const SH={up:"translateY(-18px)",down:"translateY(18px)",left:"translateX(-18px) rotate(-10deg)",right:"translateX(18px) rotate(10deg)"};
   const big=t=>{ const d=document.createElement("div"); d.className="pz-big-t"; d.textContent=t; a.stage.appendChild(d); later(()=>d.remove(),800); };
@@ -1230,6 +1234,7 @@ function hoi(a){
     me.textContent=atk?"✋":"🙂"; me.style.transform=""; mini.style.transform=""; cb.textContent=atk?"":"✋"; mew.textContent=""; cw.textContent="";
     btns.forEach(b=>{ const k=b.dataset.d; b.innerHTML=`<b>${atk?DIR[k][2]:DIR[k][0]}</b>${DIR[k][1]}${atk?"":"を むく"}`; });
     a.msg.textContent=atk?"どっちに ゆびを さす？":"どっちを むく？";
+    mid.textContent=atk?"✋":"🙂";
     lock(false);
   }
   btns.forEach(b=>b.addEventListener("click",()=>{
