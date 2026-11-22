@@ -987,6 +987,14 @@ css.textContent=`
 .pz-face .hd,.pz-face .ft,.pz-face .pu{transition:transform .3s ease-out;transform-box:view-box;transform-origin:60px 70px}
 .pz-side .mini{width:116px;height:116px}
 .pz-side .mini[hidden]{display:none}
+.pz-side .pic{width:100%;flex:1;min-height:0;overflow:hidden;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.pz-side .pic img{width:100%;height:100%;object-fit:cover;transition:transform .35s cubic-bezier(.3,.7,.4,1.2);transform-origin:50% 60%}
+.pz-side .pic img.pop{animation:pzbob .45s}
+@keyframes pzbob{40%{filter:brightness(1.08)}}
+.pz-hoi .pz-side .badge{position:absolute;top:30px;bottom:auto;right:4px;font-size:36px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.25))}
+.pz-hoi .pz-side{max-height:none;padding:6px 6px 8px;justify-content:flex-start}
+.pz-hoi .pz-vs{grid-template-columns:1fr auto 1fr;min-height:0}
+.pz-box.unicorn .pz-hoi .pz-vsx,.pz-box.dragon .pz-hoi .pz-vsx{font-size:1.4rem}
 .pz-vsx{font-weight:900;color:#fff;font-size:1.1rem;text-shadow:0 2px 0 rgba(0,0,0,.25)}
 .pz-dots{display:flex;justify-content:center;gap:6px}
 .pz-dots i{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:.8rem;font-weight:900;color:#fff}
@@ -1246,12 +1254,21 @@ function look(svg,dir){
 function hoi(a){
   const DIR={up:["⬆️","うえ","👆"],down:["⬇️","した","👇"],left:["⬅️","ひだり","👈"],right:["➡️","みぎ","👉"]};
   const KEYS=["up","down","left","right"], R=6; let round=0, pts=0; const res=[]; a.score(0);
+  const NATIVE={kid:1,unicorn:-1,dragon:0};   // 1=右むき、-1=左むき、0=正面の絵
+  function turn(el,kind,dir){
+    const n=NATIVE[kind]; let t="";
+    if(!dir) t="";
+    else if(n===0){ t={left:"perspective(420px) translateX(-12%) rotate(-10deg) rotateY(-38deg) scale(1.05)",right:"perspective(420px) translateX(12%) rotate(10deg) rotateY(38deg) scale(1.05)",up:"perspective(420px) translateY(-10%) rotateX(30deg) scale(1.05)",down:"perspective(420px) translateY(10%) rotateX(-30deg) scale(1.05)"}[dir]; }
+    else if(dir==="left"||dir==="right"){ const want=dir==="right"?1:-1; t=(want===n?"":"scaleX(-1)")+" translateX(4%)"; }
+    else { t=`rotate(${(dir==="up"?-1:1)*14*n}deg) translateY(${dir==="up"?-6:6}%) scale(1.14)`; }
+    el.style.transform=t; el.classList.remove("pop"); void el.offsetWidth; if(dir) el.classList.add("pop");
+  }
   a.stage.innerHTML=`<div class="pz-hoi">
       <div class="pz-mode"></div>
       <div class="pz-vs">
-        <div class="pz-side"><span class="who">きみ</span><span class="face me">✋</span><div class="mini mef" hidden>${faceSVG("kid")}</div><span class="what mew"></span></div>
+        <div class="pz-side"><span class="who">きみ</span><div class="pic"><img class="kidimg" src="hoi-kid.png?v=1" alt=""></div><span class="badge mb"></span><span class="what mew"></span></div>
         <span class="pz-vsx">VS</span>
-        <div class="pz-side"><span class="who">${esc(NAME)}</span><span class="badge cb"></span><div class="mini cm">${faceSVG(CH)}</div><span class="what cw"></span></div>
+        <div class="pz-side"><span class="who">${esc(NAME)}</span><div class="pic"><img class="chimg" src="hoi-${CH}.png?v=1" alt=""></div><span class="badge cb"></span><span class="what cw"></span></div>
       </div>
       <div class="pz-dots">${Array.from({length:R},()=>"<i></i>").join("")}</div>
     </div>
@@ -1261,11 +1278,10 @@ function hoi(a){
       <p>こうげきと ぼうぎょを こうたいで ${R}かい。かった かずが てんすうだよ。</p>
       <button type="button" class="pz-big">はじめる</button></div>`;
   const $q=sel=>a.stage.querySelector(sel);
-  const mode=$q(".pz-mode"), mef=$q(".mef"), me=$q(".me"), mew=$q(".mew"), cw=$q(".cw"), cb=$q(".cb"), mini=$q(".cm"), dots=[...a.stage.querySelectorAll(".pz-dots i")];
+  const mode=$q(".pz-mode"), kid=$q(".kidimg"), chi=$q(".chimg"), mb=$q(".mb"), mew=$q(".mew"), cw=$q(".cw"), cb=$q(".cb"), dots=[...a.stage.querySelectorAll(".pz-dots i")];
   a.ctl.innerHTML=`<div class="pz-arrows">${KEYS.map(k=>`<button type="button" data-d="${k}" disabled><b>${DIR[k][0]}</b>${DIR[k][1]}</button>`).join("")}<span class="mid" aria-hidden="true"></span></div>`;
   const btns=[...a.ctl.querySelectorAll("button")], mid=a.ctl.querySelector(".mid");
   const lock=v=>btns.forEach(b=>b.disabled=v);
-  const SH={up:"translateY(-18px)",down:"translateY(18px)",left:"translateX(-18px) rotate(-10deg)",right:"translateX(18px) rotate(10deg)"};
   const big=t=>{ const d=document.createElement("div"); d.className="pz-big-t"; d.textContent=t; a.stage.appendChild(d); later(()=>d.remove(),800); };
   function setup(){
     if(round>=R){ a.end(pts); return; }
@@ -1274,8 +1290,8 @@ function hoi(a){
     mode.className="pz-mode "+(atk?"atk":"def");
     mode.innerHTML=atk?`⚔️ ${round+1}かいめ：きみの こうげき<small>ゆびを さそう。${esc(NAME)}が おなじ むきを むいたら かち！</small>`
                       :`🛡 ${round+1}かいめ：きみの ぼうぎょ<small>${esc(NAME)}が ゆびを さすよ。ちがう むきを むこう！</small>`;
-    me.hidden=!atk; mef.hidden=atk; me.textContent="✋"; look(mef.querySelector("svg"),""); look(mini.querySelector("svg"),""); cb.textContent=atk?"":"✋"; mew.textContent=""; cw.textContent="";
-    btns.forEach(b=>{ const k=b.dataset.d; b.innerHTML=`<b>${atk?DIR[k][2]:DIR[k][0]}</b>${DIR[k][1]}${atk?"":"を むく"}`; });
+    turn(kid,"kid",""); turn(chi,CH,""); mb.textContent=atk?"✋":""; cb.textContent=atk?"":"✋"; mew.textContent=atk?"どっちを さす？":"どっちを むく？"; cw.textContent="";
+    btns.forEach(b=>{ const k=b.dataset.d; b.innerHTML=`<b>${atk?DIR[k][2]:DIR[k][0]}</b>${DIR[k][1]}${atk?"を さす":"を むく"}`; });
     a.msg.textContent=atk?"どっちに ゆびを さす？":"どっちを むく？";
     mid.textContent=atk?"✋":"🙂";
     lock(false);
@@ -1285,14 +1301,14 @@ function hoi(a){
     a.msg.textContent="あっち むいて……"; big("あっち むいて…");
     later(()=>{
       big("ホイ！");
-      if(atk){ me.textContent=DIR[my][2]; mew.textContent=DIR[my][1]+"を さした";
-        look(mini.querySelector("svg"),its); cb.textContent=""; cw.textContent=DIR[its][1]+"を むいた"; }
+      if(atk){ mb.textContent=DIR[my][2]; mew.textContent=DIR[my][1]+"を さした";
+        turn(chi,CH,its); cb.textContent=DIR[its][0]; cw.textContent=DIR[its][1]+"を むいた"; }
       else { cb.textContent=DIR[its][2]; cw.textContent=DIR[its][1]+"を さした";
-        look(mef.querySelector("svg"),my); mew.textContent=DIR[my][1]+"を むいた"; }
+        turn(kid,"kid",my); mb.textContent=DIR[my][0]; mew.textContent=DIR[my][1]+"を むいた"; }
       const win=atk?my===its:my!==its; res[round]=win; if(win) pts++; a.score(pts);
       later(()=>{ a.msg.textContent=atk?(win?"おなじ むき！ きみの かち！ 1てん":"ちがう むきだった。ざんねん"):(win?"よけた！ きみの かち！ 1てん":"おなじ むきを むいちゃった…ざんねん");
         big(win?"かち！":"まけ…"); },650);
-      round++; later(setup,2300);
+      round++; later(setup,2400);
     },700);
   }));
   $q(".pz-rule .pz-big").addEventListener("click",()=>{ $q(".pz-rule").remove(); setup(); });
