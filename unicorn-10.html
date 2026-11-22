@@ -1097,7 +1097,7 @@ function junTarget(){
   const P=pool().filter(c=>(KVG[c.k]||[]).length>=4); return P.length?P[rnd(P.length)]:null;
 }
 function junQ(t){
-  const n=(KVG[t.k]||[]).length, h=1+rnd(n-1);
+  const n=(KVG[t.k]||[]).length, h=(rnd(n)===0&&rnd(3)===0)?0:1+rnd(n-1);
   const opts=nearNums(h+1,1,n).map(x=>({label:`${x}かくめ`, ok:x===h+1}));
   return {type:"jun", t, prompt:"あかい ところは、なんかくめに かく？", big:kvgSVG(t.k,h), opts};
 }
