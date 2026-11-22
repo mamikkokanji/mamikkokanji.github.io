@@ -44,6 +44,7 @@
 .rei-item{border-radius:12px;padding:6px 8px;background:var(--card2,rgba(0,0,0,.03))}
 .rei-item.rdone{box-shadow:inset 0 0 0 2px var(--ok)}
 .rei-tag{font-size:.85rem;margin:2px 0 4px}
+.rei-item.rt-hide .rei-tag{visibility:hidden}
 .rei-tools{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .rei-tools .btn{padding:4px 12px;font-size:.82rem}
 .rei-tools .btn.done{background:var(--ok);border-color:var(--ok);color:#fff}
@@ -104,7 +105,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 .card{background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px}
 .card h3{margin:0;font-size:.9rem;color:var(--c)}
 .big{display:flex;justify-content:center}
-.kv{width:min(74vw,280px);height:auto;aspect-ratio:1;background:var(--surface);border:3px solid var(--c);border-radius:18px;touch-action:none;user-select:none;-webkit-user-select:none}
+.kv{width:max(200px,min(74vw,280px,calc(100svh - 420px)));height:auto;aspect-ratio:1;background:var(--surface);border:3px solid var(--c);border-radius:18px;touch-action:none;user-select:none;-webkit-user-select:none}
 .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .btn{border:3px solid var(--c);background:var(--surface);color:var(--c);font-weight:900;border-radius:99px;padding:8px 18px;font-size:.95rem}
 .btn.pri{background:var(--c);color:#fff}
@@ -130,7 +131,8 @@ ruby rt{font-size:.5em;color:var(--muted);font-weight:700}
 .choices button.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--surface))}
 .choices button.ng{border-color:var(--ng);animation:shake .4s}
 @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.nav{display:flex;gap:10px;justify-content:space-between;position:sticky;bottom:max(10px,env(safe-area-inset-bottom,0px));z-index:5}
+.nav{display:flex;gap:10px;justify-content:space-between;position:sticky;bottom:0;z-index:5;background:var(--bg);margin:0 -16px;padding:10px 16px max(10px,env(safe-area-inset-bottom,0px));box-shadow:0 -8px 14px -10px rgba(0,0,0,.25)}
+body:has(.kv) .nav{position:static}
 .nav .btn{flex:1;padding:12px;font-size:1.05rem;box-shadow:0 6px 16px -6px rgba(0,0,0,.3)}
 /* ごほうび */
 .ov{position:fixed;inset:0;background:rgba(30,20,40,.6);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
@@ -455,15 +457,15 @@ function lesson(k){
       frame(`${talk(CHAR.say.word)}<div class="card"><h3>「${k}」を つかった ことば</h3><p class="legend" style="text-align:left">「${k}」の よみが <span class="y-on">おんよみ（カタカナ）</span>か <span class="y-kun">くんよみ（ひらがな）</span>か、いみと いっしょに おぼえよう。</p>
       <div class="wlist">${I.w.map(w=>`<div class="wrow"><span class="wk">${wordRuby(w,k)}</span><span class="wm">${esc(w[6])}</span><span class="wt">「${k}」は ${TAG[w[5]]} ${w[5]?`<b class="y-${w[5]}">${esc(w[5]==="on"?kata(w[3]):kunFull(I,w[3],kanaAfter(w[0],k)))}</b>`:""}</span></div>`).join("")}</div></div>`,true);
     }else if(step===5){
-      const ACT=[["say","🔈 よむ"],["rep","🔁 くりかえす"],["hide","🙈 かくして よむ"]];
-      const st=I.rei.map(()=>({say:false,rep:false,hide:false}));
+      const ACT=[["say","🔈 よむ"],["rep","🗣 3かい こえに だして よむ"],["hide","🙈 かくして よむ"]];
+      const st=I.rei.map(()=>({say:false,rep:false,hide:false,n:0}));
       const speak=(i,rate)=>{ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(reiPlain(I.rei[i]).replace(/ /g,"")); u.lang="ja-JP"; u.rate=rate; speechSynthesis.speak(u); }catch(e){} };
-      frame(`${talk("こえに だして よんで、ぶんごと おぼえよう！")}<div class="card"><h3>れいぶん</h3><p class="legend" style="text-align:left">ぶんごとに 「よむ」→「くりかえす」→「かくして よむ」の じゅんに やってみよう。</p><div class="rei-box" id="rb">${I.rei.map((r,i)=>{ const t=reiType(r,k); return `<div class="rei-item" id="ri${i}"><p class="rei">${ruby(r,k)}</p><div class="rei-tag">${TAG[t.t]} <b class="y-${t.t}">${esc(t.t==="kun"?kunFull(I,t.y,t.a):t.y)}</b></div><div class="rei-tools">${ACT.map(([a,l])=>`<button class="btn" data-a="${a}" data-i="${i}">${l}</button>`).join("")}</div></div>`; }).join("")}</div>
+      frame(`${talk("こえに だして よんで、ぶんごと おぼえよう！")}<div class="card"><h3>れいぶん</h3><p class="legend" style="text-align:left">ぶんごとに 「よむ」→「3かい こえに だして よむ」→「かくして よむ」の じゅんに やってみよう。</p><div class="rei-box" id="rb">${I.rei.map((r,i)=>{ const t=reiType(r,k); return `<div class="rei-item" id="ri${i}"><p class="rei">${ruby(r,k)}</p><div class="rei-tag">${TAG[t.t]} <b class="y-${t.t}">${esc(t.t==="kun"?kunFull(I,t.y,t.a):t.y)}</b></div><div class="rei-tools">${ACT.map(([a,l])=>`<button class="btn" data-a="${a}" data-i="${i}">${l}</button>`).join("")}</div></div>`; }).join("")}</div>
       <p class="count" id="cnt"></p></div>`,false);
       const upd=()=>{ const n=st.filter(x=>x.say&&x.rep&&x.hide).length; $("#cnt").textContent=n>=st.length?"ぜんぶ よめたね！ すごい！":`よめた ぶん ${n} / ${st.length}`; if(n>=st.length) unlock(); };
       app.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{ const i=+b.dataset.i, a=b.dataset.a, box=$("#ri"+i);
         if(a==="say") speak(i,.85);
-        if(a==="rep") speak(i,.65);
+        if(a==="rep"){ st[i].n=Math.min(3,st[i].n+1); b.textContent=`🗣 3かい こえに だして よむ（${st[i].n}/3）`; if(st[i].n<3){ upd(); return; } }
         if(a==="hide"){ const on=box.classList.toggle("rt-hide"); b.textContent=on?"👀 ふりがなを だす":"🙈 かくして よむ"; }
         if(!st[i][a]){ st[i][a]=true; b.classList.add("done"); }
         if(st[i].say&&st[i].rep&&st[i].hide) box.classList.add("rdone");
@@ -535,7 +537,7 @@ function makeQuiz(I){
     qs.push({q:`<span class="sentence" style="display:block">${sentenceBlank(r,k)}</span>□に はいる かんじは？`,a:k,c:shuffle([k,...pool]).map(x=>({v:x,h:`<span style="font-family:var(--f-k);font-size:1.6rem">${x}</span>`}))}); }
   // 4) れいぶんの よみは おんよみ？ くんよみ？
   { const cand=I.rei.filter(r=>reiType(r,k).t); if(cand.length){ const r=pick(cand), t=reiType(r,k);
-    qs.push({q:`<span class="sentence" style="display:block">${ruby(r.replace(/\|(on|kun)\}/g,"}"),k)}</span>この ぶんの「${k}」（${esc(hira(t.y))}）は おんよみ？ くんよみ？`,a:t.t,c:[{v:"on",h:`<span class="y-on">おんよみ</span>`},{v:"kun",h:`<span class="y-kun">くんよみ</span>`}]}); } }
+    qs.push({q:`<span class="sentence" style="display:block">${ruby(r.replace(/\{([^|}]+)\|([^|}]+)(?:\|[a-z]*)?\}/g,(m,a,b)=>`{${a}|${hira(b)}}`),k)}</span>この ぶんの「${k}」（${esc(hira(t.y))}）は おんよみ？ くんよみ？`,a:t.t,c:[{v:"on",h:`<span class="y-on">おんよみ</span>`},{v:"kun",h:`<span class="y-kun">くんよみ</span>`}]}); } }
   return qs;
 }
 home();
