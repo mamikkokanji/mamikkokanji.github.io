@@ -1732,6 +1732,108 @@ if((CH==="pirate"||CH==="unicorn") && typeof renderSea==="function"){
   }
 })();
 </script>
+<script>
+// ハムスター・ドラゴンの「マップ」（パイレーツの島・ユニコーンのくにと同じしくみ。ボスはなし）
+// その場所の漢字をぜんぶ1回ずつ正解すると、つぎの場所がひらく。
+(function(){
+  if(typeof ALL==="undefined"||typeof pool0!=="function"||typeof grade!=="function") return;
+  const CH=window.PLAY_CH;
+  const M=({
+    hamster:{title:"おさんぽマップ", icon:"🐾", names:["おうちのケージ","ひまわりばたけ","どんぐりのもり","いちごのはたけ","クローバーのはら","ちいさな かわ","キノコのもり","ゆきの やま","おほしさまのおか","ひみつのたからばこ"]},
+    dragon:{title:"ドラゴンのせかい", icon:"🐉", names:["たまごのすみか","みどりのたに","ほのおの やま","こおりのどうくつ","かみなりの そら","にじのたき","ほうせきのどうくつ","くものしろ","ほしぞらのとう","でんせつのしんでん"]}
+  })[CH];
+  if(!M) return;
+  const N=ALL.length<=80?8:10;
+  const SECS=Array.from({length:N},(_,i)=>ALL.slice(Math.round(i*ALL.length/N),Math.round((i+1)*ALL.length/N)));
+  const nameOf=i=>i===N-1?M.names[M.names.length-1]:M.names[i];
+  const escH=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+
+  // はじめて：これまでに正解したことのある漢字は「見つけた」にしておく
+  if(!state.found||typeof state.found!=="object"){
+    state.found={};
+    const st=state.st||{};
+    for(const k in st){ const v=st[k]; if(v&&Object.values(v).some(a=>Array.isArray(a)&&a[0]>0)) state.found[k]=1; }
+  }
+  const secDone=i=>SECS[i].every(c=>state.found[c.k]);
+  if(typeof state.cleared!=="number"){ state.cleared=0; while(state.cleared<N&&secDone(state.cleared)) state.cleared++; }
+  const maxOpen=()=>Math.min(state.cleared,N-1);
+  if(typeof state.sec!=="number"||state.sec<0||state.sec>maxOpen()) state.sec=maxOpen();
+  save();
+
+  pool0=function(){ return SECS[state.sec]||SECS[0]; };
+  pickTarget=function(){
+    const P=pool();
+    const missed=P.filter(c=>state.miss[c.k]>0);
+    if(missed.length&&Math.random()<0.35) return missed[Math.floor(Math.random()*missed.length)];
+    const fresh=P.filter(c=>!state.found[c.k]);
+    if(fresh.length&&Math.random()<0.6) return fresh[Math.floor(Math.random()*fresh.length)];
+    return P[Math.floor(Math.random()*P.length)];
+  };
+
+  let msg="";
+  const _g=grade;
+  grade=function(ok){
+    const was=locked, t=current&&current.t;
+    const r=_g.apply(this,arguments);
+    if(!was&&ok&&t&&t.k){
+      state.found[t.k]=1;
+      const i=state.sec;
+      if(i===state.cleared&&secDone(i)){
+        state.cleared=i+1;
+        if(i+1<N){ state.sec=i+1; state.chap=null; msg=`🎉 「${nameOf(i)}」クリア！ つぎは「${nameOf(i+1)}」へ しゅっぱつ！`; }
+        else msg=`🏆 ぜんぶの ばしょを クリア！ すごい！`;
+      }
+      save();
+    }
+    render();
+    return r;
+  };
+
+  const css=document.createElement("style");
+  css.textContent=`
+.sea{background:var(--surface,#fff);border:2px solid var(--line,#e5e0d8);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.sea h2{margin:0;font-size:.85rem;color:var(--muted,#777);letter-spacing:.06em}
+.isles{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.isle{font:inherit;font-size:.68rem;font-weight:700;line-height:1.25;border:2px solid var(--line,#e5e0d8);background:var(--bg,#faf7f2);color:var(--ink,#333);border-radius:12px;padding:6px 2px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:58px;justify-content:center;text-align:center}
+.isle b{font-size:1rem}
+.isle[aria-pressed="true"]{border-color:var(--acc,#E08A2E);background:var(--acc-soft,#FDEBD6);color:var(--acc,#E08A2E)}
+.isle.clear b{color:#C8960C}
+.isle:disabled{opacity:.45;cursor:default}
+.isle-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.isle-name{font-weight:900;font-size:1.1rem;margin:0}
+.tiles{display:flex;flex-wrap:wrap;gap:4px}
+.tiles span{font-size:1.15rem;width:1.9rem;height:1.9rem;display:grid;place-items:center;border-radius:8px;background:var(--bg,#faf7f2);color:var(--muted,#999);border:1.5px dashed var(--line,#e5e0d8)}
+.tiles span.f{background:var(--acc-soft,#FDEBD6);color:var(--ink,#333);border:1.5px solid var(--acc,#E08A2E)}
+.sea .mapmsg{margin:0;font-weight:700;background:#FFF4CC;border-radius:12px;padding:8px 10px}
+.sea .mapnote{margin:0;font-size:.85rem;color:var(--muted,#777)}
+`;
+  document.head.appendChild(css);
+
+  const sea=document.createElement("section"); sea.className="sea"; sea.id="mapSea"; sea.setAttribute("aria-live","polite");
+  document.getElementById("quiz").after(sea);
+  function render(){
+    const i=state.sec, sec=SECS[i], n=sec.filter(c=>state.found[c.k]).length, clr=i<state.cleared;
+    sea.innerHTML=`<h2>${M.icon} ${M.title}（ばしょを えらぶ）</h2>
+      ${msg?`<p class="mapmsg">${escH(msg)}</p>`:""}
+      <div class="isles">${SECS.map((_,k)=>{ const lock=k>maxOpen(), c=k<state.cleared;
+        return `<button type="button" class="isle${c?" clear":""}" data-i="${k}" aria-pressed="${k===i}" ${lock?"disabled":""}><b>${c?"★":lock?"🔒":k+1}</b>${escH(nameOf(k))}</button>`; }).join("")}</div>
+      <div class="isle-head"><p class="isle-name">${i+1}. ${escH(nameOf(i))}</p><span class="sub">みつけた かんじ <b>${n}</b> / ${sec.length}</span></div>
+      <div class="tiles">${sec.map(c=>`<span class="${state.found[c.k]?"f":""}">${state.found[c.k]?escH(c.k):"？"}</span>`).join("")}</div>
+      <p class="mapnote">${clr?"クリアずみ！ ほかの ばしょにも いけるよ。":i===N-1?"さいごの ばしょ！ ぜんぶ みつけよう。":`ここの かんじを ぜんぶ せいかいすると、つぎの ばしょが ひらくよ（あと ${sec.length-n}じ）。`}</p>`;
+    sea.querySelectorAll(".isle").forEach(b=>b.addEventListener("click",()=>{
+      const k=+b.dataset.i; if(k===state.sec) return;
+      state.sec=k; state.chap=null; msg=""; save(); render();
+      if(typeof renderNest==="function") try{ renderNest(); }catch(e){}
+      renderQuestion();
+    }));
+  }
+  render();
+  // 進み具合の「このチャプターを練習」や、リセットのあとも 見た目をそろえる
+  document.addEventListener("click",e=>{ if(e.target.closest&&e.target.closest("#resetYes")){ state.found={}; state.cleared=0; state.sec=0; msg=""; } },true);
+  const _rq=renderQuestion;
+  renderQuestion=function(){ const r=_rq.apply(this,arguments); render(); return r; };
+})();
+</script>
 
 <script>
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
