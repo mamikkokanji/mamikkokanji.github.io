@@ -214,9 +214,15 @@ function hira(s){ return s.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCod
 function kata(s){ return s.replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60)); }
 const TAG={on:'<span class="tag on">おんよみ</span>',kun:'<span class="tag kun">くんよみ</span>',"":'<span class="tag sp">とくべつな よみ</span>'};
 // ことばの よみ：その字の ぶぶんは おん＝カタカナ、くん＝ひらがな
+function rbPart(t,y){ // かなの ところには ふりがなを つけない
+  if(!t) return ""; let a=0,z=0; const K=c=>/[ぁ-ゖー]/.test(c);
+  while(a<t.length&&a<y.length&&K(t[a])&&t[a]===y[a]) a++;
+  while(z<t.length-a&&z<y.length-a&&K(t[t.length-1-z])&&t[t.length-1-z]===y[y.length-1-z]) z++;
+  const mid=t.slice(a,t.length-z), my=y.slice(a,y.length-z);
+  return esc(t.slice(0,a))+(mid?`<ruby>${esc(mid)}<rt>${esc(my)}</rt></ruby>`:"")+esc(t.slice(t.length-z)); }
 function wordRuby(w,k){ const [word,y,pre,seg,post,t]=w; const i=word.indexOf(k);
-  const yy=t?`${esc(pre)}<b class="y-${t}">${esc(t==="on"?kata(seg):seg)}</b>${esc(post)}`:esc(y);
-  return `<ruby>${esc(word.slice(0,i))}<mark>${k}</mark>${esc(word.slice(i+1))}<rt>${yy}</rt></ruby>`; }
+  if(!t) return `<ruby>${esc(word.slice(0,i))}<mark>${k}</mark>${esc(word.slice(i+1))}<rt>${esc(y)}</rt></ruby>`;
+  return `${rbPart(word.slice(0,i),pre)}<ruby><mark>${k}</mark><rt><b class="y-${t}">${esc(t==="on"?kata(seg):seg)}</b></rt></ruby>${rbPart(word.slice(i+1),post)}`; }
 const SC=i=>`var(--s${i%18+1})`;
 function wordHTML(w,k){ const y=(D.wy||{})[w]; const ww=esc(w).split(k).join(`<mark>${k}</mark>`); return y?`<ruby>${ww}<rt>${esc(y)}</rt></ruby>`:ww; }
 function splitYomi(y){ const on=[],kun=[]; y.split("・").forEach(x=>{ (/^[ァ-ヶー]+$/.test(x)?on:kun).push(x); }); return {on,kun}; }
