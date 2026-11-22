@@ -9,13 +9,13 @@
 <meta property="og:title" content="かんじフレンズ">
 <meta property="og:description" content="パイレーツ・ドラゴン・ハムスター・ユニコーンといっしょに、漢字検定10級・9級・5級の漢字を楽しくおぼえるゲーム">
 <meta property="og:url" content="https://mamiariumi-oss.github.io/-app/hamster-10.html">
-<meta property="og:image" content="https://mamiariumi-oss.github.io/-app/og-image.png?v=4">
+<meta property="og:image" content="https://mamiariumi-oss.github.io/-app/og-image.png?v=5">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-192.png?v=3" type="image/png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
+<link rel="icon" href="icon-192.png?v=4" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -1545,21 +1545,20 @@ function look(svg,dir){
 function hoi(a){
   const DIR={up:["⬆️","うえ","👆"],down:["⬇️","した","👇"],left:["⬅️","ひだり","👈"],right:["➡️","みぎ","👉"]};
   const KEYS=["up","down","left","right"], R=6; let round=0, pts=0; const res=[]; a.score(0);
-  const NATIVE={kid:1,unicorn:-1,dragon:0};   // 1=右むき、-1=左むき、0=正面の絵
+  // むきごとの絵（MAさんの絵 hoi2-<kind>-<front|right|left|down>.png）。うえ は正面の絵をそらせる
+  const HSRC=(k,d)=>`hoi2-${k}-${d}.png?v=1`;
+  ["kid",CH].forEach(k=>["front","right","left","down"].forEach(d=>{const i=new Image(); i.src=HSRC(k,d);}));
   function turn(el,kind,dir){
-    const n=NATIVE[kind]; let t="";
-    if(!dir) t="";
-    else if(n===0){ t={left:"perspective(420px) translateX(-12%) rotate(-10deg) rotateY(-38deg) scale(1.05)",right:"perspective(420px) translateX(12%) rotate(10deg) rotateY(38deg) scale(1.05)",up:"perspective(420px) translateY(-10%) rotateX(30deg) scale(1.05)",down:"perspective(420px) translateY(10%) rotateX(-30deg) scale(1.05)"}[dir]; }
-    else if(dir==="left"||dir==="right"){ const want=dir==="right"?1:-1; t=(want===n?"":"scaleX(-1)")+" translateX(4%)"; }
-    else { t=`rotate(${(dir==="up"?-1:1)*14*n}deg) translateY(${dir==="up"?-6:6}%) scale(1.14)`; }
-    el.style.transform=t; el.classList.remove("pop"); void el.offsetWidth; if(dir) el.classList.add("pop");
+    el.src=HSRC(kind,(!dir||dir==="up")?"front":dir);
+    el.style.transform=dir==="up"?"perspective(420px) translateY(-9%) rotateX(24deg) scale(1.04)":"";
+    el.classList.remove("pop"); void el.offsetWidth; if(dir) el.classList.add("pop");
   }
   a.stage.innerHTML=`<div class="pz-hoi">
       <div class="pz-mode"></div>
       <div class="pz-vs">
-        <div class="pz-side"><span class="who">きみ</span><div class="pic"><img class="kidimg" src="hoi-kid.png?v=1" alt=""></div><span class="badge mb"></span><span class="what mew"></span></div>
+        <div class="pz-side"><span class="who">きみ</span><div class="pic"><img class="kidimg" src="hoi2-kid-front.png?v=1" alt=""></div><span class="badge mb"></span><span class="what mew"></span></div>
         <span class="pz-vsx">VS</span>
-        <div class="pz-side"><span class="who">${esc(NAME)}</span><div class="pic"><img class="chimg" src="hoi-${CH}.png?v=1" alt=""></div><span class="badge cb"></span><span class="what cw"></span></div>
+        <div class="pz-side"><span class="who">${esc(NAME)}</span><div class="pic"><img class="chimg" src="hoi2-${CH}-front.png?v=1" alt=""></div><span class="badge cb"></span><span class="what cw"></span></div>
       </div>
       <div class="pz-dots">${Array.from({length:R},()=>"<i></i>").join("")}</div>
     </div>
