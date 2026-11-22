@@ -1319,13 +1319,13 @@ const GAMES = ({
     {id:"cups",   icon:"⛄", name:"どこかな？ ペンギン", desc:"かまくらが まざるよ。ペンギンが どこに いるか よく みてね", unit:"かい"}],
   dragon:[
     {id:"target", icon:"🎯", name:"ほのおで まとあて",     desc:"でてくる まとを タッチして ほのおを ふこう", unit:"こ"},
-    {id:"hoi",    icon:"👉", name:"あっちむいて ホイ",     desc:"ドラゴンと 6かい しょうぶ！",            unit:"てん"}],
+    {id:"hoi",    icon:"↗️", name:"あっちむいて ホイ",     desc:"ドラゴンと 6かい しょうぶ！",            unit:"てん"}],
   pirate:[
     {id:"treasure", icon:"💰", name:"たからさがし",        desc:"すなを ほって たからを 3つ さがそう（10かいまで）", unit:"こ"},
     {id:"target", icon:"💣", name:"たいほうで まとあて",   desc:"でてくる まとを タッチして たいほうを うとう", unit:"こ"}],
   unicorn:[
     {id:"feed",   icon:"⭐", name:"ながれぼし キャッチ",   desc:"でてくる ほしを タッチして あつめよう", unit:"こ"},
-    {id:"hoi",    icon:"👉", name:"あっちむいて ホイ",     desc:"ユニコーンと 6かい しょうぶ！",          unit:"てん"}],
+    {id:"hoi",    icon:"↗️", name:"あっちむいて ホイ",     desc:"ユニコーンと 6かい しょうぶ！",          unit:"てん"}],
 })[CH].concat([MEM]);
 const NAME=({hamster:"ペンギン",dragon:"ドラゴン",pirate:"かいぞく",unicorn:"ユニコーン"})[CH];
 
@@ -1707,7 +1707,11 @@ function look(svg,dir){
 
 // ---------- あっちむいて ホイ ----------
 function hoi(a){
-  const DIR={up:["⬆️","うえ","👆"],down:["⬇️","した","👇"],left:["⬅️","ひだり","👈"],right:["➡️","みぎ","👉"]};
+  // 手は はだの いろに しない（ユニバーサルデザイン、MAさん 2026-11-23）：しろい てぶくろの 絵
+  const HS='fill="#FFFFFF" stroke="#2A2430" stroke-width="2.2" stroke-linejoin="round"';
+  const HAND=deg=>`<svg class="hand" viewBox="0 0 40 40" width="1.45em" height="1.45em" aria-hidden="true" style="vertical-align:-.25em"><g transform="rotate(${deg} 20 20)"><rect x="15.5" y="2" width="9" height="20" rx="4.5" ${HS}/><rect x="10" y="16" width="20" height="15" rx="6" ${HS}/><path d="M10.5 22q-4-1-4.5 3t4.5 4" ${HS}/><path d="M16 20v5M21 20v5M26 20v5" stroke="#2A2430" stroke-width="1.6" stroke-linecap="round"/><rect x="12" y="30" width="16" height="6" rx="2" fill="#8EC9F0" stroke="#2A2430" stroke-width="2.2"/></g></svg>`;
+  const PALM=`<svg class="hand" viewBox="0 0 40 40" width="1.25em" height="1.25em" aria-hidden="true" style="vertical-align:-.2em"><path d="M12 30V14a2.5 2.5 0 015 0v-4a2.5 2.5 0 015 0v-1a2.5 2.5 0 015 0v3a2.5 2.5 0 015 0v13q0 6-6 8h-8q-4-1-6-5l-4-6a2.4 2.4 0 014-3l1 1z" ${HS}/><path d="M17 14v8M22 10v12M27 11v11" stroke="#2A2430" stroke-width="1.4" stroke-linecap="round"/></svg>`;
+  const DIR={up:["⬆️","うえ",HAND(0)],down:["⬇️","した",HAND(180)],left:["⬅️","ひだり",HAND(-90)],right:["➡️","みぎ",HAND(90)]};
   const KEYS=["up","down","left","right"], R=6; let round=0, pts=0; const res=[]; a.score(0);
   // むきごとの絵（MAさんの絵 hoi2-<kind>-<front|right|left|down>.png）。うえ は正面の絵をそらせる
   const HSRC=(k,d)=>`hoi2-${k}-${d}.png?v=1`;
@@ -1726,7 +1730,7 @@ function hoi(a){
       </div>
       <div class="pz-dots">${Array.from({length:R},()=>"<i></i>").join("")}</div>
     </div>
-    <div class="pz-rule"><h3>👉 あっちむいて ホイ のルール</h3>
+    <div class="pz-rule"><h3>↗️ あっちむいて ホイ のルール</h3>
       <p><b>⚔️ こうげきの ばん</b>：やじるしで ゆびを さそう。${esc(NAME)}が <b>おなじ むき</b>を むいたら かち！</p>
       <p><b>🛡 ぼうぎょの ばん</b>：${esc(NAME)}が ゆびを さすよ。<b>ちがう むき</b>を むけたら かち！</p>
       <p>こうげきと ぼうぎょを こうたいで ${R}かい。かった かずが てんすうだよ。</p>
@@ -1744,10 +1748,10 @@ function hoi(a){
     mode.className="pz-mode "+(atk?"atk":"def");
     mode.innerHTML=atk?`⚔️ ${round+1}かいめ：きみの こうげき<small>ゆびを さそう。${esc(NAME)}が おなじ むきを むいたら かち！</small>`
                       :`🛡 ${round+1}かいめ：きみの ぼうぎょ<small>${esc(NAME)}が ゆびを さすよ。ちがう むきを むこう！</small>`;
-    turn(kid,"kid",""); turn(chi,CH,""); mb.textContent=atk?"✋":""; cb.textContent=atk?"":"✋"; mew.textContent=atk?"どっちを さす？":"どっちを むく？"; cw.textContent="";
+    turn(kid,"kid",""); turn(chi,CH,""); mb.innerHTML=atk?PALM:""; cb.innerHTML=atk?"":PALM; mew.textContent=atk?"どっちを さす？":"どっちを むく？"; cw.textContent="";
     btns.forEach(b=>{ const k=b.dataset.d; b.innerHTML=`<b>${atk?DIR[k][2]:DIR[k][0]}</b>${DIR[k][1]}${atk?"を さす":"を むく"}`; });
     a.msg.textContent=atk?"どっちに ゆびを さす？":"どっちを むく？";
-    mid.textContent=atk?"✋":"🙂";
+    mid.innerHTML=atk?PALM:"🙂";
     lock(false);
   }
   btns.forEach(b=>b.addEventListener("click",()=>{
@@ -1755,9 +1759,9 @@ function hoi(a){
     a.msg.textContent="あっち むいて……"; big("あっち むいて…");
     later(()=>{
       big("ホイ！");
-      if(atk){ mb.textContent=DIR[my][2]; mew.textContent=DIR[my][1]+"を さした";
+      if(atk){ mb.innerHTML=DIR[my][2]; mew.textContent=DIR[my][1]+"を さした";
         turn(chi,CH,its); cb.textContent=DIR[its][0]; cw.textContent=DIR[its][1]+"を むいた"; }
-      else { cb.textContent=DIR[its][2]; cw.textContent=DIR[its][1]+"を さした";
+      else { cb.innerHTML=DIR[its][2]; cw.textContent=DIR[its][1]+"を さした";
         turn(kid,"kid",my); mb.textContent=DIR[my][0]; mew.textContent=DIR[my][1]+"を むいた"; }
       const win=atk?my===its:my!==its; res[round]=win; if(win) pts++; a.score(pts);
       later(()=>{ a.msg.textContent=atk?(win?"おなじ むき！ きみの かち！ 1てん":"ちがう むきだった。ざんねん"):(win?"よけた！ きみの かち！ 1てん":"おなじ むきを むいちゃった…ざんねん");
