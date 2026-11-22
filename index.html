@@ -58,7 +58,7 @@ h1{font-size:1.7rem;font-weight:900;margin:0;letter-spacing:.06em;text-align:cen
 .chara small{font-size:.75rem;color:var(--muted)}
 .chara[aria-expanded="true"]{border-color:var(--c);background:var(--soft)}
 .chara:focus-visible,.kyu:focus-visible,.cont:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
-.panel{background:var(--surface);border:3px solid var(--c);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.panel{grid-column:1/-1;background:var(--surface);border:3px solid var(--c);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px}
 .panel h2{margin:0;font-size:1.1rem;color:var(--c)}
 .kyu{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;text-decoration:none;color:var(--ink);background:var(--soft);border-radius:14px;padding:12px 14px}
 .kyu .k{font-size:1.4rem;font-weight:900;color:var(--c);min-width:3.2em}
@@ -115,6 +115,7 @@ function info(c,k){
   return v&&v.answered ? `正解 <b>${v.correct}</b> 問（${v.answered}問とき）` : "はじめから";
 }
 function render(open){
+  $("grid").after($("panel"));
   $("grid").innerHTML = CHARS.map(c=>`<button type="button" class="chara ${c.id}" data-id="${c.id}" aria-expanded="${open===c.id}">
       <img src="chara-${c.id}.png?v=4" alt="" width="366" height="322"><b>${c.name}</b><small>${c.kyus.map(k=>GR[k]+"年生").join("・")}</small></button>`).join("");
   $("grid").querySelectorAll(".chara").forEach(b=>b.addEventListener("click",()=>{ const id=b.dataset.id; render(open===id?null:id); if(open!==id) $("panel").scrollIntoView({behavior:"smooth",block:"nearest"}); }));
@@ -123,6 +124,10 @@ function render(open){
   if(c){
     $("panel").className="panel "+c.id;
     $("panel").innerHTML=`<h2>${c.name}：学年をえらぶ</h2>`+c.kyus.map(k=>`<a class="kyu" href="${c.id}-${k}.html"><span class="k">${GR[k]}年生</span><span class="d">${KYU_TXT[k]}<br>${info(c,k)}</span><i>›</i></a>`).join("");
+    // えらんだキャラの段のすぐ下に出す
+    const cards=$("grid").querySelectorAll(".chara"), idx=CHARS.indexOf(c), end=cards[Math.min(idx|1,cards.length-1)];
+    end.after($("panel"));
+  }else{ $("grid").after($("panel"));
   }
 }
 const L=last(), m=L&&L.match(/^(pirate|dragon|hamster|unicorn)-(10|9|5)$/), lc=m&&CHARS.find(c=>c.id===m[1]&&c.kyus.includes(m[2]));
