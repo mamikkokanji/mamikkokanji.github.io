@@ -40,7 +40,10 @@
 .wrow .wm{font-size:.92rem;line-height:1.5}
 .wrow .wt{grid-column:1/-1;font-size:.75rem;color:var(--muted)}
 .rei-box{display:flex;flex-direction:column;gap:6px}
-.rei-box .rt-hide ruby rt{visibility:hidden}
+.rei-item.rt-hide ruby rt{visibility:hidden}
+.rei-item{border-radius:12px;padding:6px 8px;background:var(--card2,rgba(0,0,0,.03))}
+.rei-item.rdone{box-shadow:inset 0 0 0 2px var(--ok)}
+.rei-tag{font-size:.85rem;margin:2px 0 4px}
 .rei-tools{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .rei-tools .btn{padding:4px 12px;font-size:.82rem}
 .rei-tools .btn.done{background:var(--ok);border-color:var(--ok);color:#fff}
@@ -202,7 +205,10 @@ try{ localStorage.setItem("kanji-app-last-learn",PAGE); }catch(e){}
 
 // ふりがな {漢|よみ} → <ruby>
 function ruby(s,mk){ return esc(s).replace(/\{([^|}]+)\|([^|}]+)(?:\|([a-z]*))?\}/g,(m,a,b,t)=>{ const r=`<ruby>${a}<rt${t?` class="y-${t}"`:""}>${b}</rt></ruby>`; return a===mk?`<mark>${r}</mark>`:r; }); }
-function reiType(r,k){ const m=r.match(new RegExp("\\{"+k+"\\|([^|}]+)\\|([a-z]*)\\}")); return m?{y:m[1],t:m[2]}:{y:"",t:""}; }
+function reiType(r,k){ const m=r.match(new RegExp("\\{"+k+"\\|([^|}]+)\\|([a-z]*)\\}([ぁ-ゖ]*)")); return m?{y:m[1],t:m[2],a:m[3]}:{y:"",t:"",a:""}; }
+// くんよみの おくりがなを （ ） で つける：さ＋げる → さ（げる）
+function kunFull(I,y,after){ if(!after) return y; const o=(I.kun||[]).find(([st,ok])=>st===y&&ok&&after.startsWith(ok)); return o?`${y}（${o[1]}）`:y; }
+function kanaAfter(w,k){ const m=w.slice(w.indexOf(k)+1).match(/^[ぁ-ゖ]*/); return m?m[0]:""; }
 function reiPlain(r){ return r.replace(/\{([^|}]+)\|([^|}]+)(?:\|[a-z]*)?\}/g,(m,a,b)=>hira(b)); }
 function hira(s){ return s.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60)); }
 function kata(s){ return s.replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60)); }
@@ -441,14 +447,22 @@ function lesson(k){
       $("#peek").onclick=()=>{ const h=$("#pad"); h.innerHTML=kanjiSVG(k); animate(h.querySelector("svg"),k); $("#peek").disabled=true; setTimeout(()=>{ $("#peek").disabled=false; go(); }, Math.min(9000,1200+strokePts(k).reduce((a,s)=>a+Math.max(260,s.len*11)+220,0))); };
     }else if(step===4){
       frame(`${talk(CHAR.say.word)}<div class="card"><h3>「${k}」を つかった ことば</h3><p class="legend" style="text-align:left">「${k}」の よみが <span class="y-on">おんよみ（カタカナ）</span>か <span class="y-kun">くんよみ（ひらがな）</span>か、いみと いっしょに おぼえよう。</p>
-      <div class="wlist">${I.w.map(w=>`<div class="wrow"><span class="wk">${wordRuby(w,k)}</span><span class="wm">${esc(w[6])}</span><span class="wt">「${k}」は ${TAG[w[5]]} ${w[5]?`<b class="y-${w[5]}">${esc(w[5]==="on"?kata(w[3]):w[3])}</b>`:""}</span></div>`).join("")}</div></div>`,true);
+      <div class="wlist">${I.w.map(w=>`<div class="wrow"><span class="wk">${wordRuby(w,k)}</span><span class="wm">${esc(w[6])}</span><span class="wt">「${k}」は ${TAG[w[5]]} ${w[5]?`<b class="y-${w[5]}">${esc(w[5]==="on"?kata(w[3]):kunFull(I,w[3],kanaAfter(w[0],k)))}</b>`:""}</span></div>`).join("")}</div></div>`,true);
     }else if(step===5){
-      const read=I.rei.map(()=>false);
-      frame(`${talk("こえに だして よんで、ぶんごと おぼえよう！")}<div class="card"><h3>れいぶん</h3><div class="rei-box" id="rb">${I.rei.map((r,i)=>{ const t=reiType(r,k); return `<div><p class="rei">${ruby(r,k)}</p><div class="rei-tools">${TAG[t.t]} <b class="y-${t.t}">${esc(t.y)}</b><span class="spacer"></span>${"speechSynthesis" in window?`<button class="btn" data-say="${i}">🔈 きく</button>`:""}<button class="btn" data-read="${i}">📣 よんだ</button></div></div>`; }).join("")}</div>
-      <div class="row"><button class="btn" id="hideRt">🙈 ふりがなを かくして よむ</button></div><p class="count" id="cnt">2つの ぶんを こえに だして よんだら「よんだ」を おしてね</p></div>`,false);
-      app.querySelectorAll("[data-read]").forEach(b=>b.onclick=()=>{ read[+b.dataset.read]=true; b.classList.add("done"); b.textContent="✓ よんだ"; if(read.every(Boolean)){ unlock(); $("#cnt").textContent="よく よめたね！ ふりがなを かくしても よめるかな？"; } });
-      app.querySelectorAll("[data-say]").forEach(b=>b.onclick=()=>{ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(reiPlain(I.rei[+b.dataset.say]).replace(/ /g,"")); u.lang="ja-JP"; u.rate=.85; speechSynthesis.speak(u); }catch(e){} });
-      $("#hideRt").onclick=()=>{ const on=$("#rb").classList.toggle("rt-hide"); $("#hideRt").textContent=on?"👀 ふりがなを だす":"🙈 ふりがなを かくして よむ"; };
+      const ACT=[["say","🔈 よむ"],["rep","🔁 くりかえす"],["hide","🙈 かくして よむ"]];
+      const st=I.rei.map(()=>({say:false,rep:false,hide:false}));
+      const speak=(i,rate)=>{ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(reiPlain(I.rei[i]).replace(/ /g,"")); u.lang="ja-JP"; u.rate=rate; speechSynthesis.speak(u); }catch(e){} };
+      frame(`${talk("こえに だして よんで、ぶんごと おぼえよう！")}<div class="card"><h3>れいぶん</h3><p class="legend" style="text-align:left">ぶんごとに 「よむ」→「くりかえす」→「かくして よむ」の じゅんに やってみよう。</p><div class="rei-box" id="rb">${I.rei.map((r,i)=>{ const t=reiType(r,k); return `<div class="rei-item" id="ri${i}"><p class="rei">${ruby(r,k)}</p><div class="rei-tag">${TAG[t.t]} <b class="y-${t.t}">${esc(t.t==="kun"?kunFull(I,t.y,t.a):t.y)}</b></div><div class="rei-tools">${ACT.map(([a,l])=>`<button class="btn" data-a="${a}" data-i="${i}">${l}</button>`).join("")}</div></div>`; }).join("")}</div>
+      <p class="count" id="cnt"></p></div>`,false);
+      const upd=()=>{ const n=st.filter(x=>x.say&&x.rep&&x.hide).length; $("#cnt").textContent=n>=st.length?"ぜんぶ よめたね！ すごい！":`よめた ぶん ${n} / ${st.length}`; if(n>=st.length) unlock(); };
+      app.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{ const i=+b.dataset.i, a=b.dataset.a, box=$("#ri"+i);
+        if(a==="say") speak(i,.85);
+        if(a==="rep") speak(i,.65);
+        if(a==="hide"){ const on=box.classList.toggle("rt-hide"); b.textContent=on?"👀 ふりがなを だす":"🙈 かくして よむ"; }
+        if(!st[i][a]){ st[i][a]=true; b.classList.add("done"); }
+        if(st[i].say&&st[i].rep&&st[i].hide) box.classList.add("rdone");
+        upd(); });
+      upd();
     }else if(step===6){
       const qs=makeQuiz(I); let qi=0;
       frame(`${talk("さいごに たしかめよう！ ぜんぶ できたら れんしゅう かんりょう！")}<div class="card" id="quiz"></div>`,false,"れんしゅう かんりょう！ ✨");
