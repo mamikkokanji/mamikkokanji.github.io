@@ -1,7 +1,7 @@
 // かんじフレンズ：オフラインでも遊べるようにするしくみ
 // ゲームを直したら VERSION を上げると、つぎに開いたとき新しい版に入れかわります
-const VERSION = "nakama-v30";
-const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png", "./chara-pirate.png", "./chara-dragon.png", "./chara-hamster.png", "./chara-unicorn.png", "./pirate-10.html", "./pirate-9.html", "./pirate-5.html", "./dragon-10.html", "./dragon-9.html", "./dragon-5.html", "./hamster-10.html", "./hamster-9.html", "./hamster-5.html", "./unicorn-10.html", "./unicorn-9.html", "./unicorn-5.html"];
+const VERSION = "nakama-v31";
+const CORE = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png", "./chara-pirate.png", "./chara-dragon.png", "./chara-hamster.png", "./chara-unicorn.png", "./pirate-10.html", "./pirate-9.html", "./pirate-5.html", "./dragon-10.html", "./dragon-9.html", "./dragon-5.html", "./hamster-10.html", "./hamster-9.html", "./hamster-5.html", "./unicorn-10.html", "./unicorn-9.html", "./unicorn-5.html", "./learn.html", "./learn-1.js?v=1", "./learn-2.js?v=1", "./learn-6.js?v=1"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));

@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>おぼえる｜かんじフレンズ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#D9701A">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png?v=4" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="かんじフレンズ">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
+<style>
+:root{
+  --bg:#FFF9F0; --surface:#FFFFFF; --ink:#2A2430; --muted:#6F6577; --line:#EADFCF; --gold:#C9940E; --ok:#2E9E5B; --ng:#D2463C;
+  --grid:#E7D9C6; --ghost:#E9E1D6; --f-ui:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;
+  --f-k:"Klee One","Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17141B; --surface:#221E28; --ink:#F0EBF4; --muted:#A99FB2; --line:#3A3341; --gold:#E8B63E; --ok:#4CC37E; --ng:#F07A70; --grid:#3E3646; --ghost:#3A3341; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17141B; --surface:#221E28; --ink:#F0EBF4; --muted:#A99FB2; --line:#3A3341; --gold:#E8B63E; --ok:#4CC37E; --ng:#F07A70; --grid:#3E3646; --ghost:#3A3341; color-scheme:dark}
+.pirate{--c:#1C6EA4;--soft:#DCEBF6} .dragon{--c:#16855A;--soft:#DBF0E5} .hamster{--c:#D9701A;--soft:#FCE9D6} .unicorn{--c:#8A5CC2;--soft:#EEE4F8}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pirate{--c:#5AA9E0;--soft:#1E3550}:root:not([data-theme="light"]) .dragon{--c:#3CC487;--soft:#183A2C}:root:not([data-theme="light"]) .hamster{--c:#F2903C;--soft:#43301C}:root:not([data-theme="light"]) .unicorn{--c:#B48BE8;--soft:#352A4A}}
+:root[data-theme="dark"] .pirate{--c:#5AA9E0;--soft:#1E3550}:root[data-theme="dark"] .dragon{--c:#3CC487;--soft:#183A2C}:root[data-theme="dark"] .hamster{--c:#F2903C;--soft:#43301C}:root[data-theme="dark"] .unicorn{--c:#B48BE8;--soft:#352A4A}
+[hidden]{display:none!important}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.6;margin:0;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wrap{max-width:560px;margin:0 auto;padding-block:max(12px,env(safe-area-inset-top,0px)) 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
+.top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:.85rem;font-weight:700;color:var(--muted);text-decoration:none;border:2px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 12px}
+.pill.on{color:#fff;background:var(--c);border-color:var(--c)}
+.spacer{flex:1}
+/* キャラのカード */
+.hero{display:grid;grid-template-columns:92px 1fr;gap:12px;align-items:center;background:var(--soft);border:3px solid var(--c);border-radius:22px;padding:10px 14px}
+.hero img{width:92px;height:auto}
+.hero h1{margin:0;font-size:1.15rem;font-weight:900;color:var(--c);line-height:1.3}
+.hero p{margin:2px 0 0;font-size:.85rem;color:var(--muted)}
+.bar{height:12px;border-radius:99px;background:var(--surface);overflow:hidden;margin-top:6px;border:2px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--c);border-radius:99px;transition:width .6s}
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.modes a,.modes button{display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;font-weight:900;font-size:1rem;border-radius:16px;padding:12px 8px;border:3px solid var(--c);background:var(--surface);color:var(--c)}
+.modes .on{background:var(--c);color:#fff}
+/* 字のいちらん */
+.chap{background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:12px}
+.chap h2{margin:0 0 8px;font-size:.95rem;display:flex;align-items:center;gap:8px}
+.chap h2 .sp{margin-left:auto;font-size:1.3rem;filter:grayscale(1) opacity(.35)}
+.chap h2 .sp.got{filter:none}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.tile{position:relative;aspect-ratio:1;border-radius:14px;border:2px solid var(--line);background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--f-k);font-size:clamp(1.5rem,8vw,2.1rem);line-height:1;padding:0}
+.tile .st{font-family:var(--f-ui);font-size:.55rem;letter-spacing:-.05em;margin-top:4px;color:var(--line)}
+.tile .st b{color:var(--gold);font-weight:900}
+.tile.done{background:var(--soft);border-color:var(--c)}
+.tile.next{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,148,14,.25);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(201,148,14,.12)}}
+.legend{font-size:.75rem;color:var(--muted);text-align:center;margin:0}
+/* レッスン */
+.lesson{display:flex;flex-direction:column;gap:12px}
+.steps{display:flex;gap:6px;justify-content:center}
+.steps span{flex:1;max-width:70px;text-align:center;font-size:.7rem;font-weight:700;color:var(--muted);border-bottom:5px solid var(--line);padding-bottom:2px}
+.steps span.on{color:var(--c);border-color:var(--c)}
+.steps span.dn{border-color:var(--c);opacity:.5}
+.talk{display:grid;grid-template-columns:60px 1fr;gap:8px;align-items:end}
+.talk img{width:60px}
+.talk p{margin:0;background:var(--surface);border:2px solid var(--c);border-radius:16px 16px 16px 4px;padding:8px 12px;font-weight:700;font-size:.95rem}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.card h3{margin:0;font-size:.9rem;color:var(--c)}
+.big{display:flex;justify-content:center}
+.kv{width:min(74vw,280px);height:auto;aspect-ratio:1;background:var(--surface);border:3px solid var(--c);border-radius:18px;touch-action:none;user-select:none;-webkit-user-select:none}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.btn{border:3px solid var(--c);background:var(--surface);color:var(--c);font-weight:900;border-radius:99px;padding:8px 18px;font-size:.95rem}
+.btn.pri{background:var(--c);color:#fff}
+.btn[disabled]{opacity:.35;cursor:default}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:baseline;font-size:1rem}
+.facts dt{font-size:.8rem;font-weight:700;color:var(--muted)}
+.facts dd{margin:0;font-weight:700}
+.on-y{font-weight:700}
+.badge{display:inline-block;font-size:.75rem;font-weight:900;color:#fff;background:var(--c);border-radius:99px;padding:2px 10px}
+.nari{font-size:1.05rem;line-height:1.9;margin:0}
+.nari-k{font-family:var(--f-k);font-size:4.5rem;line-height:1;text-align:center;color:var(--c)}
+.words{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.word{background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:6px 8px;text-align:center;font-size:1.25rem;font-weight:700}
+.word mark,.rei mark{background:none;color:var(--c);font-weight:900}
+.rei{font-size:1.2rem;line-height:2.2;margin:0;padding:4px 10px;border-left:5px solid var(--c);background:var(--bg);border-radius:6px}
+ruby rt{font-size:.5em;color:var(--muted);font-weight:700}
+.msg{min-height:1.6em;text-align:center;font-weight:900;font-size:1.05rem;margin:0}
+.msg.ok{color:var(--ok)} .msg.ng{color:var(--ng)}
+.count{text-align:center;font-weight:700;color:var(--muted);font-size:.9rem;margin:0}
+.q{font-weight:900;font-size:1.05rem;margin:0}
+.choices{display:grid;grid-template-columns:1fr;gap:8px}
+.choices button{border:3px solid var(--line);background:var(--surface);border-radius:14px;padding:10px;font-size:1.15rem;font-weight:700}
+.choices button.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--surface))}
+.choices button.ng{border-color:var(--ng);animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.nav{display:flex;gap:10px;justify-content:space-between;position:sticky;bottom:max(10px,env(safe-area-inset-bottom,0px));z-index:5}
+.nav .btn{flex:1;padding:12px;font-size:1.05rem;box-shadow:0 6px 16px -6px rgba(0,0,0,.3)}
+/* ごほうび */
+.ov{position:fixed;inset:0;background:rgba(30,20,40,.6);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.prize{background:var(--surface);border-radius:26px;padding:22px 18px;max-width:360px;width:100%;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;border:4px solid var(--gold)}
+.prize h2{margin:0;font-size:1.3rem}
+.box{font-size:5.5rem;line-height:1;background:none;border:0;padding:0;animation:wob 1.2s ease-in-out infinite}
+@keyframes wob{0%,100%{transform:rotate(0)}20%{transform:rotate(-8deg)}40%{transform:rotate(8deg)}60%{transform:rotate(-4deg)}}
+.got{font-size:5.5rem;line-height:1;animation:pop .6s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{0%{transform:scale(.2) rotate(-30deg);opacity:0}100%{transform:none;opacity:1}}
+.got-name{font-weight:900;font-size:1.2rem;color:var(--c)}
+.sp-tag{font-size:.8rem;font-weight:900;color:#fff;background:var(--gold);border-radius:99px;padding:2px 12px}
+.kira{position:fixed;pointer-events:none;font-size:1.4rem;animation:fall 1.4s ease-out forwards;z-index:60}
+@keyframes fall{to{transform:translate(var(--dx),var(--dy)) rotate(260deg);opacity:0}}
+/* たからばこ */
+.shelf{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.it{aspect-ratio:1;border-radius:16px;border:2px solid var(--line);background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:2.2rem;line-height:1;position:relative;padding:4px}
+.it small{font-size:.55rem;font-weight:700;color:var(--muted);text-align:center;line-height:1.2}
+.it.no{font-size:1.6rem;color:var(--line)}
+.it.sp{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,var(--bg))}
+.it .n{position:absolute;right:5px;top:3px;font-size:.65rem;font-weight:900;color:var(--c)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>(function(){ const g=new URLSearchParams(location.search).get("g"); document.write('<script src="learn-'+(["1","2","6"].includes(g)?g:"1")+'.js?v=1"><\/script>'); })();</script>
+<script>
+const P=new URLSearchParams(location.search);
+const CH=["pirate","dragon","hamster","unicorn"].includes(P.get("c"))?P.get("c"):"hamster";
+const GRADE=["1","2","6"].includes(P.get("g"))?P.get("g"):"1";
+const KYU={"1":"10","2":"9","6":"5"}[GRADE];
+document.body.className=CH;
+const CHAR={
+  pirate:{name:"漢字パイレーツ",who:"パイレーツ",box:"たからばこ",boxE:"🧰",
+    say:{hi:"いっしょに たからの かんじを さがそう！",look:"かきじゅんを よく みてね！",nari:"この かんじの ひみつだぜ！",trace:"うすい じを なぞってみよう！",write:"こんどは みないで かいてみよう！",word:"ことばと ぶんで つかってみよう！"},
+    items:[["🪙","きんか"],["💎","ほうせき"],["🗺️","たからの ちず"],["🧭","コンパス"],["⚓","いかり"],["🐚","かいがら"],["🔭","ぼうえんきょう"],["🗝️","ふしぎな かぎ"],["💍","ゆびわ"],["📿","くびかざり"],["🍾","びんの てがみ"],["🦀","かに"],["🐙","たこ"],["🐠","ねったいぎょ"],["🦜","オウム"],["🏴‍☠️","かいぞくの はた"],["🪝","フック"],["🧱","きんの レンガ"],["🍖","ほねつき にく"],["🍌","バナナ"],["🥥","ヤシの み"],["🐢","うみがめ"],["🦈","サメ"],["🐳","くじら"]],
+    special:[["👑","おうかん"],["⛵","かいぞくせん"],["🏝️","たからじま"],["🏆","きんの トロフィー"],["🔱","うみの やり"],["🌊","おおなみ"],["🐋","おおくじら"],["🌋","ひの やま"],["🎖️","くんしょう"],["🗿","なぞの せきぞう"]]},
+  dragon:{name:"漢字ドラゴン",who:"ドラゴン",box:"ほうせきばこ",boxE:"🧰",
+    say:{hi:"かんじの ちからを あつめよう！",look:"かきじゅんを よく みてね！",nari:"この かんじの なりたちを おしえるよ！",trace:"うすい じを なぞってみよう！",write:"こんどは みないで かいてみよう！",word:"ことばと ぶんで つかってみよう！"},
+    items:[["💎","ほうせき"],["🔥","ほのおの たま"],["⚡","いなずま"],["🌙","つきの いし"],["⭐","ほしの かけら"],["🔮","すいしょう"],["🍖","おにく"],["🍎","りんご"],["🪨","まほうの いわ"],["🌿","くすりそう"],["🍄","ふしぎな きのこ"],["🗡️","つるぎ"],["🛡️","たて"],["💠","あおい ほうせき"],["🔶","オレンジの ほうせき"],["🟢","みどりの ほうせき"],["🪶","はね"],["🦴","ほね"],["☄️","りゅうせい"],["🌈","にじの かけら"],["🧪","まほうの くすり"],["📜","まきもの"],["🪵","たきぎ"],["🍯","はちみつ"]],
+    special:[["👑","りゅうの おうかん"],["🏯","りゅうの しろ"],["🌋","かざん"],["🥚","でんせつの たまご"],["🏆","きんの トロフィー"],["🐉","りゅうの おまもり"],["🌌","ぎんが"],["⛰️","りゅうの やま"],["🎖️","くんしょう"],["🔱","いかずちの やり"]]},
+  hamster:{name:"漢字ハムスター",who:"ハムスター",box:"おやつばこ",boxE:"🧺",
+    say:{hi:"いっしょに かんじを おぼえよう！",look:"かきじゅんを よく みてね！",nari:"この かんじの ひみつ、おしえるね！",trace:"うすい じを なぞってみよう！",write:"こんどは みないで かいてみよう！",word:"ことばと ぶんで つかってみよう！"},
+    items:[["🌻","ひまわりの たね"],["🥜","ピーナッツ"],["🌰","くり"],["🍓","いちご"],["🥕","にんじん"],["🍎","りんご"],["🌽","とうもろこし"],["🫐","ブルーベリー"],["🧀","チーズ"],["🍪","クッキー"],["🥦","ブロッコリー"],["🍌","バナナ"],["🍉","すいか"],["🍒","さくらんぼ"],["🥒","きゅうり"],["🍠","さつまいも"],["🎀","リボン"],["🧶","けいと"],["🥬","キャベツ"],["🍞","パン"],["🎈","ふうせん"],["🧸","ぬいぐるみ"],["🪀","ヨーヨー"],["🍙","おにぎり"]],
+    special:[["🏠","ハムスターの おうち"],["🎡","まわしぐるま"],["🛝","すべりだい"],["🎂","ケーキ"],["🏆","きんの トロフィー"],["🛏️","ふかふか ベッド"],["🎠","メリーゴーランド"],["🚂","きしゃ"],["🎖️","くんしょう"],["🏰","おしろ"]]},
+  unicorn:{name:"漢字ユニコーン",who:"ユニコーン",box:"きらきらばこ",boxE:"💝",
+    say:{hi:"まほうの かんじを あつめよう！",look:"かきじゅんを よく みてね！",nari:"この かんじの なりたちだよ！",trace:"うすい じを なぞってみよう！",write:"こんどは みないで かいてみよう！",word:"ことばと ぶんで つかってみよう！"},
+    items:[["🌟","ほし"],["🌸","さくら"],["🌈","にじ"],["🦋","ちょうちょ"],["🍭","キャンディ"],["💐","はなたば"],["🎀","リボン"],["💖","ハート"],["🔮","まほうの たま"],["🌙","おつきさま"],["☁️","くも"],["🌷","チューリップ"],["🧁","カップケーキ"],["🍬","あめ"],["🫧","しゃぼんだま"],["🪄","まほうの つえ"],["💎","ほうせき"],["🌼","ひなぎく"],["🍓","いちご"],["🎐","ふうりん"],["🐚","かいがら"],["🪽","はね"],["🍀","よつばの クローバー"],["🌺","ハイビスカス"]],
+    special:[["👑","ティアラ"],["🏰","おしろ"],["🎠","メリーゴーランド"],["🌌","ほしぞら"],["🏆","きんの トロフィー"],["👗","ドレス"],["🧚","ようせい"],["🎆","はなび"],["🎖️","くんしょう"],["🌠","ながれぼし"]]},
+}[CH];
+const TEST_KEY={pirate:k=>`kanji-pirate-${k}kyu-v1`,dragon:k=>k==="5"?"kanji-dragon-v1":`kanji-dragon-${k}kyu-v1`,hamster:k=>`kanji-hamster-${k}kyu-v2`,unicorn:k=>`kanji-unicorn-${k}kyu-v1`}[CH](KYU);
+const D=window.LEARN_DATA;
+const KS=D.list.map(r=>r[0]);
+const INFO={}; D.list.forEach(r=>INFO[r[0]]={k:r[0],s:+r[1],bu:r[2],buN:r[3],yomi:r[4],imi:r[5],words:r[6].split("/"),type:D.nari[r[0]][0],nari:D.nari[r[0]][1],rei:D.nari[r[0]].slice(2)});
+// ばしょ（クイズの 島・国・マップと 同じ 区切り）
+const SEC_N=KS.length<=80?8:10;
+const SECS=Array.from({length:SEC_N},(_,i)=>KS.slice(Math.round(i*KS.length/SEC_N),Math.round((i+1)*KS.length/SEC_N)));
+const PLACE={pirate:{icon:"🏝️",names:["はじまりの島","ヤシの木の島","さんごの島","きりの島","火山の島","こおりの島","かぜの島","ほらあなの島","あらしの島"],last:"さいごの島"},
+  unicorn:{icon:"🌈",names:["はじまりの草原","おはなの国","にじの谷","きりの森","ほのおの山","こおりの国","かぜの丘","ほらあなの国","かみなりの空"],last:"ゆめのお城"},
+  hamster:{icon:"🐾",names:["おうちのケージ","ひまわりばたけ","どんぐりのもり","いちごのはたけ","クローバーのはら","ちいさな かわ","キノコのもり","ゆきの やま","おほしさまのおか","ひみつのたからばこ"]},
+  dragon:{icon:"🐉",names:["たまごのすみか","みどりのたに","ほのおの やま","こおりのどうくつ","かみなりの そら","にじのたき","ほうせきのどうくつ","くものしろ","ほしぞらのとう","でんせつのしんでん"]}}[CH];
+const placeName=i=>i===SEC_N-1?(PLACE.last||PLACE.names[PLACE.names.length-1]):PLACE.names[i];
+const LKEY="kanji-learn-v1", PAGE=CH+"-"+GRADE;
+const $=s=>document.querySelector(s), app=$("#app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function load(){ try{ const v=JSON.parse(localStorage.getItem(LKEY)||"{}"); return v&&typeof v==="object"?v:{}; }catch(e){ return {}; } }
+let S=load(); S.learned=S.learned||{}; S.items=S.items||{}; S.sp=S.sp||{};
+const L=S.learned[PAGE]=S.learned[PAGE]||{}; const IT=S.items[CH]=S.items[CH]||{}; const SP=S.sp[CH]=S.sp[CH]||{};
+function save(){ try{ localStorage.setItem(LKEY,JSON.stringify(S)); }catch(e){} }
+function testSt(){ try{ const v=JSON.parse(localStorage.getItem(TEST_KEY)||"null"); return v&&v.st||{}; }catch(e){ return {}; } }
+try{ localStorage.setItem("kanji-app-last-learn",PAGE); }catch(e){}
+
+// ふりがな {漢|よみ} → <ruby>
+function ruby(s,mk){ return esc(s).replace(/\{([^|}]+)\|([^}]+)\}/g,(m,a,b)=>{ const r=`<ruby>${a}<rt>${b}</rt></ruby>`; return a===mk?`<mark>${r}</mark>`:r; }); }
+function wordHTML(w,k){ const y=(D.wy||{})[w]; const ww=esc(w).split(k).join(`<mark>${k}</mark>`); return y?`<ruby>${ww}<rt>${esc(y)}</rt></ruby>`:ww; }
+function splitYomi(y){ const on=[],kun=[]; y.split("・").forEach(x=>{ (/^[ァ-ヶー]+$/.test(x)?on:kun).push(x); }); return {on,kun}; }
+const TYPE_TXT={"かたち":"かたちから できた じ","しるし":"しるしで あらわした じ","くみあわせ":"くみあわせて できた じ"};
+
+// ---------- KanjiVG の線 ----------
+const NS="http://www.w3.org/2000/svg";
+const measure=document.createElementNS(NS,"svg"); measure.setAttribute("width","0"); measure.setAttribute("height","0"); measure.style.position="absolute"; document.body.appendChild(measure);
+const PTS={};
+function strokePts(k){
+  if(PTS[k]) return PTS[k];
+  PTS[k]=(D.kvg[k]||[]).map(d=>{ const p=document.createElementNS(NS,"path"); p.setAttribute("d",d); measure.appendChild(p); const len=p.getTotalLength(); const pts=[]; for(let i=0;i<=24;i++){ const q=p.getPointAtLength(len*i/24); pts.push([q.x,q.y]); } measure.removeChild(p); return {d,len,pts}; });
+  return PTS[k];
+}
+function gridSVG(){ return `<rect x="1" y="1" width="107" height="107" rx="6" fill="none"/><path d="M54.5 4V105M4 54.5H105" stroke="var(--grid)" stroke-width=".8" stroke-dasharray="3 3" fill="none"/>`; }
+function kanjiSVG(k,cls){ return `<svg class="${cls||"kv"}" viewBox="0 0 109 109" aria-label="${k}">${gridSVG()}<g fill="none" stroke-linecap="round" stroke-linejoin="round"></g><g class="nums"></g></svg>`; }
+// 書きじゅんアニメ
+function animate(svg,k){
+  const g=svg.querySelector("g"), nums=svg.querySelector(".nums"); g.innerHTML=""; nums.innerHTML="";
+  const st=strokePts(k); const calm=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const token={}; svg._tok=token;
+  st.forEach(s=>{ const p=document.createElementNS(NS,"path"); p.setAttribute("d",s.d); p.setAttribute("stroke","var(--ghost)"); p.setAttribute("stroke-width","5"); g.appendChild(p); });
+  let i=0; const placed=[];
+  function next(){
+    if(svg._tok!==token||i>=st.length) return;
+    const s=st[i]; const p=document.createElementNS(NS,"path"); p.setAttribute("d",s.d); p.setAttribute("stroke","var(--c)"); p.setAttribute("stroke-width","5.5");
+    p.style.strokeDasharray=s.len; p.style.strokeDashoffset=s.len; g.appendChild(p);
+    const t=document.createElementNS(NS,"text"); const [x,y]=s.pts[0]; let tx=Math.min(100,Math.max(2,x-7)), ty=Math.min(104,Math.max(8,y-2));
+    for(let tries=0;tries<6&&placed.some(q=>Math.abs(q[0]-tx)<6&&Math.abs(q[1]-ty)<7);tries++){ tx=Math.max(2,tx-6); if(tries%2) ty=Math.min(104,ty+6); }
+    placed.push([tx,ty]); t.setAttribute("x",tx); t.setAttribute("y",ty); t.setAttribute("font-size","8"); t.setAttribute("font-weight","900"); t.setAttribute("fill","var(--ng)"); t.textContent=i+1; nums.appendChild(t);
+    const dur=calm?0:Math.max(260,s.len*11);
+    p.getBoundingClientRect();
+    p.style.transition=`stroke-dashoffset ${dur}ms linear`; p.style.strokeDashoffset=0;
+    i++; setTimeout(next,dur+220);
+  }
+  setTimeout(next,300);
+}
+function staticKanji(svg,k){ const g=svg.querySelector("g"); g.innerHTML=strokePts(k).map(s=>`<path d="${s.d}" stroke="var(--c)" stroke-width="5.5"/>`).join(""); }
+
+// ---------- なぞり・かきとりの パッド（1画ずつ 自動チェック） ----------
+function resample(pts,n){
+  const d=[0]; for(let i=1;i<pts.length;i++) d.push(d[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));
+  const L=d[d.length-1]; if(L<1e-6) return Array.from({length:n+1},()=>pts[0].slice());
+  const out=[]; let j=0; for(let i=0;i<=n;i++){ const t=L*i/n; while(j<d.length-2&&d[j+1]<t) j++; const r=(t-d[j])/((d[j+1]-d[j])||1); out.push([pts[j][0]+(pts[j+1][0]-pts[j][0])*r, pts[j][1]+(pts[j+1][1]-pts[j][1])*r]); }
+  return out;
+}
+function plen(p){ let s=0; for(let i=1;i<p.length;i++) s+=Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]); return s; }
+function dist(a,b){ let s=0; for(let i=0;i<a.length;i++) s+=Math.hypot(a[i][0]-b[i][0],a[i][1]-b[i][1]); return s/a.length; }
+function makePad(host,k,mode,onDone,onMsg){
+  // mode: "trace"（うすい字あり） / "write"（なにもなし。2かいまちがえるとヒント）
+  host.innerHTML=`<svg class="kv" viewBox="0 0 109 109">${gridSVG()}<g class="ghost" fill="none" stroke-linecap="round" stroke-linejoin="round"></g><g class="done" fill="none" stroke-linecap="round" stroke-linejoin="round"></g><g class="hint" fill="none" stroke-linecap="round"></g><path class="fail" fill="none" stroke="var(--ng)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/><path class="ink" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const svg=host.querySelector("svg"), ghost=svg.querySelector(".ghost"), done=svg.querySelector(".done"), hint=svg.querySelector(".hint"), ink=svg.querySelector(".ink"), fail=svg.querySelector(".fail");
+  const st=strokePts(k); let cur=0, miss=0, totalMiss=0, pts=null, pid=null;
+  const TOL=mode==="trace"?13:17;
+  if(mode==="trace") ghost.innerHTML=st.map(s=>`<path d="${s.d}" stroke="var(--ghost)" stroke-width="7"/>`).join("");
+  function showHint(strong){
+    hint.innerHTML=""; if(cur>=st.length) return;
+    if(mode==="write"&&!strong) return;
+    const s=st[cur], [x,y]=s.pts[0], [x2,y2]=s.pts[3];
+    const a=Math.atan2(y2-y,x2-x)*180/Math.PI;
+    hint.innerHTML=(strong||mode==="trace"?`<path d="${s.d}" stroke="color-mix(in srgb,var(--c) 30%,transparent)" stroke-width="7"/>`:"")+`<circle cx="${x}" cy="${y}" r="4.2" fill="var(--ng)"/><path d="M${x+5},${y} l4,0 m-2,-2.2 l2,2.2 l-2,2.2" stroke="var(--ng)" stroke-width="1.6" transform="rotate(${a} ${x} ${y})"/>`;
+  }
+  showHint(false);
+  function pt(e){ const m=svg.getScreenCTM().inverse(); const p=new DOMPoint(e.clientX,e.clientY).matrixTransform(m); return [p.x,p.y]; }
+  svg.addEventListener("pointerdown",e=>{ if(cur>=st.length||pid!==null) return; e.preventDefault(); pid=e.pointerId; try{svg.setPointerCapture(pid);}catch(_){} pts=[pt(e)]; ink.setAttribute("d",`M${pts[0][0]},${pts[0][1]}`); });
+  svg.addEventListener("pointermove",e=>{ if(e.pointerId!==pid||!pts) return; e.preventDefault(); const p=pt(e), q=pts[pts.length-1]; if(Math.hypot(p[0]-q[0],p[1]-q[1])<.6) return; pts.push(p); ink.setAttribute("d",ink.getAttribute("d")+` L${p[0]},${p[1]}`); });
+  const end=e=>{ if(e.pointerId!==pid) return; pid=null; const p=pts; pts=null; if(p) judge(p); };
+  svg.addEventListener("pointerup",end); svg.addEventListener("pointercancel",e=>{ if(e.pointerId===pid){ pid=null; pts=null; ink.setAttribute("d",""); } });
+  ["touchstart","touchmove"].forEach(t=>svg.addEventListener(t,e=>e.preventDefault(),{passive:false}));
+  // write では、それまでの画の ずれ（いち）を おぼえて さしひく。1画めは いちが ずれていても かたちで みる
+  const offs=[];
+  const cen=p=>{ let x=0,y=0; p.forEach(q=>{x+=q[0];y+=q[1];}); return [x/p.length,y/p.length]; };
+  function shiftOf(){ if(mode!=="write"||!offs.length) return [0,0]; const m=cen(offs); return [Math.max(-18,Math.min(18,m[0])),Math.max(-18,Math.min(18,m[1]))]; }
+  function check(user,s){ // → {r:"ok"|"rev"|"no", d:ずれ}
+    const ul=plen(user), N=24, sh=shiftOf();
+    const first=mode==="write"&&!offs.length, T=first?TOL*1.4:TOL;
+    const u=resample(user,N).map(q=>[q[0]-sh[0],q[1]-sh[1]]);
+    const uc=cen(u), sc=cen(s.pts);
+    if(s.len<16){ // てん：みじかい線なら むきは とわない
+      const d=Math.hypot(uc[0]-sc[0],uc[1]-sc[1]);
+      return {r:ul<=Math.max(30,s.len*2.5)&&d<T*1.3?"ok":"no",d};
+    }
+    const f=dist(u,s.pts), rv=dist(u.slice().reverse(),s.pts);
+    const tol=Math.max(T, Math.min(T*1.5,s.len*.22));
+    const lenOk=ul>s.len*.35 && ul<s.len*2.2+14;
+    const ue=[u[N][0]-u[0][0],u[N][1]-u[0][1]], se=[s.pts[24][0]-s.pts[0][0],s.pts[24][1]-s.pts[0][1]];
+    const cos=(ue[0]*se[0]+ue[1]*se[1])/((Math.hypot(...ue)*Math.hypot(...se))||1);
+    const curved=Math.hypot(...se)<s.len*.5; // まがった線（はね・おれ）は むきの かくにんを かたちで
+    if(f<tol&&lenOk&&(curved?f<rv:(cos>.3||f<rv*.7))) return {r:"ok",d:f};
+    if(rv<tol&&lenOk&&rv<f*.8&&(curved||cos<-.3)) return {r:"rev",d:rv};
+    return {r:"no",d:f};
+  }
+  function judge(user){
+    const s=st[cur]; const c0=check(user,s); let res=c0.r;
+    // ほかの画（あとの画）に もっと にているなら、じゅんばんちがい
+    let other=-1; for(let j=cur+1;j<st.length;j++){ const cj=check(user,st[j]); if(cj.r==="ok"&&(res!=="ok"||cj.d<c0.d*.6)){ other=j; break; } }
+    if(other>=0) res="no";
+    if(res==="ok"){
+      { const sh=shiftOf(), uc=cen(resample(user,24)), sc=cen(s.pts); offs.push([uc[0]-sc[0],uc[1]-sc[1]]); }
+      ink.setAttribute("d","");
+      const p=document.createElementNS(NS,"path"); p.setAttribute("d",s.d); p.setAttribute("stroke","var(--c)"); p.setAttribute("stroke-width","5.5"); done.appendChild(p);
+      cur++; miss=0; showHint(false);
+      if(cur>=st.length){ hint.innerHTML=""; onMsg&&onMsg(totalMiss===0?"かんぺき！ すごい！":"できた！ よく がんばったね！","ok"); onDone&&onDone(totalMiss); }
+      else onMsg&&onMsg(`${cur}かくめ OK！ つぎは ${cur+1}かくめ`,"ok");
+      return;
+    }
+    // ちがう：ほかの画とくらべて、じゅんばんちがいか しらべる
+    miss++; totalMiss++;
+    fail.setAttribute("d",ink.getAttribute("d")); ink.setAttribute("d",""); const ft=fail._t=(fail._t||0)+1; setTimeout(()=>{ if(fail._t===ft) fail.setAttribute("d",""); },700);
+    const msg=res==="rev"?"むきが はんたいだよ。あかい ●から かこう":other>=0?`それは ${other+1}かくめ だよ。いまは ${cur+1}かくめ！`:"おしい！ もういちど かいてみよう";
+    onMsg&&onMsg(msg,"ng");
+    showHint(mode==="trace"||miss>=2||res==="rev"||other>=0);
+  }
+  return {reset(){ makePad(host,k,mode,onDone,onMsg); }};
+}
+
+// ---------- アイテム ----------
+function ownedCount(){ return Object.keys(IT).length; }
+function giveItem(){
+  const all=CHAR.items, notYet=all.map((x,i)=>i).filter(i=>!IT[i]);
+  const i=notYet.length?notYet[Math.floor(Math.random()*notYet.length)]:Math.floor(Math.random()*all.length);
+  IT[i]=(IT[i]||0)+1; return {e:all[i][0],n:all[i][1],sp:false};
+}
+function giveSpecial(ci){
+  const id=GRADE+"-"+ci; if(SP[id]!=null) return null;
+  const used=new Set(Object.values(SP)); let i=CHAR.special.findIndex((x,j)=>!used.has(j)); if(i<0) i=Math.floor(Math.random()*CHAR.special.length);
+  SP[id]=i; return {e:CHAR.special[i][0],n:CHAR.special[i][1],sp:true};
+}
+function kira(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const set=["✨","⭐","🌟","💫"];
+  for(let i=0;i<18;i++){ const s=document.createElement("span"); s.className="kira"; s.textContent=set[i%4]; s.style.left="50%"; s.style.top="40%"; s.style.setProperty("--dx",(Math.random()*300-150)+"px"); s.style.setProperty("--dy",(Math.random()*300-120)+"px"); document.body.appendChild(s); setTimeout(()=>s.remove(),1500); }
+}
+
+// ---------- 画面：いちらん ----------
+function chapOf(k){ return SECS.findIndex(a=>a.includes(k)); }
+function testState(){ try{ return JSON.parse(localStorage.getItem(TEST_KEY)||"null")||{}; }catch(e){ return {}; } }
+function nextK(){ return KS.find(k=>!L[k]); }
+function home(){
+  const ts=testSt(), n=KS.filter(k=>L[k]).length, nk=nextK();
+  const star=k=>{ const t=ts[k]||{}; const anyOk=Object.values(t).some(v=>Array.isArray(v)&&v[0]>0); const kaki=Array.isArray(t.kaki)&&t.kaki[0]>0; return `<span class="st">${L[k]?"<b>★</b>":"☆"}${anyOk?"<b>★</b>":"☆"}${kaki?"<b>★</b>":"☆"}</span>`; };
+  let ch="";
+  const qc=+testState().cleared||0, curSec=nk?chapOf(nk):-1;
+  for(let c=0;c<SEC_N;c++){
+    const ks=SECS[c], got=SP[GRADE+"-"+c]!=null, spi=SP[GRADE+"-"+c];
+    ch+=`<section class="chap" ${c===curSec?'id="cur"':""}><h2>${PLACE.icon} ${c+1}. ${placeName(c)} <span style="color:var(--muted);font-weight:700;font-size:.8rem">${ks.filter(k=>L[k]).length}/${ks.length}</span>${c<qc?'<span class="badge" style="font-size:.65rem">クイズ クリア</span>':""}<span class="sp ${got?"got":""}" title="ぜんぶ おぼえると とくべつアイテム">${got?CHAR.special[spi][0]:"🎁"}</span></h2><div class="tiles">`+
+      ks.map(k=>`<button class="tile ${L[k]?"done":""} ${k===nk?"next":""}" data-k="${k}" aria-label="${k}${L[k]?"（おぼえた）":""}">${k}${star(k)}</button>`).join("")+`</div></section>`;
+  }
+  app.innerHTML=`<div class="top"><a class="pill" href="./">‹ キャラをえらぶ</a><span class="spacer"></span><button class="pill" id="boxBtn">${CHAR.boxE} ${CHAR.box}（${ownedCount()+Object.keys(SP).length}）</button></div>
+  <div class="hero"><img src="chara-${CH}.png?v=4" alt=""><div><h1>${CHAR.name} ${GRADE}年生<br>おぼえる</h1><p>おぼえた かんじ <b>${n}</b> / ${KS.length}${nk?`・いまは「${placeName(chapOf(nk))}」`:""}</p><div class="bar"><i style="width:${n/KS.length*100}%"></i></div></div></div>
+  <div class="modes"><button class="on" aria-current="page">📖 おぼえる</button><a href="${CH}-${KYU}.html">✏️ クイズ</a></div>
+  ${nk?`<button class="btn pri" id="goNext" style="padding:14px;font-size:1.1rem">つぎの かんじ「${nk}」を おぼえる ›</button>`:`<p class="msg ok">ぜんぶ おぼえたね！ クイズに ちょうせんしよう！</p>`}
+  <p class="legend">★ の いみ：1こめ おぼえた ・ 2こめ クイズで せいかい ・ 3こめ かきとりで せいかい。ひとつの ばしょを ぜんぶ おぼえると とくべつアイテム！</p>
+  ${ch}`;
+  app.querySelectorAll(".tile").forEach(b=>b.onclick=()=>lesson(b.dataset.k));
+  $("#goNext")&&($("#goNext").onclick=()=>lesson(nk));
+  $("#boxBtn").onclick=box;
+  try{ localStorage.setItem("kanji-app-last","learn:"+CH+"-"+GRADE); }catch(e){}
+}
+
+// ---------- 画面：たからばこ ----------
+function box(){
+  const all=CHAR.items;
+  const spList=Object.entries(SP);
+  app.innerHTML=`<div class="top"><button class="pill" id="back">‹ もどる</button></div>
+  <div class="hero"><img src="chara-${CH}.png?v=4" alt=""><div><h1>${CHAR.boxE} ${CHAR.box}</h1><p>かんじを 1つ おぼえると アイテムが 1つ。ひとつの ばしょの かんじを ぜんぶ おぼえると とくべつアイテム！</p></div></div>
+  <section class="card"><h3>とくべつアイテム（${spList.length}）</h3><div class="shelf">${CHAR.special.map((x,i)=>{ const has=spList.some(([id,j])=>j===i); return has?`<div class="it sp">${x[0]}<small>${x[1]}</small></div>`:`<div class="it no">？</div>`; }).join("")}</div></section>
+  <section class="card"><h3>アイテム（${Object.keys(IT).length} / ${all.length}しゅるい）</h3><div class="shelf">${all.map((x,i)=>IT[i]?`<div class="it">${IT[i]>1?`<span class="n">×${IT[i]}</span>`:""}${x[0]}<small>${x[1]}</small></div>`:`<div class="it no">？</div>`).join("")}</div></section>`;
+  $("#back").onclick=home; scrollTo(0,0);
+}
+
+// ---------- 画面：1字を おぼえる ----------
+const STEPS=["みる","なりたち","なぞる","かく","ことば"];
+function lesson(k){
+  const I=INFO[k]; let step=0; const firstTime=!L[k];
+  function frame(body,canNext,nextLabel){
+    app.innerHTML=`<div class="top"><button class="pill" id="quit">‹ いちらん</button><span class="spacer"></span><span class="pill on" style="font-family:var(--f-k);font-size:1.1rem">${k}</span></div>
+    <div class="steps">${STEPS.map((s,i)=>`<span class="${i===step?"on":i<step?"dn":""}">${i+1} ${s}</span>`).join("")}</div>
+    <div class="lesson">${body}</div>
+    <div class="nav"><button class="btn" id="prev" ${step===0?"disabled":""}>‹ まえ</button><button class="btn pri" id="next" ${canNext?"":"disabled"}>${nextLabel||"つぎへ ›"}</button></div>`;
+    $("#quit").onclick=home; $("#prev").onclick=()=>{ step--; show(); }; $("#next").onclick=()=>{ step++; show(); };
+    scrollTo(0,0);
+  }
+  const talk=t=>`<div class="talk"><img src="chara-${CH}.png?v=4" alt=""><p>${t}</p></div>`;
+  function show(){
+    if(step>=STEPS.length) return finish();
+    if(step===0){
+      const y=splitYomi(I.yomi);
+      frame(`${talk(CHAR.say.look)}<div class="card"><div class="big">${kanjiSVG(k)}</div><div class="row"><button class="btn" id="again">▶ もういちど みる</button></div>
+      <dl class="facts"><dt>よみかた</dt><dd>${y.on.length?`<span class="on-y">${y.on.join("・")}</span>`:""}${y.on.length&&y.kun.length?"　":""}${y.kun.join("・")}</dd><dt>いみ</dt><dd>${esc(I.imi)}</dd><dt>かくすう</dt><dd>${I.s}かく</dd><dt>ぶしゅ</dt><dd>${esc(I.bu)}（${esc(I.buN)}）</dd></dl>
+      <p class="legend" style="text-align:left">カタカナは おんよみ、ひらがなは くんよみ だよ。</p></div>`,true);
+      const svg=app.querySelector(".kv"); animate(svg,k); $("#again").onclick=()=>animate(svg,k);
+    }else if(step===1){
+      frame(`${talk(CHAR.say.nari)}<div class="card"><span class="badge" style="align-self:flex-start">${TYPE_TXT[I.type]||I.type}</span><div class="nari-k">${k}</div><p class="nari">${esc(I.nari)}</p></div>`,true);
+    }else if(step===2){
+      frame(`${talk(CHAR.say.trace)}<div class="card"><p class="count">あかい ● から、かきじゅんの とおりに なぞろう</p><div class="big" id="pad"></div><p class="msg" id="msg" aria-live="polite"></p><div class="row"><button class="btn" id="redo">↺ さいしょから</button></div></div>`,false);
+      const go=()=>makePad($("#pad"),k,"trace",()=>{ $("#next").disabled=false; },(t,c)=>{ const m=$("#msg"); m.textContent=t; m.className="msg "+c; });
+      go(); $("#redo").onclick=()=>{ $("#msg").textContent=""; go(); };
+    }else if(step===3){
+      let round=0; const need=2;
+      frame(`${talk(CHAR.say.write)}<div class="card"><p class="count" id="cnt"></p><div class="big" id="pad"></div><p class="msg" id="msg" aria-live="polite"></p><div class="row"><button class="btn" id="peek">👀 おてほんを みる</button><button class="btn" id="redo">↺ かきなおす</button></div></div>`,false);
+      const cnt=()=>$("#cnt").textContent=`おてほんなしで ${need}かい かこう（${Math.min(round+1,need)}かいめ）`;
+      const go=()=>{ cnt(); makePad($("#pad"),k,"write",()=>{ round++; if(round>=need){ $("#next").disabled=false; $("#cnt").textContent=`${need}かい かけたね！`; } else setTimeout(()=>{ $("#msg").textContent="もう1かい！"; $("#msg").className="msg"; go(); },900); },(t,c)=>{ const m=$("#msg"); m.textContent=t; m.className="msg "+c; }); };
+      go(); $("#redo").onclick=()=>{ $("#msg").textContent=""; go(); };
+      $("#peek").onclick=()=>{ const h=$("#pad"); const old=h.innerHTML; h.innerHTML=kanjiSVG(k); animate(h.querySelector("svg"),k); $("#peek").disabled=true; setTimeout(()=>{ $("#peek").disabled=false; go(); }, Math.min(9000,1200+strokePts(k).reduce((a,s)=>a+Math.max(260,s.len*11)+220,0))); };
+    }else if(step===4){
+      const ws=I.words.filter(w=>(D.wy||{})[w]).slice(0,6);
+      const qs=makeQuiz(I,ws); let qi=0, okAll=false;
+      frame(`${talk(CHAR.say.word)}<div class="card"><h3>「${k}」を つかった ことば</h3><div class="words">${ws.map(w=>`<div class="word">${wordHTML(w,k)}</div>`).join("")}</div></div>
+      <div class="card"><h3>れいぶん</h3>${I.rei.map(r=>`<p class="rei">${ruby(r,k)}</p>`).join("")}</div>
+      <div class="card" id="quiz"></div>`,false,"アイテムを もらう 🎁");
+      function q(){
+        const Q=qs[qi], box=$("#quiz");
+        box.innerHTML=`<h3>たしかめ もんだい ${qi+1} / ${qs.length}</h3><p class="q">${Q.q}</p><div class="choices">${Q.c.map(c=>`<button>${esc(c)}</button>`).join("")}</div><p class="msg" id="qm"></p>`;
+        box.querySelectorAll(".choices button").forEach(b=>b.onclick=()=>{
+          if(b.textContent===Q.a){ b.classList.add("ok"); box.querySelectorAll(".choices button").forEach(x=>x.disabled=true); $("#qm").textContent="せいかい！"; $("#qm").className="msg ok";
+            setTimeout(()=>{ qi++; if(qi<qs.length) q(); else { box.innerHTML=`<p class="msg ok">ぜんぶ できたね！ アイテムを もらおう！</p>`; $("#next").disabled=false; $("#next").scrollIntoView({behavior:"smooth",block:"center"}); } },800);
+          }else{ b.classList.remove("ng"); void b.offsetWidth; b.classList.add("ng"); $("#qm").textContent="ざんねん、もういちど！"; $("#qm").className="msg ng"; }
+        });
+      }
+      q();
+    }
+  }
+  function finish(){
+    const rec=L[k]||{n:0}; rec.n=(rec.n||0)+1; rec.t=Date.now(); L[k]=rec;
+    const gifts=[];
+    if(firstTime){ gifts.push(giveItem()); const ci=chapOf(k); if(SECS[ci].every(x=>L[x])){ const sp=giveSpecial(ci); if(sp) gifts.push(sp); } }
+    save();
+    const ov=document.createElement("div"); ov.className="ov "+CH; document.body.appendChild(ov);
+    let gi=0;
+    function showBox(){
+      if(!gifts.length){ ov.innerHTML=`<div class="prize"><h2>「${k}」 ふくしゅう できた！</h2><div class="got">💮</div><p style="margin:0">アイテムは はじめて おぼえた ときに もらえるよ。</p><div class="row"><button class="btn pri" id="ok">いちらんへ</button></div></div>`; $("#ok").onclick=()=>{ ov.remove(); home(); }; return; }
+      const g=gifts[gi];
+      ov.innerHTML=`<div class="prize">${g.sp?`<span class="sp-tag">「${placeName(chapOf(k))}」の かんじを ぜんぶ おぼえた！</span>`:""}<h2>「${k}」を おぼえた！</h2><button class="box" id="open" aria-label="あける">${g.sp?"🎁":CHAR.boxE}</button><p style="margin:0;font-weight:700">タップして あけてね</p></div>`;
+      $("#open").onclick=()=>{
+        kira();
+        const more=gi<gifts.length-1, nk=nextK();
+        ov.innerHTML=`<div class="prize">${g.sp?`<span class="sp-tag">とくべつアイテム</span>`:""}<div class="got">${g.e}</div><div class="got-name">${g.n}</div><p style="margin:0">を てに いれた！ ${CHAR.box}に いれたよ。</p>
+        <div class="row">${more?`<button class="btn pri" id="more">もう 1つ あるよ！ 🎁</button>`:`${nk?`<button class="btn pri" id="nx">つぎの「${nk}」へ ›</button>`:""}<button class="btn" id="ok">いちらんへ</button>`}</div></div>`;
+        if(more) $("#more").onclick=()=>{ gi++; showBox(); };
+        else{ $("#ok").onclick=()=>{ ov.remove(); home(); }; $("#nx")&&($("#nx").onclick=()=>{ ov.remove(); lesson(nk); }); }
+      };
+    }
+    showBox();
+  }
+  show();
+}
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function makeQuiz(I,ws){
+  const qs=[];
+  // 1) れいぶんの 中の よみ
+  const m=I.rei[0].match(new RegExp("\\{"+I.k+"\\|([^}]+)\\}"));
+  if(m){
+    const ans=m[1], pool=new Set();
+    KS.forEach(x=>{ if(x===I.k) return; INFO[x].rei.forEach(r=>{ const mm=r.match(/\{[^|}]+\|([^}]+)\}/g); (mm||[]).forEach(z=>{ const y=z.split("|")[1].slice(0,-1); if(y!==ans) pool.add(y); }); }); });
+    const others=shuffle([...pool]).sort((a,b)=>Math.abs(a.length-ans.length)-Math.abs(b.length-ans.length)).slice(0,6);
+    const sent=ruby(I.rei[0].replace(m[0],"＿＿"),"").replace("＿＿",`<mark>${I.k}</mark>`);
+    qs.push({q:`<span style="font-size:1.15rem">${sent}</span><br>「${I.k}」の よみかたは？`,a:ans,c:shuffle([ans,...shuffle(others).slice(0,2)])});
+  }
+  // 2) ことばの よみ
+  if(ws.length){
+    const w=ws[Math.floor(Math.random()*ws.length)], ans=D.wy[w];
+    const pool=Object.entries(D.wy).filter(([x,y])=>x!==w&&y!==ans&&x.includes(I.k)===false).map(e=>e[1]);
+    const near=shuffle(pool).sort((a,b)=>Math.abs(a.length-ans.length)-Math.abs(b.length-ans.length)).slice(0,8);
+    qs.push({q:`「<span style="font-size:1.3rem">${esc(w)}</span>」は なんと よむ？`,a:ans,c:shuffle([ans,...shuffle(near).slice(0,2)])});
+  }
+  return qs;
+}
+home();
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
+</script>
+</body>
+</html>

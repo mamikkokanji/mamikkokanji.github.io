@@ -22,6 +22,7 @@
 <meta name="apple-mobile-web-app-title" content="かんじフレンズ">
 <style>
 .home-btn{display:inline-flex;align-items:center;gap:2px;font:inherit;font-size:.85rem;font-weight:700;color:var(--muted);text-decoration:none;border:2px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 12px 4px 8px;flex-basis:100%;max-width:max-content;margin-bottom:-4px}
+.mode-row{display:flex;gap:8px;flex-basis:100%;flex-wrap:wrap;margin-bottom:-4px}.mode-row .home-btn{flex-basis:auto;margin:0}.mode-btn{color:var(--accent,#C9940E)!important;border-color:currentColor!important}
 .home-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .wrap>header{order:0}.wrap>.room,.wrap>.nest{order:1}.wrap>#chapBar{order:2}.wrap>.sea.in-battle{order:3}.wrap>#quiz{order:4}.wrap>.sea{order:5}.wrap>.pg{order:6}.wrap>.settings{order:7}.wrap>.foot{order:8}
 .wrap>.room,.wrap>.nest{position:sticky;top:max(6px,env(safe-area-inset-top,0px));z-index:30;grid-template-columns:104px 1fr;gap:12px;padding:8px 14px;box-shadow:0 8px 20px -8px rgba(0,0,0,.25);overflow:visible}
@@ -220,7 +221,7 @@ html,body{overscroll-behavior-y:none}
 <body>
 <div class="wrap">
   <header>
-    <a class="home-btn" href="./">‹ キャラをえらぶ</a>
+    <nav class="mode-row"><a class="home-btn" href="./">‹ キャラをえらぶ</a><a class="home-btn mode-btn" href="learn.html?c=hamster&g=2">📖 おぼえるへ</a></nav>
     <h1>漢字ハムスター 2年生</h1>
     <span class="sub" id="subTitle"></span>
     <button type="button" class="btn ghost pg-top" id="pgTop">📊 進み具合</button>
