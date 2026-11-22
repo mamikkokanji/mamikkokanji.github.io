@@ -1534,6 +1534,107 @@ if((CH==="pirate"||CH==="unicorn") && typeof renderSea==="function"){
 }
 })();
 </script>
+<script>
+// 保護者むけ：書き取りの手書き画像ログ（さいご30件）と、進み具合を見ているときはキャラのカードをかくす
+(function(){
+  if(typeof grade!=="function") return;
+  const KEY="kanji-kakilog-"+(window.PLAY_ID||location.pathname.split("/").pop().replace(".html",""));
+  const MAX=30;
+  const load=()=>{ try{ return JSON.parse(localStorage.getItem(KEY)||"[]"); }catch(e){ return []; } };
+  const store=a=>{ for(let n=a.length;n>0;n--){ try{ localStorage.setItem(KEY,JSON.stringify(a.slice(0,n))); return; }catch(e){} } };
+  const escH=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+  function qText(){
+    const d=document.createElement("div");
+    d.innerHTML=String(current.big||"").replace(/<span class="blank"[^>]*><\/span>/g,"□");
+    d.querySelectorAll(".blank").forEach(b=>b.replaceWith("□"));
+    return d.textContent.replace(/\s+/g," ").trim();
+  }
+  function snap(){
+    const cv=document.getElementById("padCanvas"); if(!cv||!cv.width) return "";
+    const S=180, o=document.createElement("canvas"); o.width=S; o.height=S;
+    const x=o.getContext("2d"); x.fillStyle="#fff"; x.fillRect(0,0,S,S);
+    x.strokeStyle="#e3d9cc"; x.setLineDash([4,4]); x.beginPath(); x.moveTo(S/2,0); x.lineTo(S/2,S); x.moveTo(0,S/2); x.lineTo(S,S/2); x.stroke();
+    x.drawImage(cv,0,0,S,S);
+    return o.toDataURL("image/png");
+  }
+  const _grade=grade;
+  grade=function(ok){
+    try{
+      if(!locked && current && current.type==="kaki"){
+        const t=current.t||{};
+        const a=load(); a.unshift({at:Date.now(),k:t.k||current.k,yomi:t.yomi||"",q:qText(),ok:!!ok,img:snap()});
+        store(a.slice(0,MAX)); paintBtn();
+      }
+    }catch(e){}
+    return _grade.apply(this,arguments);
+  };
+
+  const css=document.createElement("style");
+  css.textContent=`
+.sheet{z-index:60}
+.wrap>.room,.wrap>.nest{transition:transform .25s,opacity .25s}
+.wrap>.room.kpark,.wrap>.nest.kpark{transform:translateY(-140%);opacity:0;pointer-events:none}
+.wrap>.klog-sec{order:6}
+.klog-sec{display:flex;flex-direction:column;gap:8px}
+.klog-sec .btn{width:100%}
+.klog{position:fixed;inset:0;z-index:70;background:var(--bg,#fff);overflow-y:auto;-webkit-overflow-scrolling:touch;padding:max(14px,env(safe-area-inset-top,0px)) 14px 30px}
+.klog-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px}
+.klog-head h2{margin:0;font-size:1.2rem}
+.klog .note{margin:0 0 12px;font-size:.85rem;opacity:.8}
+.klog-sum{display:flex;gap:10px;margin-bottom:12px;font-weight:700}
+.klog-sum span{background:#fff;border-radius:10px;padding:6px 10px;border:1px solid rgba(0,0,0,.08)}
+.klog-list{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.klog-list li{display:grid;grid-template-columns:96px 1fr;gap:12px;align-items:center;background:#fff;border-radius:14px;padding:10px;border:2px solid rgba(0,0,0,.06)}
+.klog-list li.ng{border-color:#f3b8b8;background:#fff7f7}
+.klog-list img,.klog-list .noimg{width:96px;height:96px;border-radius:10px;border:1px solid #e3d9cc;background:#fff}
+.klog-list .noimg{display:flex;align-items:center;justify-content:center;font-size:.75rem;color:#999}
+.klog-list .meta{font-size:.75rem;opacity:.7}
+.klog-list .q{font-size:1rem;margin:2px 0}
+.klog-list .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.klog-list .ans{font-size:2rem;line-height:1;font-weight:700;color:#2A2430}
+.klog-list .judge{font-weight:700;border-radius:999px;padding:3px 10px;font-size:.85rem}
+.klog-list .judge.ok{background:#e1f4e8;color:#1f7a45}
+.klog-list .judge.ng{background:#fde2e2;color:#b43a3a}
+.klog-empty{padding:30px 10px;text-align:center;opacity:.7}
+`;
+  document.head.appendChild(css);
+
+  // てがきログのボタン（進み具合のカードのすぐ下）
+  let btn;
+  function paintBtn(){ if(btn) btn.textContent=`✏️ 書き取りの手書きログ（保護者用）${load().length}件`; }
+  const prog=document.getElementById("prog");
+  if(prog){
+    const sec=document.createElement("section"); sec.className="klog-sec";
+    sec.innerHTML=`<button type="button" class="btn ghost" id="klogBtn"></button>`;
+    prog.after(sec); btn=sec.querySelector("button"); paintBtn();
+    btn.addEventListener("click",openLog);
+  }
+  function fmt(ms){ const d=new Date(ms); const p=n=>String(n).padStart(2,"0"); return `${d.getMonth()+1}/${d.getDate()} ${p(d.getHours())}:${p(d.getMinutes())}`; }
+  function openLog(){
+    const a=load(), ok=a.filter(e=>e.ok).length;
+    const box=document.createElement("div"); box.className="klog"; box.setAttribute("role","dialog"); box.setAttribute("aria-modal","true");
+    box.innerHTML=`<div class="klog-head"><h2>書き取りの手書きログ</h2><button type="button" class="btn ghost" id="klogClose">とじる</button></div>
+      <p class="note">書き取りは自分で○×をつけるので、おうちの方があとから見られるように、さいごの${MAX}件の手書きを残しています（この端末だけに保存）。</p>
+      ${a.length?`<div class="klog-sum"><span>${a.length}件</span><span>○ 書けた ${ok}</span><span>× まちがえた ${a.length-ok}</span></div>
+      <ul class="klog-list">${a.map(e=>`<li class="${e.ok?"ok":"ng"}">
+        ${e.img?`<img src="${e.img}" alt="${escH(e.k)}の手書き">`:`<div class="noimg">画像なし</div>`}
+        <div><div class="meta">${fmt(e.at)}</div><div class="q">${escH(e.q||"")}</div>
+        <div class="row"><span class="meta">正解</span><span class="ans">${escH(e.k)}</span><span class="judge ${e.ok?"ok":"ng"}">${e.ok?"○ 書けた":"× まちがえた"}</span></div></div></li>`).join("")}</ul>`
+      :`<div class="klog-empty">まだ書き取りの記録がありません</div>`}`;
+    document.body.appendChild(box); document.body.style.overflow="hidden";
+    box.querySelector("#klogClose").addEventListener("click",()=>{ box.remove(); document.body.style.overflow=""; });
+  }
+
+  // 進み具合（#prog）より下を見ているときは、上に固定したキャラのカードをかくす
+  const card=document.querySelector(".wrap>.room,.wrap>.nest");
+  if(card&&prog){
+    let raf=0;
+    const upd=()=>{ raf=0; const lim=card.offsetHeight+24; card.classList.toggle("kpark", prog.getBoundingClientRect().top<lim); };
+    addEventListener("scroll",()=>{ if(!raf) raf=requestAnimationFrame(upd); },{passive:true});
+    addEventListener("resize",upd); upd();
+  }
+})();
+</script>
 
 <script>
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
