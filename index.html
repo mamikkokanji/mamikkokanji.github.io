@@ -5,11 +5,11 @@
 <title>かんじフレンズ</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#8A5CC2">
-<meta name="description" content="パイレーツ・ドラゴン・ハムスター・ユニコーンといっしょに、小学校で習う漢字を楽しくおぼえるゲーム">
+<meta name="description" content="パイレーツ・ドラゴン・ペンギン・ユニコーンといっしょに、小学校で習う漢字を楽しくおぼえるゲーム">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="かんじフレンズ">
 <meta property="og:title" content="かんじフレンズ">
-<meta property="og:description" content="パイレーツ・ドラゴン・ハムスター・ユニコーンといっしょに、小学1年生・2年生・6年生の漢字を楽しくおぼえるゲーム">
+<meta property="og:description" content="パイレーツ・ドラゴン・ペンギン・ユニコーンといっしょに、小学1年生・2年生・6年生の漢字を楽しくおぼえるゲーム">
 <meta property="og:url" content="https://mamiariumi-oss.github.io/-app/">
 <meta property="og:image" content="https://mamiariumi-oss.github.io/-app/og-image.png?v=6">
 <meta property="og:image:width" content="1200">
@@ -29,17 +29,17 @@
 :root{
   --bg:#FBF6EE; --surface:#FFFFFF; --ink:#2A2430; --muted:#6F6577; --line:#E8DFD3; --gold:#C9940E;
   --pirate:#1C6EA4; --pirate-soft:#DCEBF6; --dragon:#16855A; --dragon-soft:#DBF0E5;
-  --hamster:#D9701A; --hamster-soft:#FCE9D6; --unicorn:#8A5CC2; --unicorn-soft:#EEE4F8;
+  --hamster:#17879A; --hamster-soft:#DCF1F4; --unicorn:#8A5CC2; --unicorn-soft:#EEE4F8;
   --f-ui:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#17141B; --surface:#221E28; --ink:#F0EBF4; --muted:#A99FB2; --line:#3A3341; --gold:#E8B63E;
   --pirate:#5AA9E0; --pirate-soft:#1E3550; --dragon:#3CC487; --dragon-soft:#183A2C;
-  --hamster:#F2903C; --hamster-soft:#43301C; --unicorn:#B48BE8; --unicorn-soft:#352A4A; color-scheme:dark}}
+  --hamster:#4CC3D4; --hamster-soft:#163A40; --unicorn:#B48BE8; --unicorn-soft:#352A4A; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#17141B; --surface:#221E28; --ink:#F0EBF4; --muted:#A99FB2; --line:#3A3341; --gold:#E8B63E;
   --pirate:#5AA9E0; --pirate-soft:#1E3550; --dragon:#3CC487; --dragon-soft:#183A2C;
-  --hamster:#F2903C; --hamster-soft:#43301C; --unicorn:#B48BE8; --unicorn-soft:#352A4A; color-scheme:dark}
+  --hamster:#4CC3D4; --hamster-soft:#163A40; --unicorn:#B48BE8; --unicorn-soft:#352A4A; color-scheme:dark}
 [hidden]{display:none!important}
 html,body{min-height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.6;margin:0}
@@ -112,7 +112,7 @@ h1 .spk{color:#F2C230;font-size:1.3rem}
 const CHARS = [
   {id:"pirate",  name:"漢字パイレーツ",  who:"海賊の男の子",   kyus:["10","9","5"], key:k=>`kanji-pirate-${k}kyu-v1`},
   {id:"dragon",  name:"漢字ドラゴン",    who:"ドラゴン",       kyus:["10","9","5"], key:k=>k==="5"?"kanji-dragon-v1":`kanji-dragon-${k}kyu-v1`},
-  {id:"hamster", name:"漢字ハムスター",  who:"ハムスター",     kyus:["10","9","5"], key:k=>`kanji-hamster-${k}kyu-v2`},
+  {id:"hamster", name:"漢字ペンギン",  who:"ペンギン",     kyus:["10","9","5"], key:k=>`kanji-hamster-${k}kyu-v2`},
   {id:"unicorn", name:"漢字ユニコーン",  who:"ユニコーン",     kyus:["10","9","5"], key:k=>`kanji-unicorn-${k}kyu-v1`},
 ];
 const KYU_TXT = {"10":"漢字 80字","9":"漢字 160字","5":"漢字 191字"};
@@ -130,7 +130,7 @@ function info(c,k){
 function render(open){
   $("grid").after($("panel"));
   $("grid").innerHTML = CHARS.map(c=>`<button type="button" class="chara ${c.id}" data-id="${c.id}" aria-expanded="${open===c.id}">
-      <img src="chara-${c.id}.png?v=4" alt="" width="366" height="322"><b>${c.name}</b><small>${c.kyus.map(k=>GR[k]+"年生").join("・")}</small></button>`).join("");
+      <img src="chara-${c.id}.png?v=5" alt="" width="366" height="322"><b>${c.name}</b><small>${c.kyus.map(k=>GR[k]+"年生").join("・")}</small></button>`).join("");
   $("grid").querySelectorAll(".chara").forEach(b=>b.addEventListener("click",()=>{ const id=b.dataset.id; render(open===id?null:id); if(open!==id) $("panel").scrollIntoView({behavior:"smooth",block:"nearest"}); }));
   const c=CHARS.find(x=>x.id===open);
   $("panel").hidden=!c;
@@ -151,10 +151,10 @@ const L=last(), lm=L&&L.match(/^learn:(pirate|dragon|hamster|unicorn)-(1|2|6)$/)
 const m=L&&L.match(/^(pirate|dragon|hamster|unicorn)-(10|9|5)$/), lc=m&&CHARS.find(c=>c.id===m[1]&&c.kyus.includes(m[2]));
 if(lm){ const c=CHARS.find(x=>x.id===lm[1]), k={"1":"10","2":"9","6":"5"}[lm[2]];
   $("cont").hidden=false; $("cont").href=`learn.html?c=${c.id}&g=${lm[2]}`; $("cont").className="cont "+c.id;
-  $("cont").innerHTML=`<img src="chara-${c.id}.png?v=4" alt="" width="84" height="68"><div><b>つづきから：${c.name} ${lm[2]}年生</b><span>📖 おぼえる（${learnInfo(c,k)} / ${NK[k]}字）</span></div><i>›</i>`;
+  $("cont").innerHTML=`<img src="chara-${c.id}.png?v=5" alt="" width="84" height="68"><div><b>つづきから：${c.name} ${lm[2]}年生</b><span>📖 おぼえる（${learnInfo(c,k)} / ${NK[k]}字）</span></div><i>›</i>`;
 }else if(lc){
   $("cont").hidden=false; $("cont").href=L+".html"; $("cont").className="cont "+lc.id;
-  $("cont").innerHTML=`<img src="chara-${lc.id}.png?v=4" alt="" width="84" height="68"><div><b>つづきから：${lc.name} ${GR[m[2]]}年生</b><span>✏️ クイズ・${info(lc,m[2]).replace(/<\/?b>/g,"")}</span></div><i>›</i>`;
+  $("cont").innerHTML=`<img src="chara-${lc.id}.png?v=5" alt="" width="84" height="68"><div><b>つづきから：${lc.name} ${GR[m[2]]}年生</b><span>✏️ クイズ・${info(lc,m[2]).replace(/<\/?b>/g,"")}</span></div><i>›</i>`;
 }
 render(null);
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }

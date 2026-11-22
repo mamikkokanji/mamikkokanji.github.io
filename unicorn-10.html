@@ -7,7 +7,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="かんじフレンズ">
 <meta property="og:title" content="かんじフレンズ">
-<meta property="og:description" content="パイレーツ・ドラゴン・ハムスター・ユニコーンといっしょに、小学1年生・2年生・6年生の漢字を楽しくおぼえるゲーム">
+<meta property="og:description" content="パイレーツ・ドラゴン・ペンギン・ユニコーンといっしょに、小学1年生・2年生・6年生の漢字を楽しくおぼえるゲーム">
 <meta property="og:url" content="https://mamiariumi-oss.github.io/-app/unicorn-10.html">
 <meta property="og:image" content="https://mamiariumi-oss.github.io/-app/og-image.png?v=6">
 <meta property="og:image:width" content="1200">
@@ -588,7 +588,9 @@ function buildQuestion(type,t){
 }
 
 // ---------- ユニコーンの絵（オリジナルキャラクター） ----------
-function unicornSVG(st){
+function unicornSVG(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||"";
+  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><defs><clipPath id="evc${n}"><rect x="4" y="14" width="152" height="132" rx="22"/></clipPath></defs><g class="bob"><rect x="4" y="14" width="152" height="132" rx="22" fill="#fff"/><image href="evo/unicorn-${n}.webp" x="4" y="14" width="152" height="132" preserveAspectRatio="xMidYMid slice" clip-path="url(#evc${n})"/></g></svg>`; }
+function unicornSVG_old(st){
   const sc = 0.66 + st*0.024;
   const S = 'stroke="var(--ink)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
   const S2 = 'stroke="var(--ink)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"';
@@ -1197,7 +1199,7 @@ renderChips(); renderAll(); resumeOrNew(); bindReset(); connectCloud();
 </script>
 <script>window.PLAY_CH="unicorn";window.PLAY_ID="unicorn-10";</script>
 <script>
-// あそびば：ハムスター・ドラゴンのミニゲーム（build.py が hamster-*/dragon-* に入れる）
+// あそびば：ペンギン・ドラゴンのミニゲーム（build.py が hamster-*/dragon-* に入れる）
 (function(){
 const CH=window.PLAY_CH, PID=window.PLAY_ID;
 if(!CH || typeof state!=="object") return;
@@ -1216,8 +1218,8 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const MEM={id:"memory", icon:"🃏", name:"かんじ しんけいすいじゃく", desc:"かんじと よみかたを そろえよう", unit:"かい", low:true};
 const GAMES = ({
   hamster:[
-    {id:"feed",   icon:"🌻", name:"たねを あげよう",      desc:"でてくる たねを タッチして たべさせよう", unit:"こ"},
-    {id:"cups",   icon:"🥤", name:"どこかな？ ハムスター", desc:"コップが まざるよ。ハムスターが どこに いるか よく みてね", unit:"かい"}],
+    {id:"feed",   icon:"🐟", name:"さかなを あげよう",      desc:"でてくる さかなを タッチして たべさせよう", unit:"ひき"},
+    {id:"cups",   icon:"⛄", name:"どこかな？ ペンギン", desc:"かまくらが まざるよ。ペンギンが どこに いるか よく みてね", unit:"かい"}],
   dragon:[
     {id:"target", icon:"🎯", name:"ほのおで まとあて",     desc:"でてくる まとを タッチして ほのおを ふこう", unit:"こ"},
     {id:"hoi",    icon:"👉", name:"あっちむいて ホイ",     desc:"ドラゴンと 6かい しょうぶ！",            unit:"てん"}],
@@ -1228,7 +1230,7 @@ const GAMES = ({
     {id:"feed",   icon:"⭐", name:"ながれぼし キャッチ",   desc:"でてくる ほしを タッチして あつめよう", unit:"こ"},
     {id:"hoi",    icon:"👉", name:"あっちむいて ホイ",     desc:"ユニコーンと 6かい しょうぶ！",          unit:"てん"}],
 })[CH].concat([MEM]);
-const NAME=({hamster:"ハムスター",dragon:"ドラゴン",pirate:"かいぞく",unicorn:"ユニコーン"})[CH];
+const NAME=({hamster:"ペンギン",dragon:"ドラゴン",pirate:"かいぞく",unicorn:"ユニコーン"})[CH];
 
 // ---------- スタイル ----------
 const css=document.createElement("style");
@@ -1257,9 +1259,12 @@ css.textContent=`
 .pz-time i{display:block;height:100%;background:var(--pc);width:100%}
 .pz-stage{position:relative;height:min(58vh,340px);border-radius:18px;overflow:hidden;background:linear-gradient(#FFF8EC,#F3E4C8);touch-action:none;user-select:none;-webkit-user-select:none}
 .pz-box.dragon .pz-stage{background:linear-gradient(#DDF1FF,#CFEBDD)}
+.pz-box.hamster .pz-stage{background:linear-gradient(#DDF0FA,#F4FAFD)}
+.pz-box.hamster .pz-floor{background:linear-gradient(#FFFFFF,#D7EAF3)}
 .pz-box.pirate .pz-stage{background:linear-gradient(#CFE9FA,#F4E3BC)}
 .pz-box.unicorn .pz-stage{background:linear-gradient(#3B2E6E,#8C6CC8)}
 .pz-box.unicorn .pz-seed::before{content:"⭐";font-size:34px;left:4px;top:2px;width:auto;height:auto;border:0;background:none;transform:none}
+.pz-box.hamster .pz-seed::before{content:"🐟";font-size:34px;left:4px;top:2px;width:auto;height:auto;border:0;background:none;transform:none}
 .pz-sand{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:10px;height:100%;box-sizing:border-box;align-content:center}
 .pz-sand button{font:inherit;aspect-ratio:1;border:0;border-radius:10px;background:#E2C68E;box-shadow:inset 0 -4px 0 rgba(0,0,0,.12);font-size:1.5rem;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:center;padding:0}
 .pz-sand button.dug{background:#C9A86A;box-shadow:none;cursor:default}
@@ -1303,6 +1308,8 @@ css.textContent=`
 .pz-cupw .cup::after{content:"";position:absolute;left:12px;right:12px;top:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.35)}
 .pz-cupw .cup.up{transform:translateY(-92px)}
 .pz-cupw .cup:disabled{cursor:default}
+.pz-box.hamster .pz-cupw .cup{border-radius:50% 50% 8px 8px/70% 70% 8px 8px;background:repeating-linear-gradient(0deg,transparent 0 22px,rgba(120,160,190,.45) 22px 24px),radial-gradient(circle at 35% 30%,#FFFFFF,#E4F2FA 55%,#BFDDEE);box-shadow:inset 0 -8px 0 rgba(90,140,180,.25),0 6px 0 rgba(0,0,0,.12)}
+.pz-box.hamster .pz-cupw .cup::after{left:34px;right:34px;top:auto;bottom:6px;height:34px;border-radius:18px 18px 4px 4px;background:rgba(70,110,150,.35)}
 .pz-cupw.pick .cup{box-shadow:0 0 0 5px #FFD54A,inset 0 -10px 0 rgba(0,0,0,.18)}
 .pz-floor{position:absolute;left:0;right:0;bottom:0;height:46px;background:#D9B98A}
 .pz-big-t{position:absolute;left:0;right:0;top:38%;text-align:center;font-size:2.6rem;font-weight:900;color:var(--pc);text-shadow:0 3px 0 #fff;pointer-events:none;animation:pzpop .25s ease-out}
@@ -1425,14 +1432,14 @@ function openGame(id){
   ov.querySelector(".pz-x").focus({preventScroll:true});
 }
 
-// ---------- ハムスター：たねを あげよう ----------
+// ---------- ペンギン：さかなを あげよう ----------
 function feed(a){
   let n=0; a.score(0);
   a.stage.innerHTML=`<div class="pz-chr">${charSVG()}</div>`;
   const chr=a.stage.querySelector(".pz-chr");
   function spawn(){
     const W=a.stage.clientWidth, H=a.stage.clientHeight;
-    const s=document.createElement("button"); s.type="button"; s.className="pz-seed"; s.setAttribute("aria-label","たね");
+    const s=document.createElement("button"); s.type="button"; s.className="pz-seed"; s.setAttribute("aria-label",CH==="hamster"?"さかな":"たね");
     s.style.left=(30+Math.random()*(W-60))+"px"; s.style.top=(30+Math.random()*(H-180))+"px";
     s.addEventListener("pointerdown",e=>{ e.preventDefault(); if(s.classList.contains("fly")) return;
       n++; a.score(n); s.classList.add("fly"); s.style.left=(W/2)+"px"; s.style.top=(H-80)+"px";
@@ -1444,10 +1451,10 @@ function feed(a){
   a.timer(20,()=>a.end(n));
 }
 
-// ---------- ハムスター：どこかな？（コップの シャッフル） ----------
+// ---------- ペンギン：どこかな？（かまくらの シャッフル） ----------
 function cups(a){
   const R=5; let round=0, got=0; a.score(0);
-  a.stage.innerHTML=`<div class="pz-floor"></div>`+[0,1,2].map(i=>`<div class="pz-cupw" data-c="${i}"><div class="ham">${i===0?charSVG():""}</div><button type="button" class="cup" aria-label="コップ ${i+1}" disabled></button></div>`).join("");
+  a.stage.innerHTML=`<div class="pz-floor"></div>`+[0,1,2].map(i=>`<div class="pz-cupw" data-c="${i}"><div class="ham">${i===0?charSVG():""}</div><button type="button" class="cup" aria-label="かまくら ${i+1}" disabled></button></div>`).join("");
   const W=()=>a.stage.clientWidth, X=s=>W()*(0.2+0.3*s);
   const ws=[...a.stage.querySelectorAll(".pz-cupw")]; let slot=[0,1,2]; let hamCup=0;
   const place=()=>ws.forEach((w,i)=>w.style.left=X(slot[i])+"px");
@@ -1459,7 +1466,7 @@ function cups(a){
   function startRound(){
     go.hidden=true; ws.forEach(w=>w.classList.remove("pick"));
     hamCup=rnd(3); ws.forEach((w,i)=>w.querySelector(".ham").innerHTML=i===hamCup?charSVG():"");
-    a.msg.textContent=`${round+1}かいめ：ハムスターは この コップに はいるよ。よく みてね！`;
+    a.msg.textContent=`${round+1}かいめ：ペンギンは この かまくらに はいるよ。よく みてね！`;
     cupsBtn.forEach(c=>{ c.disabled=true; c.classList.remove("up"); });
     cupsBtn[hamCup].classList.add("up");
     later(()=>{ cupsBtn[hamCup].classList.remove("up"); later(shuffleCups,500); },1300);
@@ -1475,7 +1482,7 @@ function cups(a){
     step();
   }
   function ask(){
-    a.msg.textContent="ハムスターは どこかな？ コップを タッチしてね";
+    a.msg.textContent="ペンギンは どこかな？ かまくらを タッチしてね";
     cupsBtn.forEach(c=>c.disabled=false);
   }
   cupsBtn.forEach((c,i)=>c.addEventListener("click",()=>{
@@ -1483,12 +1490,12 @@ function cups(a){
     c.classList.add("up");
     const ok=i===hamCup;
     if(ok){ got++; a.score(got); big("みつけた！"); a.msg.textContent="あたり！ よく みていたね"; }
-    else { later(()=>cupsBtn[hamCup].classList.add("up"),500); big("ざんねん"); a.msg.textContent="ハムスターは こっちに いたよ"; }
+    else { later(()=>cupsBtn[hamCup].classList.add("up"),500); big("ざんねん"); a.msg.textContent="ペンギンは こっちに いたよ"; }
     round++;
     later(()=>{ if(round>=R){ a.end(got); return; } cupsBtn.forEach(x=>x.classList.remove("up")); later(startRound,450); },1800);
   }));
   go.addEventListener("click",startRound);
-  a.msg.textContent=`ハムスターが はいった コップを、さいごまで めで おいかけよう！ ぜんぶで ${R}かい`;
+  a.msg.textContent=`ペンギンが はいった かまくらを、さいごまで めで おいかけよう！ ぜんぶで ${R}かい`;
 }
 
 // ---------- しんけいすいじゃく ----------
@@ -1565,7 +1572,7 @@ function faceSVG(kind){
   const K={
     dragon:{c:"#5BBF84",back:`<path d="M34 40L28 12L48 32Z" fill="#F2C94C" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/><path d="M86 40L92 12L72 32Z" fill="#F2C94C" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/>`,patch:"",muzzle:`<ellipse cx="60" cy="84" rx="17" ry="11" fill="#8FD6A8" stroke="#2A2430" stroke-width="2.5"/><circle cx="54" cy="82" r="2.2" fill="#2A2430"/><circle cx="66" cy="82" r="2.2" fill="#2A2430"/>`,front:""},
     unicorn:{c:"#FFFFFF",back:`<path d="M30 40L26 14L46 30Z" fill="#fff" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/><path d="M90 40L94 14L74 30Z" fill="#fff" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/><path d="M60 4L52 34H68Z" fill="#F2C94C" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/><path d="M24 50Q14 70 26 92Q30 70 36 58Z" fill="#F7A8C8" stroke="#2A2430" stroke-width="2.5"/><path d="M96 50Q106 70 94 92Q90 70 84 58Z" fill="#A8C8F7" stroke="#2A2430" stroke-width="2.5"/>`,patch:"",muzzle:`<circle cx="55" cy="82" r="2" fill="#E77A8F"/><circle cx="65" cy="82" r="2" fill="#E77A8F"/>`,front:`<path d="M38 34Q60 18 82 34Q70 30 60 40Q50 30 38 34Z" fill="#C8A8F7" stroke="#2A2430" stroke-width="2.5"/>`},
-    hamster:{c:"#E9A25B",back:`<circle cx="30" cy="34" r="14" fill="#E9A25B" stroke="#2A2430" stroke-width="3"/><circle cx="30" cy="34" r="7" fill="#F5B5C0"/><circle cx="90" cy="34" r="14" fill="#E9A25B" stroke="#2A2430" stroke-width="3"/><circle cx="90" cy="34" r="7" fill="#F5B5C0"/>`,patch:`<ellipse cx="60" cy="80" rx="24" ry="18" fill="#FFF1DE"/>`,muzzle:`<path d="M56 76L64 76L60 81Z" fill="#E77A8F"/>`,front:""},
+    hamster:{c:"#33415E",back:"",patch:`<path d="M60 44c-10-8-30-4-32 16-2 18 10 32 32 34 22-2 34-16 32-34-2-20-22-24-32-16z" fill="#FFFFFF"/>`,muzzle:`<path d="M53 74Q60 71 67 74L60 82Z" fill="#F2A13A" stroke="#2A2430" stroke-width="2" stroke-linejoin="round"/>`,front:""},
     pirate:{c:"#F6CBA4",back:``,patch:"",muzzle:`<path d="M57 74Q60 78 63 74" fill="none" stroke="#C98A6A" stroke-width="2.5" stroke-linecap="round"/>`,front:`<path d="M20 52Q22 22 60 20Q98 22 100 52Q80 40 60 42Q40 40 20 52Z" fill="#D9453A" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/><path d="M98 46L112 40L108 56Z" fill="#D9453A" stroke="#2A2430" stroke-width="2.5" stroke-linejoin="round"/>`},
     kid:{c:"#F6CBA4",back:``,patch:"",muzzle:`<path d="M57 74Q60 78 63 74" fill="none" stroke="#C98A6A" stroke-width="2.5" stroke-linecap="round"/>`,front:`<path d="M20 58Q18 20 60 20Q102 20 100 58Q92 36 72 34Q66 44 48 40Q34 38 20 58Z" fill="#5A3B2A" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/>`},
   }[kind]||{};

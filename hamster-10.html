@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#D9701A">
+<meta name="theme-color" content="#17879A">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="かんじフレンズ">
 <meta property="og:title" content="かんじフレンズ">
-<meta property="og:description" content="パイレーツ・ドラゴン・ハムスター・ユニコーンといっしょに、小学1年生・2年生・6年生の漢字を楽しくおぼえるゲーム">
+<meta property="og:description" content="パイレーツ・ドラゴン・ペンギン・ユニコーンといっしょに、小学1年生・2年生・6年生の漢字を楽しくおぼえるゲーム">
 <meta property="og:url" content="https://mamiariumi-oss.github.io/-app/hamster-10.html">
 <meta property="og:image" content="https://mamiariumi-oss.github.io/-app/og-image.png?v=6">
 <meta property="og:image:width" content="1200">
@@ -43,26 +43,26 @@
 .wrap>.room .stats,.wrap>.nest .stats{flex-wrap:nowrap;white-space:nowrap;overflow:hidden}
 </style>
 <script>try{localStorage.setItem("kanji-app-last","hamster-10")}catch(e){}</script>
-<title>かんじハムスター 1ねんせい</title>
+<title>かんじペンギン 1ねんせい</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
 <style>
-/* Layout: ハムスターのおへや（上）＋問題カード（下）の1列。スマホでもそのまま縦にならぶ */
+/* Layout: ペンギンのこおりのへや（上）＋問題カード（下）の1列。スマホでもそのまま縦にならぶ */
 :root{
-  --bg:#FFF5E8; --surface:#FFFFFF; --ink:#3A2A1E; --muted:#7A6553; --line:#EBDAC4;
-  --acc:#D9701A; --acc-soft:#FCE5CC; --ok:#2E8656; --ok-soft:#D9F0E2; --bad:#C2413A; --bad-soft:#F8DEDB; --gold:#C9940E;
-  --fur:#E9A25B; --fur-d:#C97F3A; --gold-fur:#EDC04A; --cream:#FFF1DC; --pink:#F09AA4; --cape:#C7423B; --cap:#3B3550; --wood:#9A6A3A;
+  --bg:#EEF7FB; --surface:#FFFFFF; --ink:#1F2B3A; --muted:#5E6E80; --line:#D3E4EE;
+  --acc:#17879A; --acc-soft:#D6EEF3; --ok:#2E8656; --ok-soft:#D9F0E2; --bad:#C2413A; --bad-soft:#F8DEDB; --gold:#C9940E;
+  --pg:#33415E; --baby:#9AA4B2; --belly:#FFFFFF; --beak:#F2A13A; --scarf:#3FA7B5; --fish:#7DB7E8; --gold-fur:#EDC04A; --pink:#F09AA4; --cape:#C7423B; --cap:#3B3550; --wood:#9A6A3A;
   --f-ui:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;
   --f-kanji:"Klee One","Hiragino Mincho ProN","Yu Mincho",serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#1E1712; --surface:#2A211A; --ink:#F3E8DC; --muted:#BBA894; --line:#43362B;
-  --acc:#F2903C; --acc-soft:#4A321C; --ok:#4CC383; --ok-soft:#1E3A2A; --bad:#F07068; --bad-soft:#3E2220; --gold:#E8B63E;
-  --fur:#E39A52; --fur-d:#B9773A; --gold-fur:#E8BC48; --cream:#F7E6CC; --pink:#E98E99; --cape:#D2524A; --cap:#5A5274; --wood:#B4824E; color-scheme:dark}}
+  --bg:#121A22; --surface:#1B2631; --ink:#E6F0F6; --muted:#9FB2C2; --line:#2E3E4D;
+  --acc:#4CC3D4; --acc-soft:#173B42; --ok:#4CC383; --ok-soft:#1E3A2A; --bad:#F07068; --bad-soft:#3E2220; --gold:#E8B63E;
+  --pg:#5C6F96; --baby:#A9B2BF; --belly:#F4F1EA; --beak:#F0A040; --scarf:#4FB8C6; --fish:#8CC2EE; --gold-fur:#E8BC48; --pink:#E98E99; --cape:#D2524A; --cap:#5A5274; --wood:#B4824E; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#1E1712; --surface:#2A211A; --ink:#F3E8DC; --muted:#BBA894; --line:#43362B;
-  --acc:#F2903C; --acc-soft:#4A321C; --ok:#4CC383; --ok-soft:#1E3A2A; --bad:#F07068; --bad-soft:#3E2220; --gold:#E8B63E;
-  --fur:#E39A52; --fur-d:#B9773A; --gold-fur:#E8BC48; --cream:#F7E6CC; --pink:#E98E99; --cape:#D2524A; --cap:#5A5274; --wood:#B4824E; color-scheme:dark}
+  --bg:#121A22; --surface:#1B2631; --ink:#E6F0F6; --muted:#9FB2C2; --line:#2E3E4D;
+  --acc:#4CC3D4; --acc-soft:#173B42; --ok:#4CC383; --ok-soft:#1E3A2A; --bad:#F07068; --bad-soft:#3E2220; --gold:#E8B63E;
+  --pg:#5C6F96; --baby:#A9B2BF; --belly:#F4F1EA; --beak:#F0A040; --scarf:#4FB8C6; --fish:#8CC2EE; --gold-fur:#E8BC48; --pink:#E98E99; --cape:#D2524A; --cap:#5A5274; --wood:#B4824E; color-scheme:dark}
 [hidden]{display:none!important}
 html,body{min-height:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.6;margin:0}
@@ -222,16 +222,16 @@ html,body{overscroll-behavior-y:none}
 <div class="wrap">
   <header>
     <nav class="mode-row"><a class="home-btn" href="./">‹ キャラをえらぶ</a><a class="home-btn mode-btn" href="learn.html?c=hamster&g=1">📖 おぼえるへ</a></nav>
-    <h1>かんじハムスター 1ねんせい</h1>
+    <h1>かんじペンギン 1ねんせい</h1>
     <span class="sub" id="subTitle"></span>
     <button type="button" class="btn ghost pg-top" id="pgTop">📊 進み具合</button>
   </header>
 
-  <section class="room" aria-label="ハムスターのようす">
+  <section class="room" aria-label="ペンギンのようす">
     <div id="hamBox"></div>
     <div>
       <div class="stage-lv" id="stageLv">LEVEL 1</div>
-      <p class="stage-name" id="stageName">あかちゃんハムスター</p>
+      <p class="stage-name" id="stageName">あかちゃんペンギン</p>
       <div class="meter" aria-hidden="true"><i id="meterBar"></i></div>
       <div class="meter-txt" id="meterTxt"></div>
       <div class="road" id="road" aria-hidden="true"></div>
@@ -566,18 +566,23 @@ const TYPES = [
 ];
 // 10だんかいの進化。PER問正解するごとに1つ進化する
 const STAGES = [
-  {name:"あかちゃんハムスター", text:"ねむそうな、あかちゃんハムスター。"},
-  {name:"ちびハムスター", text:"めが ぱっちり！ ひまわりの たねを もてるように なった。"},
-  {name:"もぐもぐハムスター", text:"ほおぶくろが ぷっくり。たねを たくさん ためられる！"},
-  {name:"はちまきハムスター", text:"「漢」の はちまきで、やるき まんまん！"},
-  {name:"めがねハムスター", text:"めがねを かけて、むずかしい かんじも よく みえる！"},
-  {name:"ふでハムスター", text:"ふでを もって、かきじゅんも ばっちり！"},
-  {name:"マントハムスター", text:"あかい マントで、かっこよく しんか！"},
-  {name:"はかせハムスター", text:"はかせぼうしを かぶった、かんじの はかせ！"},
-  {name:"きんいろハムスター", text:"けが きんいろに かがやきはじめた！"},
-  {name:"でんせつの かんじハムスター", text:"おうかんを かぶった、でんせつの ハムスターに なった！"},
+  {name:"たまごの ペンギン", text:"なにが うまれるかな？ あおい もようの たまご。"},
+  {name:"ひよこの ペンギン", text:"からを やぶって うまれた！"},
+  {name:"こどもの ペンギン", text:"よちよち あるけるように なった！"},
+  {name:"わかものの ペンギン", text:"せが のびて、たくましく なってきた！"},
+  {name:"おとなの ペンギン", text:"つばさを ひろげて、りっぱな おとなに なった！"},
+  {name:"ぼうしの ペンギン", text:"あかい ぼうしを かぶって、おでかけ きぶん！"},
+  {name:"マフラーの ペンギン", text:"しましまの マフラーで ぽかぽか！"},
+  {name:"うみの ペンギン", text:"ゴーグルを つけて、うみに もぐるよ！"},
+  {name:"せいじゃの ペンギン", text:"おうかんと つえを もった、かしこい ペンギン！"},
+  {name:"つばさの ペンギン", text:"つばさを ぱたぱた、げんき いっぱい！"},
+  {name:"ほしの ペンギン", text:"きらきらの ほしに かこまれた！"},
+  {name:"みずうみの ペンギン", text:"うきわで みずうみを すいすい！"},
+  {name:"レインボーの ペンギン", text:"にじいろの つばさが はえた！"},
+  {name:"きんいろの ペンギン", text:"からだが きんいろに かがやきはじめた！"},
+  {name:"でんせつの かんじペンギン", text:"おうかんと マントの、でんせつの ペンギンに なった！"},
 ];
-const PER = 15;
+const PER = 10;
 
 // ---------- 記録（この端末のブラウザに保存） ----------
 // 1) すぐ使えるブラウザ保存  2) claude.ai のアカウントに保存（ほかの端末でもつづきから）
@@ -725,49 +730,51 @@ function buildQuestion(type,t){
   return {type, t, prompt:"この かんじは ぜんぶで なんかく？", big:esc(t.k), opts};
 }
 
-// ---------- ハムスターの絵 ----------
-function hamsterSVG(st){
+// ---------- ペンギンの絵 ----------
+function hamsterSVG(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||"";
+  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><defs><clipPath id="evc${n}"><rect x="4" y="14" width="152" height="132" rx="22"/></clipPath></defs><g class="bob"><rect x="4" y="14" width="152" height="132" rx="22" fill="#fff"/><image href="evo/hamster-${n}.webp" x="4" y="14" width="152" height="132" preserveAspectRatio="xMidYMid slice" clip-path="url(#evc${n})"/></g></svg>`; }
+function hamsterSVG_old(st){
+  // ペンギンの絵（関数名は CH+"SVG" で よばれるので そのまま）
   const sc = 0.74 + st*0.029;
-  const fur = st>=8 ? "var(--gold-fur)" : "var(--fur)";
+  const body = st>=8 ? "var(--gold-fur)" : st===0 ? "var(--baby)" : "var(--pg)";
   const S = 'stroke="var(--ink)" stroke-width="3" stroke-linejoin="round"';
+  const s2 = S.replace('3"','2"');
   const sparkle=(x,y,r)=>`<path d="M${x} ${y-r}L${x+r*.3} ${y-r*.3}L${x+r} ${y}L${x+r*.3} ${y+r*.3}L${x} ${y+r}L${x-r*.3} ${y+r*.3}L${x-r} ${y}L${x-r*.3} ${y-r*.3}Z" fill="var(--gold)"/>`;
   const eyes = st===0
     ? `<path d="M58 78q6 5 12 0M90 78q6 5 12 0" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round"/>`
     : `<circle cx="64" cy="77" r="6" fill="var(--ink)"/><circle cx="96" cy="77" r="6" fill="var(--ink)"/>
        <circle cx="66" cy="75" r="2" fill="#fff"/><circle cx="98" cy="75" r="2" fill="#fff"/>`;
-  const cheekR = st>=2 ? 15 : 10;
+  const fish = (x,y,r)=>`<g transform="translate(${x} ${y}) rotate(${r})"><path d="M-12 0Q-4 -8 6 -1L13 -7L12 0L13 7L6 1Q-4 8 -12 0Z" fill="var(--fish)" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round"/><circle cx="-6" cy="-1" r="1.6" fill="var(--ink)"/></g>`;
+  const up = st>=5;  // みぎの つばさを あげて ふでを もつ
   return `<svg viewBox="0 0 160 160" role="img" aria-label="${STAGES[st].name}"><g class="bob"><g transform="translate(80 150) scale(${sc}) translate(-80 -150)">
     ${st>=9?`<circle cx="80" cy="96" r="74" fill="var(--gold)" opacity=".18"/>`:""}
     <ellipse cx="80" cy="149" rx="46" ry="7" fill="var(--line)"/>
     ${st>=6?`<path d="M46 74Q22 120 30 148H130Q138 120 114 74Z" fill="var(--cape)" ${S}/>`:""}
-    <circle cx="48" cy="50" r="15" fill="${fur}" ${S}/><circle cx="48" cy="50" r="7" fill="var(--pink)"/>
-    <circle cx="112" cy="50" r="15" fill="${fur}" ${S}/><circle cx="112" cy="50" r="7" fill="var(--pink)"/>
-    <path d="M80 44c32 0 52 26 52 58s-22 46-52 46-52-14-52-46 20-58 52-58z" fill="${fur}" ${S}/>
-    <ellipse cx="80" cy="124" rx="30" ry="22" fill="var(--cream)"/>
-    <ellipse cx="80" cy="92" rx="22" ry="14" fill="var(--cream)"/>
-    ${st>=6?`<path d="M56 104q24 10 48 0" fill="none" stroke="var(--gold)" stroke-width="4" stroke-linecap="round"/><circle cx="80" cy="108" r="5" fill="var(--gold)" ${S.replace('3"','2"')}/>`:""}
-    <circle class="cheek" cx="${st>=2?50:56}" cy="92" r="${cheekR}" fill="${st>=2?fur:"none"}" ${st>=2?S:""}/>
-    <circle class="cheek" cx="${st>=2?110:104}" cy="92" r="${cheekR}" fill="${st>=2?fur:"none"}" ${st>=2?S:""}/>
-    <ellipse cx="${st>=2?50:56}" cy="94" rx="7" ry="4.5" fill="var(--pink)" opacity=".75"/>
-    <ellipse cx="${st>=2?110:104}" cy="94" rx="7" ry="4.5" fill="var(--pink)" opacity=".75"/>
+    <path d="M36 94Q16 114 22 132Q34 126 42 108Z" fill="${body}" ${S}/>
+    ${up?`<path d="M118 100Q136 84 140 66Q126 70 112 92Z" fill="${body}" ${S}/>`:`<path d="M124 94Q144 114 138 132Q126 126 118 108Z" fill="${body}" ${S}/>`}
+    <path d="M80 34c34 0 50 30 50 66s-18 48-50 48-50-12-50-48 16-66 50-66z" fill="${body}" ${S}/>
+    ${st===0?`<path d="M70 38q4-12 10-4q6-10 10 4" fill="${body}" ${s2}/>`:""}
+    <ellipse cx="80" cy="120" rx="33" ry="27" fill="var(--belly)"/>
+    <circle cx="65" cy="80" r="17" fill="var(--belly)"/><circle cx="95" cy="80" r="17" fill="var(--belly)"/>
+    <rect x="65" y="80" width="30" height="24" fill="var(--belly)"/>
+    ${st>=2&&st<=5?`<path d="M44 100Q80 116 116 100L114 110Q80 124 46 110Z" fill="var(--scarf)" ${s2}/><path d="M100 110l8 22l10-4l-6-20" fill="var(--scarf)" ${s2}/>`:""}
+    ${st>=6?`<path d="M56 106q24 10 48 0" fill="none" stroke="var(--gold)" stroke-width="4" stroke-linecap="round"/><circle cx="80" cy="110" r="5" fill="var(--gold)" ${s2}/>`:""}
+    <ellipse cx="54" cy="93" rx="7" ry="4.5" fill="var(--pink)" opacity=".75"/>
+    <ellipse cx="106" cy="93" rx="7" ry="4.5" fill="var(--pink)" opacity=".75"/>
     ${eyes}
     ${st>=4?`<g fill="none" stroke="var(--ink)" stroke-width="2.5"><circle cx="64" cy="77" r="11"/><circle cx="96" cy="77" r="11"/><path d="M75 76q5-3 10 0"/></g>`:""}
-    <ellipse cx="80" cy="88" rx="4.5" ry="3.2" fill="var(--pink)" stroke="var(--ink)" stroke-width="1.5"/>
-    <path d="M73 95q4 4 7 0q3 4 7 0" fill="none" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/>
-    <g stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" opacity=".6"><path d="M62 90l-18-3M62 95l-18 2M98 90l18-3M98 95l18 2"/></g>
-    ${st>=3&&st<=6?`<path d="M34 66Q80 46 126 66" fill="none" stroke="var(--cape)" stroke-width="9" stroke-linecap="round"/>
-      <path d="M124 64l14-6M124 66l12 8" stroke="var(--cape)" stroke-width="5" stroke-linecap="round"/>
-      <circle cx="80" cy="56" r="8" fill="#fff" stroke="var(--cape)" stroke-width="2"/>
-      <text x="80" y="59.5" text-anchor="middle" font-size="10" font-weight="900" fill="var(--cape)" font-family="sans-serif">漢</text>`:""}
-    ${st===7||st===8?`<path d="M54 52h52v-8H54z" fill="var(--cap)" ${S}/><path d="M44 42L80 28L116 42L80 54Z" fill="var(--cap)" ${S}/>
-      <path d="M80 41L114 46v14" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linecap="round"/><circle cx="114" cy="62" r="4" fill="var(--gold)"/>`:""}
-    ${st>=9?`<path d="M54 54l4-24 12 12 10-18 10 18 12-12 4 24z" fill="var(--gold)" ${S}/><circle cx="80" cy="46" r="4" fill="var(--cape)"/><circle cx="64" cy="48" r="2.5" fill="#fff"/><circle cx="96" cy="48" r="2.5" fill="#fff"/>`:""}
-    ${st>=1&&st<5?`<path d="M80 108c5 0 7 7 6 12-1 4-4 6-6 6s-5-2-6-6c-1-5 1-12 6-12z" fill="var(--ink)"/><path d="M80 111v12" stroke="var(--cream)" stroke-width="1.6" stroke-linecap="round"/>`:""}
-    ${st>=5?`<path d="M102 124L126 74" stroke="var(--wood)" stroke-width="6" stroke-linecap="round"/><path d="M126 74l4-10c2-4-6-7-8-3l-3 10z" fill="var(--ink)"/>`:""}
-    <ellipse cx="68" cy="118" rx="9" ry="7" fill="var(--pink)" ${S.replace('3"','2"')}/>
-    <ellipse cx="${st>=5?102:92}" cy="${st>=5?122:118}" rx="9" ry="7" fill="var(--pink)" ${S.replace('3"','2"')}/>
-    <ellipse cx="60" cy="146" rx="12" ry="6" fill="var(--pink)" ${S.replace('3"','2"')}/>
-    <ellipse cx="100" cy="146" rx="12" ry="6" fill="var(--pink)" ${S.replace('3"','2"')}/>
+    <path d="M71 88Q80 84 89 88L80 98Z" fill="var(--beak)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+    ${st>=3&&st<=6?`<path d="M34 62Q80 42 126 62" fill="none" stroke="var(--cape)" stroke-width="9" stroke-linecap="round"/>
+      <path d="M124 60l14-6M124 62l12 8" stroke="var(--cape)" stroke-width="5" stroke-linecap="round"/>
+      <circle cx="80" cy="52" r="8" fill="#fff" stroke="var(--cape)" stroke-width="2"/>
+      <text x="80" y="55.5" text-anchor="middle" font-size="10" font-weight="900" fill="var(--cape)" font-family="sans-serif">漢</text>`:""}
+    ${st===7||st===8?`<path d="M54 46h52v-8H54z" fill="var(--cap)" ${S}/><path d="M44 36L80 22L116 36L80 48Z" fill="var(--cap)" ${S}/>
+      <path d="M80 35L114 40v14" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linecap="round"/><circle cx="114" cy="56" r="4" fill="var(--gold)"/>`:""}
+    ${st>=9?`<path d="M54 48l4-24 12 12 10-18 10 18 12-12 4 24z" fill="var(--gold)" ${S}/><circle cx="80" cy="40" r="4" fill="var(--cape)"/><circle cx="64" cy="42" r="2.5" fill="#fff"/><circle cx="96" cy="42" r="2.5" fill="#fff"/>`:""}
+    ${st>=1&&st<5?fish(80,126,-8):""}
+    ${up?`<path d="M106 128L132 66" stroke="var(--wood)" stroke-width="6" stroke-linecap="round"/><path d="M132 66l4-10c2-4-6-7-8-3l-3 10z" fill="var(--ink)"/>`:""}
+    <ellipse cx="64" cy="147" rx="13" ry="6" fill="var(--beak)" ${s2}/>
+    <ellipse cx="96" cy="147" rx="13" ry="6" fill="var(--beak)" ${s2}/>
     ${st>=8?sparkle(22,40,8)+sparkle(140,30,6)+sparkle(146,104,7)+sparkle(16,110,5):""}
   </g></g></svg>`;
 }
@@ -784,11 +791,11 @@ function renderRoom(munch){
   $("stageName").textContent=STAGES[st].name;
   if(st>=STAGES.length-1){
     $("meterBar").style.width="100%";
-    $("meterTxt").innerHTML=`さいごまで しんかした！ たね <b>${state.correct}</b> こ`;
+    $("meterTxt").innerHTML=`さいごまで しんかした！ さかな <b>${state.correct}</b> ひき`;
   }else{
     const inStage=state.correct%PER;
     $("meterBar").style.width=(inStage/PER*100)+"%";
-    $("meterTxt").innerHTML=`ひまわりのたね あと <b>${PER-inStage}</b> こで しんか`;
+    $("meterTxt").innerHTML=`さかな あと <b>${PER-inStage}</b> ひきで進化`;
   }
   $("road").innerHTML=STAGES.map((_,i)=>`<span class="${i<=st?"on":""}"></span>`).join("");
   const rate=state.answered?Math.round(state.correct/state.answered*100):0;
@@ -920,7 +927,7 @@ function grade(ok){
   save();
   if(current.type==="kaki") $("selfCheck").hidden=true;
   const fb=document.createElement("div"); fb.className="feedback";
-  fb.innerHTML=`<div class="res ${ok?"ok":"ng"}">${ok?"せいかい！ ひまわりのたねをゲット":"ざんねん… この かんじは また でてくるよ"}</div>
+  fb.innerHTML=`<div class="res ${ok?"ok":"ng"}">${ok?"せいかい！ さかなをゲット":"ざんねん… この かんじは また でてくるよ"}</div>
     <dl class="info">
       <dt>かんじ</dt><dd class="kj">${esc(t.k)}</dd>
       <dt>よみ</dt><dd><span class="lab">よみ</span>${esc(t.yomi)}</dd>
@@ -939,7 +946,7 @@ function grade(ok){
 function showEvo(st){
   $("evoHam").innerHTML=hamsterSVG(st);
   $("evoTitle").textContent=`${STAGES[st].name}に しんかした！`;
-  $("evoText").textContent=`${STAGES[st].text}（たね ${state.correct} こ）`;
+  $("evoText").textContent=`${STAGES[st].text}（さかな ${state.correct} ひき）`;
   $("evoNext").textContent = st<STAGES.length-1 ? `つぎの しんかまで、あと ${PER}もん せいかい` : "さいごの しんかだよ。おめでとう！";
   $("evo").hidden=false; $("evoClose").focus();
 }
@@ -957,7 +964,7 @@ function renderChips(){
 
 function bindReset(){
   $("resetBtn").addEventListener("click",()=>{
-    $("resetArea").innerHTML=`<div class="confirm"><span>ハムスターがあかちゃんにもどります。</span><button class="btn" type="button" id="resetYes">リセットする</button><button class="btn ghost" type="button" id="resetNo">やめる</button></div>`;
+    $("resetArea").innerHTML=`<div class="confirm"><span>ペンギンがあかちゃんにもどります。</span><button class="btn" type="button" id="resetYes">リセットする</button><button class="btn ghost" type="button" id="resetNo">やめる</button></div>`;
     $("resetYes").addEventListener("click",()=>{ Object.assign(state,{correct:0,answered:0,streak:0,best:0,miss:{},cur:null,st:{},chap:null}); restoreReset(); renderRoom(); renderQuestion(); });
     $("resetNo").addEventListener("click",restoreReset);
   });
@@ -1171,7 +1178,7 @@ renderChips(); renderRoom(); resumeOrNew(); bindReset(); connectCloud();
 </script>
 <script>window.PLAY_CH="hamster";window.PLAY_ID="hamster-10";</script>
 <script>
-// あそびば：ハムスター・ドラゴンのミニゲーム（build.py が hamster-*/dragon-* に入れる）
+// あそびば：ペンギン・ドラゴンのミニゲーム（build.py が hamster-*/dragon-* に入れる）
 (function(){
 const CH=window.PLAY_CH, PID=window.PLAY_ID;
 if(!CH || typeof state!=="object") return;
@@ -1190,8 +1197,8 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const MEM={id:"memory", icon:"🃏", name:"かんじ しんけいすいじゃく", desc:"かんじと よみかたを そろえよう", unit:"かい", low:true};
 const GAMES = ({
   hamster:[
-    {id:"feed",   icon:"🌻", name:"たねを あげよう",      desc:"でてくる たねを タッチして たべさせよう", unit:"こ"},
-    {id:"cups",   icon:"🥤", name:"どこかな？ ハムスター", desc:"コップが まざるよ。ハムスターが どこに いるか よく みてね", unit:"かい"}],
+    {id:"feed",   icon:"🐟", name:"さかなを あげよう",      desc:"でてくる さかなを タッチして たべさせよう", unit:"ひき"},
+    {id:"cups",   icon:"⛄", name:"どこかな？ ペンギン", desc:"かまくらが まざるよ。ペンギンが どこに いるか よく みてね", unit:"かい"}],
   dragon:[
     {id:"target", icon:"🎯", name:"ほのおで まとあて",     desc:"でてくる まとを タッチして ほのおを ふこう", unit:"こ"},
     {id:"hoi",    icon:"👉", name:"あっちむいて ホイ",     desc:"ドラゴンと 6かい しょうぶ！",            unit:"てん"}],
@@ -1202,7 +1209,7 @@ const GAMES = ({
     {id:"feed",   icon:"⭐", name:"ながれぼし キャッチ",   desc:"でてくる ほしを タッチして あつめよう", unit:"こ"},
     {id:"hoi",    icon:"👉", name:"あっちむいて ホイ",     desc:"ユニコーンと 6かい しょうぶ！",          unit:"てん"}],
 })[CH].concat([MEM]);
-const NAME=({hamster:"ハムスター",dragon:"ドラゴン",pirate:"かいぞく",unicorn:"ユニコーン"})[CH];
+const NAME=({hamster:"ペンギン",dragon:"ドラゴン",pirate:"かいぞく",unicorn:"ユニコーン"})[CH];
 
 // ---------- スタイル ----------
 const css=document.createElement("style");
@@ -1231,9 +1238,12 @@ css.textContent=`
 .pz-time i{display:block;height:100%;background:var(--pc);width:100%}
 .pz-stage{position:relative;height:min(58vh,340px);border-radius:18px;overflow:hidden;background:linear-gradient(#FFF8EC,#F3E4C8);touch-action:none;user-select:none;-webkit-user-select:none}
 .pz-box.dragon .pz-stage{background:linear-gradient(#DDF1FF,#CFEBDD)}
+.pz-box.hamster .pz-stage{background:linear-gradient(#DDF0FA,#F4FAFD)}
+.pz-box.hamster .pz-floor{background:linear-gradient(#FFFFFF,#D7EAF3)}
 .pz-box.pirate .pz-stage{background:linear-gradient(#CFE9FA,#F4E3BC)}
 .pz-box.unicorn .pz-stage{background:linear-gradient(#3B2E6E,#8C6CC8)}
 .pz-box.unicorn .pz-seed::before{content:"⭐";font-size:34px;left:4px;top:2px;width:auto;height:auto;border:0;background:none;transform:none}
+.pz-box.hamster .pz-seed::before{content:"🐟";font-size:34px;left:4px;top:2px;width:auto;height:auto;border:0;background:none;transform:none}
 .pz-sand{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:10px;height:100%;box-sizing:border-box;align-content:center}
 .pz-sand button{font:inherit;aspect-ratio:1;border:0;border-radius:10px;background:#E2C68E;box-shadow:inset 0 -4px 0 rgba(0,0,0,.12);font-size:1.5rem;cursor:pointer;touch-action:manipulation;display:flex;align-items:center;justify-content:center;padding:0}
 .pz-sand button.dug{background:#C9A86A;box-shadow:none;cursor:default}
@@ -1277,6 +1287,8 @@ css.textContent=`
 .pz-cupw .cup::after{content:"";position:absolute;left:12px;right:12px;top:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.35)}
 .pz-cupw .cup.up{transform:translateY(-92px)}
 .pz-cupw .cup:disabled{cursor:default}
+.pz-box.hamster .pz-cupw .cup{border-radius:50% 50% 8px 8px/70% 70% 8px 8px;background:repeating-linear-gradient(0deg,transparent 0 22px,rgba(120,160,190,.45) 22px 24px),radial-gradient(circle at 35% 30%,#FFFFFF,#E4F2FA 55%,#BFDDEE);box-shadow:inset 0 -8px 0 rgba(90,140,180,.25),0 6px 0 rgba(0,0,0,.12)}
+.pz-box.hamster .pz-cupw .cup::after{left:34px;right:34px;top:auto;bottom:6px;height:34px;border-radius:18px 18px 4px 4px;background:rgba(70,110,150,.35)}
 .pz-cupw.pick .cup{box-shadow:0 0 0 5px #FFD54A,inset 0 -10px 0 rgba(0,0,0,.18)}
 .pz-floor{position:absolute;left:0;right:0;bottom:0;height:46px;background:#D9B98A}
 .pz-big-t{position:absolute;left:0;right:0;top:38%;text-align:center;font-size:2.6rem;font-weight:900;color:var(--pc);text-shadow:0 3px 0 #fff;pointer-events:none;animation:pzpop .25s ease-out}
@@ -1399,14 +1411,14 @@ function openGame(id){
   ov.querySelector(".pz-x").focus({preventScroll:true});
 }
 
-// ---------- ハムスター：たねを あげよう ----------
+// ---------- ペンギン：さかなを あげよう ----------
 function feed(a){
   let n=0; a.score(0);
   a.stage.innerHTML=`<div class="pz-chr">${charSVG()}</div>`;
   const chr=a.stage.querySelector(".pz-chr");
   function spawn(){
     const W=a.stage.clientWidth, H=a.stage.clientHeight;
-    const s=document.createElement("button"); s.type="button"; s.className="pz-seed"; s.setAttribute("aria-label","たね");
+    const s=document.createElement("button"); s.type="button"; s.className="pz-seed"; s.setAttribute("aria-label",CH==="hamster"?"さかな":"たね");
     s.style.left=(30+Math.random()*(W-60))+"px"; s.style.top=(30+Math.random()*(H-180))+"px";
     s.addEventListener("pointerdown",e=>{ e.preventDefault(); if(s.classList.contains("fly")) return;
       n++; a.score(n); s.classList.add("fly"); s.style.left=(W/2)+"px"; s.style.top=(H-80)+"px";
@@ -1418,10 +1430,10 @@ function feed(a){
   a.timer(20,()=>a.end(n));
 }
 
-// ---------- ハムスター：どこかな？（コップの シャッフル） ----------
+// ---------- ペンギン：どこかな？（かまくらの シャッフル） ----------
 function cups(a){
   const R=5; let round=0, got=0; a.score(0);
-  a.stage.innerHTML=`<div class="pz-floor"></div>`+[0,1,2].map(i=>`<div class="pz-cupw" data-c="${i}"><div class="ham">${i===0?charSVG():""}</div><button type="button" class="cup" aria-label="コップ ${i+1}" disabled></button></div>`).join("");
+  a.stage.innerHTML=`<div class="pz-floor"></div>`+[0,1,2].map(i=>`<div class="pz-cupw" data-c="${i}"><div class="ham">${i===0?charSVG():""}</div><button type="button" class="cup" aria-label="かまくら ${i+1}" disabled></button></div>`).join("");
   const W=()=>a.stage.clientWidth, X=s=>W()*(0.2+0.3*s);
   const ws=[...a.stage.querySelectorAll(".pz-cupw")]; let slot=[0,1,2]; let hamCup=0;
   const place=()=>ws.forEach((w,i)=>w.style.left=X(slot[i])+"px");
@@ -1433,7 +1445,7 @@ function cups(a){
   function startRound(){
     go.hidden=true; ws.forEach(w=>w.classList.remove("pick"));
     hamCup=rnd(3); ws.forEach((w,i)=>w.querySelector(".ham").innerHTML=i===hamCup?charSVG():"");
-    a.msg.textContent=`${round+1}かいめ：ハムスターは この コップに はいるよ。よく みてね！`;
+    a.msg.textContent=`${round+1}かいめ：ペンギンは この かまくらに はいるよ。よく みてね！`;
     cupsBtn.forEach(c=>{ c.disabled=true; c.classList.remove("up"); });
     cupsBtn[hamCup].classList.add("up");
     later(()=>{ cupsBtn[hamCup].classList.remove("up"); later(shuffleCups,500); },1300);
@@ -1449,7 +1461,7 @@ function cups(a){
     step();
   }
   function ask(){
-    a.msg.textContent="ハムスターは どこかな？ コップを タッチしてね";
+    a.msg.textContent="ペンギンは どこかな？ かまくらを タッチしてね";
     cupsBtn.forEach(c=>c.disabled=false);
   }
   cupsBtn.forEach((c,i)=>c.addEventListener("click",()=>{
@@ -1457,12 +1469,12 @@ function cups(a){
     c.classList.add("up");
     const ok=i===hamCup;
     if(ok){ got++; a.score(got); big("みつけた！"); a.msg.textContent="あたり！ よく みていたね"; }
-    else { later(()=>cupsBtn[hamCup].classList.add("up"),500); big("ざんねん"); a.msg.textContent="ハムスターは こっちに いたよ"; }
+    else { later(()=>cupsBtn[hamCup].classList.add("up"),500); big("ざんねん"); a.msg.textContent="ペンギンは こっちに いたよ"; }
     round++;
     later(()=>{ if(round>=R){ a.end(got); return; } cupsBtn.forEach(x=>x.classList.remove("up")); later(startRound,450); },1800);
   }));
   go.addEventListener("click",startRound);
-  a.msg.textContent=`ハムスターが はいった コップを、さいごまで めで おいかけよう！ ぜんぶで ${R}かい`;
+  a.msg.textContent=`ペンギンが はいった かまくらを、さいごまで めで おいかけよう！ ぜんぶで ${R}かい`;
 }
 
 // ---------- しんけいすいじゃく ----------
@@ -1539,7 +1551,7 @@ function faceSVG(kind){
   const K={
     dragon:{c:"#5BBF84",back:`<path d="M34 40L28 12L48 32Z" fill="#F2C94C" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/><path d="M86 40L92 12L72 32Z" fill="#F2C94C" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/>`,patch:"",muzzle:`<ellipse cx="60" cy="84" rx="17" ry="11" fill="#8FD6A8" stroke="#2A2430" stroke-width="2.5"/><circle cx="54" cy="82" r="2.2" fill="#2A2430"/><circle cx="66" cy="82" r="2.2" fill="#2A2430"/>`,front:""},
     unicorn:{c:"#FFFFFF",back:`<path d="M30 40L26 14L46 30Z" fill="#fff" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/><path d="M90 40L94 14L74 30Z" fill="#fff" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/><path d="M60 4L52 34H68Z" fill="#F2C94C" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/><path d="M24 50Q14 70 26 92Q30 70 36 58Z" fill="#F7A8C8" stroke="#2A2430" stroke-width="2.5"/><path d="M96 50Q106 70 94 92Q90 70 84 58Z" fill="#A8C8F7" stroke="#2A2430" stroke-width="2.5"/>`,patch:"",muzzle:`<circle cx="55" cy="82" r="2" fill="#E77A8F"/><circle cx="65" cy="82" r="2" fill="#E77A8F"/>`,front:`<path d="M38 34Q60 18 82 34Q70 30 60 40Q50 30 38 34Z" fill="#C8A8F7" stroke="#2A2430" stroke-width="2.5"/>`},
-    hamster:{c:"#E9A25B",back:`<circle cx="30" cy="34" r="14" fill="#E9A25B" stroke="#2A2430" stroke-width="3"/><circle cx="30" cy="34" r="7" fill="#F5B5C0"/><circle cx="90" cy="34" r="14" fill="#E9A25B" stroke="#2A2430" stroke-width="3"/><circle cx="90" cy="34" r="7" fill="#F5B5C0"/>`,patch:`<ellipse cx="60" cy="80" rx="24" ry="18" fill="#FFF1DE"/>`,muzzle:`<path d="M56 76L64 76L60 81Z" fill="#E77A8F"/>`,front:""},
+    hamster:{c:"#33415E",back:"",patch:`<path d="M60 44c-10-8-30-4-32 16-2 18 10 32 32 34 22-2 34-16 32-34-2-20-22-24-32-16z" fill="#FFFFFF"/>`,muzzle:`<path d="M53 74Q60 71 67 74L60 82Z" fill="#F2A13A" stroke="#2A2430" stroke-width="2" stroke-linejoin="round"/>`,front:""},
     pirate:{c:"#F6CBA4",back:``,patch:"",muzzle:`<path d="M57 74Q60 78 63 74" fill="none" stroke="#C98A6A" stroke-width="2.5" stroke-linecap="round"/>`,front:`<path d="M20 52Q22 22 60 20Q98 22 100 52Q80 40 60 42Q40 40 20 52Z" fill="#D9453A" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/><path d="M98 46L112 40L108 56Z" fill="#D9453A" stroke="#2A2430" stroke-width="2.5" stroke-linejoin="round"/>`},
     kid:{c:"#F6CBA4",back:``,patch:"",muzzle:`<path d="M57 74Q60 78 63 74" fill="none" stroke="#C98A6A" stroke-width="2.5" stroke-linecap="round"/>`,front:`<path d="M20 58Q18 20 60 20Q102 20 100 58Q92 36 72 34Q66 44 48 40Q34 38 20 58Z" fill="#5A3B2A" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/>`},
   }[kind]||{};
@@ -1750,13 +1762,13 @@ if((CH==="pirate"||CH==="unicorn") && typeof renderSea==="function"){
 })();
 </script>
 <script>
-// ハムスター・ドラゴンの「マップ」（パイレーツの島・ユニコーンのくにと同じしくみ。ボスはなし）
+// ペンギン・ドラゴンの「マップ」（パイレーツの島・ユニコーンのくにと同じしくみ。ボスはなし）
 // その場所の漢字をぜんぶ1回ずつ正解すると、つぎの場所がひらく。
 (function(){
   if(typeof ALL==="undefined"||typeof pool0!=="function"||typeof grade!=="function") return;
   const CH=window.PLAY_CH;
   const M=({
-    hamster:{title:"おさんぽマップ", icon:"🐾", names:["おうちのケージ","ひまわりばたけ","どんぐりのもり","いちごのはたけ","クローバーのはら","ちいさな かわ","キノコのもり","ゆきの やま","おほしさまのおか","ひみつのたからばこ"]},
+    hamster:{title:"なんきょくマップ", icon:"🐧", names:["ペンギンの すあな","こおりの はま","ゆきの さか","さかなの うみ","オーロラの そら","こおりの どうくつ","クジラの いりえ","ひょうざんの みなと","ゆきだるまの むら","なんきょくの てっぺん"]},
     dragon:{title:"ドラゴンのせかい", icon:"🐉", names:["たまごのすみか","みどりのたに","ほのおの やま","こおりのどうくつ","かみなりの そら","にじのたき","ほうせきのどうくつ","くものしろ","ほしぞらのとう","でんせつのしんでん"]}
   })[CH];
   if(!M) return;

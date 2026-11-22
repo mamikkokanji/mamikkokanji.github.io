@@ -6,8 +6,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#D9701A">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-192.png?v=4" type="image/png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
+<link rel="icon" href="icon-192.png?v=5" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="かんじフレンズ">
@@ -55,9 +55,9 @@
 .gift-meter{display:flex;align-items:center;gap:10px;background:var(--surface);border:2px solid var(--gold);border-radius:16px;padding:8px 12px;font-weight:700;font-size:.9rem}
 .gift-meter .pips{justify-content:flex-start}
 .gift-meter .pips i.on{background:var(--gold)}
-.pirate{--c:#1C6EA4;--soft:#DCEBF6} .dragon{--c:#16855A;--soft:#DBF0E5} .hamster{--c:#D9701A;--soft:#FCE9D6} .unicorn{--c:#8A5CC2;--soft:#EEE4F8}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pirate{--c:#5AA9E0;--soft:#1E3550}:root:not([data-theme="light"]) .dragon{--c:#3CC487;--soft:#183A2C}:root:not([data-theme="light"]) .hamster{--c:#F2903C;--soft:#43301C}:root:not([data-theme="light"]) .unicorn{--c:#B48BE8;--soft:#352A4A}}
-:root[data-theme="dark"] .pirate{--c:#5AA9E0;--soft:#1E3550}:root[data-theme="dark"] .dragon{--c:#3CC487;--soft:#183A2C}:root[data-theme="dark"] .hamster{--c:#F2903C;--soft:#43301C}:root[data-theme="dark"] .unicorn{--c:#B48BE8;--soft:#352A4A}
+.pirate{--c:#1C6EA4;--soft:#DCEBF6} .dragon{--c:#16855A;--soft:#DBF0E5} .hamster{--c:#17879A;--soft:#DCF1F4} .unicorn{--c:#8A5CC2;--soft:#EEE4F8}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pirate{--c:#5AA9E0;--soft:#1E3550}:root:not([data-theme="light"]) .dragon{--c:#3CC487;--soft:#183A2C}:root:not([data-theme="light"]) .hamster{--c:#4CC3D4;--soft:#163A40}:root:not([data-theme="light"]) .unicorn{--c:#B48BE8;--soft:#352A4A}}
+:root[data-theme="dark"] .pirate{--c:#5AA9E0;--soft:#1E3550}:root[data-theme="dark"] .dragon{--c:#3CC487;--soft:#183A2C}:root[data-theme="dark"] .hamster{--c:#4CC3D4;--soft:#163A40}:root[data-theme="dark"] .unicorn{--c:#B48BE8;--soft:#352A4A}
 [hidden]{display:none!important}
 *{box-sizing:border-box}
 html,body{min-height:100%}
@@ -172,10 +172,10 @@ const CHAR={
     say:{hi:"かんじの ちからを あつめよう！",look:"かきじゅんを よく みてね！",nari:"この かんじの なりたちを おしえるよ！",trace:"うすい じを なぞってみよう！",write:"こんどは みないで かいてみよう！",word:"ことばと ぶんで つかってみよう！"},
     items:[["💎","ほうせき"],["🔥","ほのおの たま"],["⚡","いなずま"],["🌙","つきの いし"],["⭐","ほしの かけら"],["🔮","すいしょう"],["🍖","おにく"],["🍎","りんご"],["🪨","まほうの いわ"],["🌿","くすりそう"],["🍄","ふしぎな きのこ"],["🗡️","つるぎ"],["🛡️","たて"],["💠","あおい ほうせき"],["🔶","オレンジの ほうせき"],["🟢","みどりの ほうせき"],["🪶","はね"],["🦴","ほね"],["☄️","りゅうせい"],["🌈","にじの かけら"],["🧪","まほうの くすり"],["📜","まきもの"],["🪵","たきぎ"],["🍯","はちみつ"]],
     special:[["👑","りゅうの おうかん"],["🏯","りゅうの しろ"],["🌋","かざん"],["🥚","でんせつの たまご"],["🏆","きんの トロフィー"],["🐉","りゅうの おまもり"],["🌌","ぎんが"],["⛰️","りゅうの やま"],["🎖️","くんしょう"],["🔱","いかずちの やり"]]},
-  hamster:{name:"漢字ハムスター",who:"ハムスター",box:"おやつばこ",boxE:"🧺",
+  hamster:{name:"漢字ペンギン",who:"ペンギン",box:"こおりの はこ",boxE:"🧊",
     say:{hi:"いっしょに かんじを おぼえよう！",look:"かきじゅんを よく みてね！",nari:"この かんじの ひみつ、おしえるね！",trace:"うすい じを なぞってみよう！",write:"こんどは みないで かいてみよう！",word:"ことばと ぶんで つかってみよう！"},
-    items:[["🌻","ひまわりの たね"],["🥜","ピーナッツ"],["🌰","くり"],["🍓","いちご"],["🥕","にんじん"],["🍎","りんご"],["🌽","とうもろこし"],["🫐","ブルーベリー"],["🧀","チーズ"],["🍪","クッキー"],["🥦","ブロッコリー"],["🍌","バナナ"],["🍉","すいか"],["🍒","さくらんぼ"],["🥒","きゅうり"],["🍠","さつまいも"],["🎀","リボン"],["🧶","けいと"],["🥬","キャベツ"],["🍞","パン"],["🎈","ふうせん"],["🧸","ぬいぐるみ"],["🪀","ヨーヨー"],["🍙","おにぎり"]],
-    special:[["🏠","ハムスターの おうち"],["🎡","まわしぐるま"],["🛝","すべりだい"],["🎂","ケーキ"],["🏆","きんの トロフィー"],["🛏️","ふかふか ベッド"],["🎠","メリーゴーランド"],["🚂","きしゃ"],["🎖️","くんしょう"],["🏰","おしろ"]]},
+    items:[["🐟","さかな"],["🦐","えび"],["🦑","いか"],["🐠","ねったいぎょ"],["🐡","ふぐ"],["🦀","かに"],["🐚","かいがら"],["🧊","こおり"],["❄️","ゆきの けっしょう"],["⛄","ゆきだるま"],["🧣","マフラー"],["🧤","てぶくろ"],["🧢","ぼうし"],["⛸️","スケートぐつ"],["🎿","スキー"],["🛷","そり"],["🪁","たこ"],["🎈","ふうせん"],["🧸","ぬいぐるみ"],["🍙","おにぎり"],["🍦","ソフトクリーム"],["🍧","かきごおり"],["⭐","ほし"],["🔦","かいちゅうでんとう"]],
+    special:[["🏠","ペンギンの おうち"],["🛝","こおりの すべりだい"],["🌌","オーロラ"],["🎂","ケーキ"],["🏆","きんの トロフィー"],["🛏️","ふかふか ベッド"],["🎠","メリーゴーランド"],["🚂","きしゃ"],["🎖️","くんしょう"],["🏰","おしろ"]]},
   unicorn:{name:"漢字ユニコーン",who:"ユニコーン",box:"きらきらばこ",boxE:"💝",
     say:{hi:"まほうの かんじを あつめよう！",look:"かきじゅんを よく みてね！",nari:"この かんじの なりたちだよ！",trace:"うすい じを なぞってみよう！",write:"こんどは みないで かいてみよう！",word:"ことばと ぶんで つかってみよう！"},
     items:[["🌟","ほし"],["🌸","さくら"],["🌈","にじ"],["🦋","ちょうちょ"],["🍭","キャンディ"],["💐","はなたば"],["🎀","リボン"],["💖","ハート"],["🔮","まほうの たま"],["🌙","おつきさま"],["☁️","くも"],["🌷","チューリップ"],["🧁","カップケーキ"],["🍬","あめ"],["🫧","しゃぼんだま"],["🪄","まほうの つえ"],["💎","ほうせき"],["🌼","ひなぎく"],["🍓","いちご"],["🎐","ふうりん"],["🐚","かいがら"],["🪽","はね"],["🍀","よつばの クローバー"],["🌺","ハイビスカス"]],
@@ -190,7 +190,7 @@ const SEC_N=KS.length<=80?8:10;
 const SECS=Array.from({length:SEC_N},(_,i)=>KS.slice(Math.round(i*KS.length/SEC_N),Math.round((i+1)*KS.length/SEC_N)));
 const PLACE={pirate:{icon:"🏝️",names:["はじまりの島","ヤシの木の島","さんごの島","きりの島","火山の島","こおりの島","かぜの島","ほらあなの島","あらしの島"],last:"さいごの島"},
   unicorn:{icon:"🌈",names:["はじまりの草原","おはなの国","にじの谷","きりの森","ほのおの山","こおりの国","かぜの丘","ほらあなの国","かみなりの空"],last:"ゆめのお城"},
-  hamster:{icon:"🐾",names:["おうちのケージ","ひまわりばたけ","どんぐりのもり","いちごのはたけ","クローバーのはら","ちいさな かわ","キノコのもり","ゆきの やま","おほしさまのおか","ひみつのたからばこ"]},
+  hamster:{icon:"🐧",names:["ペンギンの すあな","こおりの はま","ゆきの さか","さかなの うみ","オーロラの そら","こおりの どうくつ","クジラの いりえ","ひょうざんの みなと","ゆきだるまの むら","なんきょくの てっぺん"]},
   dragon:{icon:"🐉",names:["たまごのすみか","みどりのたに","ほのおの やま","こおりのどうくつ","かみなりの そら","にじのたき","ほうせきのどうくつ","くものしろ","ほしぞらのとう","でんせつのしんでん"]}}[CH];
 const placeName=i=>i===SEC_N-1?(PLACE.last||PLACE.names[PLACE.names.length-1]):PLACE.names[i];
 const LKEY="kanji-learn-v1", PAGE=CH+"-"+GRADE;
@@ -372,7 +372,7 @@ function home(){
       ks.map(k=>`<button class="tile ${L[k]?"done":""} ${k===nk?"next":""}" data-k="${k}" aria-label="${k}${L[k]?"（おぼえた）":""}">${k}${star(k)}</button>`).join("")+`</div></section>`;
   }
   app.innerHTML=`<div class="top"><a class="pill" href="./">‹ キャラをえらぶ</a><span class="spacer"></span><button class="pill" id="boxBtn">${CHAR.boxE} ${CHAR.box}（${ownedCount()+Object.keys(SP).length}）</button></div>
-  <div class="hero"><img src="chara-${CH}.png?v=4" alt=""><div><h1>${CHAR.name} ${GRADE}年生<br>おぼえる</h1><p>おぼえた かんじ <b>${n}</b> / ${KS.length}${nk?`・いまは「${placeName(chapOf(nk))}」`:""}</p><div class="bar"><i style="width:${n/KS.length*100}%"></i></div></div></div>
+  <div class="hero"><img src="chara-${CH}.png?v=5" alt=""><div><h1>${CHAR.name} ${GRADE}年生<br>おぼえる</h1><p>おぼえた かんじ <b>${n}</b> / ${KS.length}${nk?`・いまは「${placeName(chapOf(nk))}」`:""}</p><div class="bar"><i style="width:${n/KS.length*100}%"></i></div></div></div>
   <div class="modes"><button class="on" aria-current="page">📖 おぼえる</button><a href="${CH}-${KYU}.html">✏️ クイズ</a></div>
   <div class="gift-meter"><span>${CHAR.boxE}</span><span>あと <b>${PER_ITEM-(n%PER_ITEM)}</b>字 れんしゅうすると アイテム！</span>${(()=>{const m=n%PER_ITEM;return `<div class="pips">${Array.from({length:PER_ITEM},(_,i)=>`<i class="${i<m?"on":""}"></i>`).join("")}</div>`;})()}</div>
   ${nk?`<button class="btn pri" id="goNext" style="padding:14px;font-size:1.1rem">つぎの かんじ「${nk}」を おぼえる ›</button>`:`<p class="msg ok">ぜんぶ おぼえたね！ クイズに ちょうせんしよう！</p>`}
@@ -389,7 +389,7 @@ function box(){
   const all=CHAR.items;
   const spList=Object.entries(SP);
   app.innerHTML=`<div class="top"><button class="pill" id="back">‹ もどる</button></div>
-  <div class="hero"><img src="chara-${CH}.png?v=4" alt=""><div><h1>${CHAR.boxE} ${CHAR.box}</h1><p>かんじを 5つ しっかり れんしゅうすると アイテムが 1つ。ひとつの ばしょの かんじを ぜんぶ おぼえると とくべつアイテム！</p></div></div>
+  <div class="hero"><img src="chara-${CH}.png?v=5" alt=""><div><h1>${CHAR.boxE} ${CHAR.box}</h1><p>かんじを 5つ しっかり れんしゅうすると アイテムが 1つ。ひとつの ばしょの かんじを ぜんぶ おぼえると とくべつアイテム！</p></div></div>
   <section class="card"><h3>とくべつアイテム（${spList.length}）</h3><div class="shelf">${CHAR.special.map((x,i)=>{ const has=spList.some(([id,j])=>j===i); return has?`<div class="it sp">${x[0]}<small>${x[1]}</small></div>`:`<div class="it no">？</div>`; }).join("")}</div></section>
   <section class="card"><h3>アイテム（${Object.keys(IT).length} / ${all.length}しゅるい）</h3><div class="shelf">${all.map((x,i)=>IT[i]?`<div class="it">${IT[i]>1?`<span class="n">×${IT[i]}</span>`:""}${x[0]}<small>${x[1]}</small></div>`:`<div class="it no">？</div>`).join("")}</div></section>`;
   $("#back").onclick=home; scrollTo(0,0);
@@ -418,7 +418,7 @@ function lesson(k){
     scrollTo(0,0);
   }
   const unlock=()=>{ done[step]=true; $("#next").disabled=false; };
-  const talk=t=>`<div class="talk"><img src="chara-${CH}.png?v=4" alt=""><p>${t}</p></div>`;
+  const talk=t=>`<div class="talk"><img src="chara-${CH}.png?v=5" alt=""><p>${t}</p></div>`;
   const pips=(n,need)=>`<div class="pips" aria-label="${n}/${need}">${Array.from({length:need},(_,i)=>`<i class="${i<n?"on":""}"></i>`).join("")}</div>`;
   const msgFn=(t,c)=>{ const m=$("#msg"); if(m){ m.textContent=t; m.className="msg "+c; } };
   function show(){
