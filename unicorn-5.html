@@ -1195,7 +1195,7 @@ function junTarget(){
   const P=pool().filter(c=>(KVG[c.k]||[]).length>=4); return P.length?P[rnd(P.length)]:null;
 }
 function junQ(t){
-  const n=(KVG[t.k]||[]).length, h=rnd(n);
+  const n=(KVG[t.k]||[]).length, h=1+rnd(n-1);
   const opts=nearNums(h+1,1,n).map(x=>({label:`${x}画目`, ok:x===h+1}));
   return {type:"jun", t, prompt:"赤いところは、何画目に書く？", big:kvgSVG(t.k,h), opts};
 }
@@ -1209,6 +1209,24 @@ const _renderChips=renderChips; renderChips=function(){ progInit(); _renderChips
 
 $("subTitle").textContent=SUBTITLE;
 renderChips(); renderAll(); resumeOrNew(); bindReset(); connectCloud();
+</script>
+<script>
+(function(){
+  if(typeof makeQuestion!=="function") return;
+  const kOf=q=>q&&(q.k||(q.t&&q.t.k));
+  let last=null; try{ last=kOf(state.cur&&state.cur.q)||null; }catch(e){}
+  const _mq=makeQuestion; let busy=false;
+  makeQuestion=function(){
+    if(busy) return _mq();
+    busy=true; let q;
+    for(let i=0;i<15;i++){
+      q=_mq();
+      const bad1=q.type==="kakusu"&&q.t&&q.t.s<=1;
+      if(!bad1 && kOf(q)!==last) break;
+    }
+    busy=false; last=kOf(q); return q;
+  };
+})();
 </script>
 <script>
 // 答えたら：正解ならキャラがピョンととぶ。けっか（せいかい／ざんねん）が見えるところまで自動でスクロール（キャラは上に見えたまま）
