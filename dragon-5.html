@@ -534,7 +534,7 @@ function nearNums(ans,lo,hi){
   return Array.from({length:K},(_,i)=>s+i);
 }
 function makeQuestion(){
-  const type = state.types[rnd(state.types.length)];
+  const type = (()=>{ const W={yomi:25,kaki:25,blank:15,imi:10,bushu:10,jun:8,kakusu:7}, ts=state.types; let tot=0; ts.forEach(t=>tot+=(W[t]||10)); let r=Math.random()*tot; for(const t of ts){ r-=(W[t]||10); if(r<0) return t; } return ts[ts.length-1]; })();
   if(type==="jun"){ const j=junTarget(); if(j) return junQ(j); }
   const t = pickTarget();
   if(type==="kaki"){

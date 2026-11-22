@@ -695,7 +695,7 @@ function nearNums(ans,lo,hi){
 }
 const IMI_KANA={"雨": "そらから ふる みず", "円": "まるい かたち、おかねの たんい", "王": "くにを おさめる ひと", "気": "こころの はたらき、くうき", "玉": "まるい もの、ほうせき", "金": "かね、きんぞく", "口": "くち、でいりする ところ", "森": "きが たくさん ある ところ", "天": "そら、しぜん", "土": "つち、じめん", "日": "ひ、たいよう、いちにち", "年": "とし、1ねん", "林": "きが おおい ところ"};
 function makeQuestion(){
-  const type = state.types[rnd(state.types.length)];
+  const type = (()=>{ const W={yomi:35,kaki:25,blank:20,jun:10,kakusu:10}, ts=state.types; let tot=0; ts.forEach(t=>tot+=(W[t]||10)); let r=Math.random()*tot; for(const t of ts){ r-=(W[t]||10); if(r<0) return t; } return ts[ts.length-1]; })();
   let t = type==="jun" ? junTarget() : pickTarget();
   if(!t){ t=pickTarget(); return Object.assign(buildQuestion("kakusu",t),{k:t.k}); }
   return Object.assign(buildQuestion(type,t),{k:t.k});
