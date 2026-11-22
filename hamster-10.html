@@ -731,7 +731,9 @@ function buildQuestion(type,t){
 }
 
 // ---------- ペンギンの絵 ----------
-function hamsterSVG(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||"";
+function hamsterSVG(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||""; const f=n>=8?1:0;
+  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><g class="bob"><image href="cut/hamster-${f}.webp" x="4" y="4" width="152" height="152" preserveAspectRatio="xMidYMax meet"/></g></svg>`; }
+function hamsterSVGTile(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||"";
   return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><defs><clipPath id="evc${n}"><rect x="4" y="14" width="152" height="132" rx="22"/></clipPath></defs><g class="bob"><rect x="4" y="14" width="152" height="132" rx="22" fill="#fff"/><image href="evo/hamster-${n}.webp" x="4" y="14" width="152" height="132" preserveAspectRatio="xMidYMid slice" clip-path="url(#evc${n})"/></g></svg>`; }
 function hamsterSVG_old(st){
   // ペンギンの絵（関数名は CH+"SVG" で よばれるので そのまま）
@@ -944,7 +946,7 @@ function grade(ok){
 }
 
 function showEvo(st){
-  $("evoHam").innerHTML=hamsterSVG(st);
+  $("evoHam").innerHTML=hamsterSVGTile(st);
   $("evoTitle").textContent=`${STAGES[st].name}に しんかした！`;
   $("evoText").textContent=`${STAGES[st].text}（さかな ${state.correct} ひき）`;
   $("evoNext").textContent = st<STAGES.length-1 ? `つぎの しんかまで、あと ${PER}もん せいかい` : "さいごの しんかだよ。おめでとう！";

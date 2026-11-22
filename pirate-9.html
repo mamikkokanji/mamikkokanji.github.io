@@ -653,7 +653,9 @@ function buildQuestion(type,t){
 }
 
 // ---------- 海賊の男の子の絵（オリジナルキャラクター） ----------
-function pirateSVG(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||"";
+function pirateSVG(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||""; const f=n>=8?1:0;
+  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><g class="bob"><image href="cut/pirate-${f}.webp" x="4" y="4" width="152" height="152" preserveAspectRatio="xMidYMax meet"/></g></svg>`; }
+function pirateSVGTile(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||"";
   return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><defs><clipPath id="evc${n}"><rect x="4" y="14" width="152" height="132" rx="22"/></clipPath></defs><g class="bob"><rect x="4" y="14" width="152" height="132" rx="22" fill="#fff"/><image href="evo/pirate-${n}.webp" x="4" y="14" width="152" height="132" preserveAspectRatio="xMidYMid slice" clip-path="url(#evc${n})"/></g></svg>`; }
 function pirateSVG_old(st){
   const sc = 0.66 + st*0.024;
@@ -980,7 +982,7 @@ function grade(ok){
 }
 
 function showEvo(st){
-  pop({svg:pirateSVG(st), title:`${STAGES[st].name}に進化した！`, text:`${STAGES[st].text}（金貨 ${state.correct} まい）`, next: st<STAGES.length-1 ? `つぎの進化まで、あと${PER}問正解` : "さいごの進化だよ。おめでとう！"});
+  pop({svg:pirateSVGTile(st), title:`${STAGES[st].name}に進化した！`, text:`${STAGES[st].text}（金貨 ${state.correct} まい）`, next: st<STAGES.length-1 ? `つぎの進化まで、あと${PER}問正解` : "さいごの進化だよ。おめでとう！"});
 }
 $("evoClose").addEventListener("click",nextPop);
 // ---------- 島のようす・ボス戦 ----------

@@ -574,7 +574,9 @@ function makeQuestion(){
 }
 
 // ---------- dragon drawing ----------
-function dragonSVG(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||"";
+function dragonSVG(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||""; const f=n>=8?1:0;
+  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><g class="bob"><image href="cut/dragon-${f}.webp" x="4" y="4" width="152" height="152" preserveAspectRatio="xMidYMax meet"/></g></svg>`; }
+function dragonSVGTile(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||"";
   return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><defs><clipPath id="evc${n}"><rect x="4" y="14" width="152" height="132" rx="22"/></clipPath></defs><g class="bob"><rect x="4" y="14" width="152" height="132" rx="22" fill="#fff"/><image href="evo/dragon-${n}.webp" x="4" y="14" width="152" height="132" preserveAspectRatio="xMidYMid slice" clip-path="url(#evc${n})"/></g></svg>`; }
 function dragonSVG_old(stage){
   if(stage===0){
@@ -767,7 +769,7 @@ function grade(isOk){
 }
 
 function showEvo(st){
-  $("evoDragon").innerHTML=dragonSVG(st);
+  $("evoDragon").innerHTML=dragonSVGTile(st);
   $("evoTitle").textContent=`${STAGES[st].name}に進化した！`;
   $("evoText").textContent=`${STAGES[st].text}（正解 ${state.correct} 問）`;
   $("evo").hidden=false; $("evoClose").focus();
