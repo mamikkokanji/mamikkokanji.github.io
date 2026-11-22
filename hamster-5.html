@@ -1257,6 +1257,11 @@ css.textContent=`
 .pz-side .mini{width:96px;height:96px;transition:transform .25s}
 .pz-side .mini svg{width:100%;height:100%;overflow:visible}
 .pz-side .badge{position:absolute;top:6px;right:6px;font-size:34px;line-height:1}
+.pz-face{width:100%;height:100%;overflow:visible}
+.pz-hoi~.pz-big-t{top:8px;font-size:2rem}
+.pz-face .hd,.pz-face .ft,.pz-face .pu{transition:transform .3s ease-out;transform-box:view-box;transform-origin:60px 70px}
+.pz-side .mini{width:116px;height:116px}
+.pz-side .mini[hidden]{display:none}
 .pz-vsx{font-weight:900;color:#fff;font-size:1.1rem;text-shadow:0 2px 0 rgba(0,0,0,.25)}
 .pz-dots{display:flex;justify-content:center;gap:6px}
 .pz-dots i{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:.8rem;font-weight:900;color:#fff}
@@ -1486,6 +1491,32 @@ function treasure(a){
   }));
 }
 
+// ---------- あっちむいて ホイ用の「顔」（目・鼻・口が その向きに うごく） ----------
+function faceSVG(kind){
+  const K={
+    dragon:{c:"#5BBF84",back:`<path d="M34 40L28 12L48 32Z" fill="#F2C94C" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/><path d="M86 40L92 12L72 32Z" fill="#F2C94C" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/>`,patch:"",muzzle:`<ellipse cx="60" cy="84" rx="17" ry="11" fill="#8FD6A8" stroke="#2A2430" stroke-width="2.5"/><circle cx="54" cy="82" r="2.2" fill="#2A2430"/><circle cx="66" cy="82" r="2.2" fill="#2A2430"/>`,front:""},
+    unicorn:{c:"#FFFFFF",back:`<path d="M30 40L26 14L46 30Z" fill="#fff" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/><path d="M90 40L94 14L74 30Z" fill="#fff" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/><path d="M60 4L52 34H68Z" fill="#F2C94C" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/><path d="M24 50Q14 70 26 92Q30 70 36 58Z" fill="#F7A8C8" stroke="#2A2430" stroke-width="2.5"/><path d="M96 50Q106 70 94 92Q90 70 84 58Z" fill="#A8C8F7" stroke="#2A2430" stroke-width="2.5"/>`,patch:"",muzzle:`<circle cx="55" cy="82" r="2" fill="#E77A8F"/><circle cx="65" cy="82" r="2" fill="#E77A8F"/>`,front:`<path d="M38 34Q60 18 82 34Q70 30 60 40Q50 30 38 34Z" fill="#C8A8F7" stroke="#2A2430" stroke-width="2.5"/>`},
+    hamster:{c:"#E9A25B",back:`<circle cx="30" cy="34" r="14" fill="#E9A25B" stroke="#2A2430" stroke-width="3"/><circle cx="30" cy="34" r="7" fill="#F5B5C0"/><circle cx="90" cy="34" r="14" fill="#E9A25B" stroke="#2A2430" stroke-width="3"/><circle cx="90" cy="34" r="7" fill="#F5B5C0"/>`,patch:`<ellipse cx="60" cy="80" rx="24" ry="18" fill="#FFF1DE"/>`,muzzle:`<path d="M56 76L64 76L60 81Z" fill="#E77A8F"/>`,front:""},
+    pirate:{c:"#F6CBA4",back:``,patch:"",muzzle:`<path d="M57 74Q60 78 63 74" fill="none" stroke="#C98A6A" stroke-width="2.5" stroke-linecap="round"/>`,front:`<path d="M20 52Q22 22 60 20Q98 22 100 52Q80 40 60 42Q40 40 20 52Z" fill="#D9453A" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/><path d="M98 46L112 40L108 56Z" fill="#D9453A" stroke="#2A2430" stroke-width="2.5" stroke-linejoin="round"/>`},
+    kid:{c:"#F6CBA4",back:``,patch:"",muzzle:`<path d="M57 74Q60 78 63 74" fill="none" stroke="#C98A6A" stroke-width="2.5" stroke-linecap="round"/>`,front:`<path d="M20 58Q18 20 60 20Q102 20 100 58Q92 36 72 34Q66 44 48 40Q34 38 20 58Z" fill="#5A3B2A" stroke="#2A2430" stroke-width="3" stroke-linejoin="round"/>`},
+  }[kind]||{};
+  return `<svg viewBox="0 0 120 120" class="pz-face" aria-hidden="true"><g class="hd">${K.back}<circle cx="60" cy="66" r="42" fill="${K.c}" stroke="#2A2430" stroke-width="3"/>
+    <g class="ft">${K.patch}
+      <ellipse cx="44" cy="62" rx="9" ry="10" fill="#fff" stroke="#2A2430" stroke-width="2.5"/><ellipse cx="76" cy="62" rx="9" ry="10" fill="#fff" stroke="#2A2430" stroke-width="2.5"/>
+      <g class="pu"><circle cx="44" cy="63" r="5" fill="#2A2430"/><circle cx="76" cy="63" r="5" fill="#2A2430"/><circle cx="46" cy="61" r="1.6" fill="#fff"/><circle cx="78" cy="61" r="1.6" fill="#fff"/></g>
+      <ellipse cx="34" cy="78" rx="6" ry="4" fill="#F5A3A3" opacity=".7"/><ellipse cx="86" cy="78" rx="6" ry="4" fill="#F5A3A3" opacity=".7"/>
+      ${K.muzzle}
+      <path d="M50 94Q60 102 70 94" fill="none" stroke="#2A2430" stroke-width="3" stroke-linecap="round"/>
+    </g>${K.front}</g></svg>`;
+}
+function look(svg,dir){
+  if(!svg) return;
+  const F={right:[15,2,8],left:[-15,2,-8],up:[0,-14,0],down:[0,12,0]}[dir]||[0,0,0];
+  svg.querySelector(".hd").style.transform=`rotate(${F[2]}deg)`;
+  svg.querySelector(".ft").style.transform=`translate(${F[0]}px,${F[1]}px)`;
+  svg.querySelector(".pu").style.transform=`translate(${F[0]*.25}px,${F[1]*.25}px)`;
+}
+
 // ---------- あっちむいて ホイ ----------
 function hoi(a){
   const DIR={up:["⬆️","うえ","👆"],down:["⬇️","した","👇"],left:["⬅️","ひだり","👈"],right:["➡️","みぎ","👉"]};
@@ -1493,9 +1524,9 @@ function hoi(a){
   a.stage.innerHTML=`<div class="pz-hoi">
       <div class="pz-mode"></div>
       <div class="pz-vs">
-        <div class="pz-side"><span class="who">きみ</span><span class="face me">🙂</span><span class="what mew"></span></div>
+        <div class="pz-side"><span class="who">きみ</span><span class="face me">✋</span><div class="mini mef" hidden>${faceSVG("kid")}</div><span class="what mew"></span></div>
         <span class="pz-vsx">VS</span>
-        <div class="pz-side"><span class="who">${esc(NAME)}</span><span class="badge cb"></span><div class="mini">${charSVG()}</div><span class="what cw"></span></div>
+        <div class="pz-side"><span class="who">${esc(NAME)}</span><span class="badge cb"></span><div class="mini cm">${faceSVG(CH)}</div><span class="what cw"></span></div>
       </div>
       <div class="pz-dots">${Array.from({length:R},()=>"<i></i>").join("")}</div>
     </div>
@@ -1505,7 +1536,7 @@ function hoi(a){
       <p>こうげきと ぼうぎょを こうたいで ${R}かい。かった かずが てんすうだよ。</p>
       <button type="button" class="pz-big">はじめる</button></div>`;
   const $q=sel=>a.stage.querySelector(sel);
-  const mode=$q(".pz-mode"), me=$q(".me"), mew=$q(".mew"), cw=$q(".cw"), cb=$q(".cb"), mini=$q(".mini"), dots=[...a.stage.querySelectorAll(".pz-dots i")];
+  const mode=$q(".pz-mode"), mef=$q(".mef"), me=$q(".me"), mew=$q(".mew"), cw=$q(".cw"), cb=$q(".cb"), mini=$q(".cm"), dots=[...a.stage.querySelectorAll(".pz-dots i")];
   a.ctl.innerHTML=`<div class="pz-arrows">${KEYS.map(k=>`<button type="button" data-d="${k}" disabled><b>${DIR[k][0]}</b>${DIR[k][1]}</button>`).join("")}<span class="mid" aria-hidden="true"></span></div>`;
   const btns=[...a.ctl.querySelectorAll("button")], mid=a.ctl.querySelector(".mid");
   const lock=v=>btns.forEach(b=>b.disabled=v);
@@ -1518,7 +1549,7 @@ function hoi(a){
     mode.className="pz-mode "+(atk?"atk":"def");
     mode.innerHTML=atk?`⚔️ ${round+1}かいめ：きみの こうげき<small>ゆびを さそう。${esc(NAME)}が おなじ むきを むいたら かち！</small>`
                       :`🛡 ${round+1}かいめ：きみの ぼうぎょ<small>${esc(NAME)}が ゆびを さすよ。ちがう むきを むこう！</small>`;
-    me.textContent=atk?"✋":"🙂"; me.style.transform=""; mini.style.transform=""; cb.textContent=atk?"":"✋"; mew.textContent=""; cw.textContent="";
+    me.hidden=!atk; mef.hidden=atk; me.textContent="✋"; look(mef.querySelector("svg"),""); look(mini.querySelector("svg"),""); cb.textContent=atk?"":"✋"; mew.textContent=""; cw.textContent="";
     btns.forEach(b=>{ const k=b.dataset.d; b.innerHTML=`<b>${atk?DIR[k][2]:DIR[k][0]}</b>${DIR[k][1]}${atk?"":"を むく"}`; });
     a.msg.textContent=atk?"どっちに ゆびを さす？":"どっちを むく？";
     mid.textContent=atk?"✋":"🙂";
@@ -1530,9 +1561,9 @@ function hoi(a){
     later(()=>{
       big("ホイ！");
       if(atk){ me.textContent=DIR[my][2]; mew.textContent=DIR[my][1]+"を さした";
-        mini.style.transform=SH[its]; cb.textContent=DIR[its][0]; cw.textContent=DIR[its][1]+"を むいた"; }
+        look(mini.querySelector("svg"),its); cb.textContent=""; cw.textContent=DIR[its][1]+"を むいた"; }
       else { cb.textContent=DIR[its][2]; cw.textContent=DIR[its][1]+"を さした";
-        me.textContent="🙂"; me.style.transform=SH[my]; mew.textContent=DIR[my][1]+"を むいた"; }
+        look(mef.querySelector("svg"),my); mew.textContent=DIR[my][1]+"を むいた"; }
       const win=atk?my===its:my!==its; res[round]=win; if(win) pts++; a.score(pts);
       later(()=>{ a.msg.textContent=atk?(win?"おなじ むき！ きみの かち！ 1てん":"ちがう むきだった。ざんねん"):(win?"よけた！ きみの かち！ 1てん":"おなじ むきを むいちゃった…ざんねん");
         big(win?"かち！":"まけ…"); },650);
