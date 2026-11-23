@@ -248,6 +248,12 @@ html,body{overscroll-behavior-y:none}
 .jun-strip figure{margin:0;display:flex;flex-direction:column;align-items:center;font-size:.6rem;color:var(--muted)}
 .jun-strip svg{width:44px;height:44px;background:var(--surface);border:1px solid var(--line);border-radius:4px}
 @media (max-width:400px){.pg-row,.pg-dt{grid-template-columns:minmax(96px,1.6fr) repeat(7,minmax(0,1fr))}.pg-kj{font-size:.74rem}.pg-c{font-size:.66rem}.pg-c.hd{font-size:.56rem}}
+.ksvg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.kdraw{touch-action:none;cursor:crosshair}
+.pad.kans{display:block}
+.kmsg{margin:0;text-align:center;font-weight:700;color:var(--muted);min-height:1.5em}
+.kmsg.ok{color:var(--ok)} .kmsg.ng{color:var(--bad)}
+.padtools.kt{grid-template-columns:1fr}
 </style>
 
 </head>
@@ -849,31 +855,91 @@ function renderKaki(){
   box.innerHTML=`
     <p class="hint"><span class="lab">読み</span>${esc(t.yomi)}　<span class="lab">意味</span>${esc(t.imi)}</p>
     <div class="pads">
-      <div class="pad"><canvas id="padCanvas" aria-label="ここに漢字を書く"></canvas></div>
-      <div class="pad answer" id="ansPad" hidden><span>${esc(t.k)}</span></div>
+      <div class="pad kpad" id="kPad"></div>
+      <div class="pad answer kans" id="ansPad" hidden></div>
     </div>
-    <div class="padtools" id="padTools">
-      <button type="button" class="btn ghost" id="undoBtn">1画もどす</button>
-      <button type="button" class="btn ghost" id="clearBtn">ぜんぶけす</button>
-      <button type="button" class="btn" id="showBtn">こたえを見る</button>
+    <p class="kmsg" id="kMsg" aria-live="polite">かきじゅんどおりに 1かくずつ かこう（ぜんぶで ${(KVG[t.k]||[]).length||t.s}かく）</p>
+    <div class="padtools kt" id="padTools">
+      <button type="button" class="btn ghost" id="giveUp">わからない</button>
     </div>
-    <div class="selfcheck" id="selfCheck" hidden>
-      <p class="prompt">こたえと見くらべて、正しく書けたかな？（全部で${t.s}画）</p>
-      <div class="choices">
-        <button type="button" id="selfOk" class="ok">○ 書けた</button>
-        <button type="button" id="selfNg" class="ng">× まちがえた</button>
-      </div>
-    </div>`;
+    <div id="selfCheck" hidden></div>`;
   $("quiz").append(box);
-  const pad=setupPad($("padCanvas"));
-  $("undoBtn").addEventListener("click",pad.undo);
-  $("clearBtn").addEventListener("click",pad.clear);
-  $("showBtn").addEventListener("click",()=>{
-    pad.lock(); box.querySelector(".pads").classList.add("both"); $("ansPad").hidden=false; $("padTools").hidden=true; $("selfCheck").hidden=false;
-    $("selfOk").focus({preventScroll:true});
-  });
-  $("selfOk").addEventListener("click",()=>grade(true));
-  $("selfNg").addEventListener("click",()=>grade(false));
+  const host=$("kPad"), msg=(s,c)=>{ const m=$("kMsg"); m.textContent=s; m.className="kmsg "+(c||""); };
+  const showModel=()=>{ const a=$("ansPad"); a.hidden=false; box.querySelector(".pads").classList.add("both"); a.innerHTML=kAnimSVG(t.k); kAnimate(a.querySelector("svg"),t.k); $("padTools").hidden=true; };
+  if(!(KVG[t.k]||[]).length){ // 書き順データが ない字は 見て ○×
+    host.innerHTML=`<p class="kmsg">この じは かきじゅんの データが ないので、こたえを みて じぶんで ○× してね</p>`;
+    $("padTools").innerHTML=`<button type="button" class="btn ok" id="sOk">○ かけた</button><button type="button" class="btn ghost" id="sNg">× まちがえた</button>`;
+    showModel(); $("padTools").hidden=false; $("sOk").onclick=()=>grade(true); $("sNg").onclick=()=>grade(false); return;
+  }
+  const pad=kMakePad(host,t.k,(ok,info)=>{
+    if(ok){ msg("せいかい！ かきじゅんも ばっちり","ok"); showModel(); setTimeout(()=>grade(true),500); }
+    else { msg(info,"ng"); showModel(); setTimeout(()=>grade(false),900); }
+  },s=>msg(s,"ok"));
+  $("giveUp").addEventListener("click",()=>{ pad.stop(); msg("こたえと かきじゅんを みてみよう","ng"); showModel(); grade(false); });
+}
+const kNS="http://www.w3.org/2000/svg", kPTS={};
+const kSC=i=>["#E06C6C","#5A8FD8","#E2B238","#5DB075","#A0714F","#4B4B55","#EE8E3E","#9A78CF","#E880A8","#45B5CF","#9CC34A","#3E5DA8","#A65468","#B89A2E","#2E8B6E","#8D8A96","#F09AAF","#4C6FD6"][i%18];
+function kStroke(k){
+  if(kPTS[k]) return kPTS[k];
+  const m=document.createElementNS(kNS,"svg"); m.setAttribute("width","0"); m.setAttribute("height","0"); m.style.position="absolute"; document.body.appendChild(m);
+  kPTS[k]=(KVG[k]||[]).map(d=>{ const p=document.createElementNS(kNS,"path"); p.setAttribute("d",d); m.appendChild(p); const len=p.getTotalLength(); const pts=[]; for(let i=0;i<=24;i++){ const q=p.getPointAtLength(len*i/24); pts.push([q.x,q.y]); } return {d,len,pts}; });
+  m.remove(); return kPTS[k];
+}
+const kGrid=`<path d="M54.5 4V105M4 54.5H105" stroke="var(--line)" stroke-width=".8" stroke-dasharray="3 3" fill="none"/>`;
+function kAnimSVG(k){ return `<svg class="ksvg" viewBox="0 0 109 109" aria-label="${k}">${kGrid}<g fill="none" stroke-linecap="round" stroke-linejoin="round"></g><g class="nums"></g></svg>`; }
+function kAnimate(svg,k){
+  const g=svg.querySelector("g"), nums=svg.querySelector(".nums"), st=kStroke(k); let i=0;
+  const calm=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  st.forEach(s=>{ const p=document.createElementNS(kNS,"path"); p.setAttribute("d",s.d); p.setAttribute("stroke","var(--line)"); p.setAttribute("stroke-width","5"); g.appendChild(p); });
+  (function next(){
+    if(i>=st.length||!svg.isConnected) return; const s=st[i];
+    const p=document.createElementNS(kNS,"path"); p.setAttribute("d",s.d); p.setAttribute("stroke",kSC(i)); p.setAttribute("stroke-width","5.5"); p.style.strokeDasharray=s.len; p.style.strokeDashoffset=s.len; g.appendChild(p);
+    const tx=document.createElementNS(kNS,"text"); tx.setAttribute("x",Math.min(100,Math.max(2,s.pts[0][0]-7))); tx.setAttribute("y",Math.min(104,Math.max(8,s.pts[0][1]-2))); tx.setAttribute("font-size","8"); tx.setAttribute("font-weight","900"); tx.setAttribute("fill",kSC(i)); tx.setAttribute("stroke","var(--surface)"); tx.setAttribute("stroke-width","1.6"); tx.setAttribute("paint-order","stroke"); tx.textContent=i+1; nums.appendChild(tx);
+    const dur=calm?0:Math.max(220,s.len*9); p.getBoundingClientRect(); p.style.transition=`stroke-dashoffset ${dur}ms linear`; p.style.strokeDashoffset=0; i++; setTimeout(next,dur+160);
+  })();
+}
+function kRes(pts,n){ const d=[0]; for(let i=1;i<pts.length;i++) d.push(d[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1])); const L=d[d.length-1]; if(L<1e-6) return Array.from({length:n+1},()=>pts[0].slice()); const out=[]; let j=0; for(let i=0;i<=n;i++){ const t=L*i/n; while(j<d.length-2&&d[j+1]<t) j++; const r=(t-d[j])/((d[j+1]-d[j])||1); out.push([pts[j][0]+(pts[j+1][0]-pts[j][0])*r, pts[j][1]+(pts[j+1][1]-pts[j][1])*r]); } return out; }
+function kLen(p){ let s=0; for(let i=1;i<p.length;i++) s+=Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]); return s; }
+function kDist(a,b){ let s=0; for(let i=0;i<a.length;i++) s+=Math.hypot(a[i][0]-b[i][0],a[i][1]-b[i][1]); return s/a.length; }
+// おぼえるモードの「みないで かく」と おなじ あまさ（TOL 17）。ヒントなし、1画 まちがえたら ×
+function kMakePad(host,k,onEnd,onStep){
+  host.innerHTML=`<svg class="ksvg kdraw" viewBox="0 0 109 109">${kGrid}<g class="done" fill="none" stroke-linecap="round" stroke-linejoin="round"></g><path class="fail" fill="none" stroke="var(--bad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path class="ink" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const svg=host.querySelector("svg"), done=svg.querySelector(".done"), ink=svg.querySelector(".ink"), fail=svg.querySelector(".fail");
+  const st=kStroke(k), TOL=17, offs=[]; let cur=0, pts=null, pid=null, over=false;
+  const cen=p=>{ let x=0,y=0; p.forEach(q=>{x+=q[0];y+=q[1];}); return [x/p.length,y/p.length]; };
+  const shiftOf=()=>{ if(!offs.length) return [0,0]; const m=cen(offs); return [Math.max(-18,Math.min(18,m[0])),Math.max(-18,Math.min(18,m[1]))]; };
+  function check(user,s){
+    const ul=kLen(user), N=24, sh=shiftOf(), T=offs.length?TOL:TOL*1.4;
+    const u=kRes(user,N).map(q=>[q[0]-sh[0],q[1]-sh[1]]), uc=cen(u), sc=cen(s.pts);
+    if(s.len<16){ const d=Math.hypot(uc[0]-sc[0],uc[1]-sc[1]); return {r:ul<=Math.max(30,s.len*2.5)&&d<T*1.3?"ok":"no",d}; }
+    const f=kDist(u,s.pts), rv=kDist(u.slice().reverse(),s.pts), tol=Math.max(T,Math.min(T*1.5,s.len*.22));
+    const lenOk=ul>s.len*.35&&ul<s.len*2.2+14;
+    const ue=[u[N][0]-u[0][0],u[N][1]-u[0][1]], se=[s.pts[24][0]-s.pts[0][0],s.pts[24][1]-s.pts[0][1]];
+    const cos=(ue[0]*se[0]+ue[1]*se[1])/((Math.hypot(...ue)*Math.hypot(...se))||1), curved=Math.hypot(...se)<s.len*.5;
+    if(f<tol&&lenOk&&(curved?f<rv:(cos>.3||f<rv*.7))) return {r:"ok",d:f};
+    if(rv<tol&&lenOk&&rv<f*.8&&(curved||cos<-.3)) return {r:"rev",d:rv};
+    return {r:"no",d:f};
+  }
+  function judge(user){
+    const s=st[cur], c0=check(user,s); let res=c0.r, other=-1;
+    for(let j=cur+1;j<st.length;j++){ const cj=check(user,st[j]); if(cj.r==="ok"&&(res!=="ok"||cj.d<c0.d*.6)){ other=j; break; } }
+    if(other>=0) res="no";
+    if(res==="ok"){
+      const uc=cen(kRes(user,24)), sc=cen(s.pts); offs.push([uc[0]-sc[0],uc[1]-sc[1]]); ink.setAttribute("d","");
+      const p=document.createElementNS(kNS,"path"); p.setAttribute("d",s.d); p.setAttribute("stroke",kSC(cur)); p.setAttribute("stroke-width","5.5"); done.appendChild(p);
+      cur++; if(cur>=st.length){ over=true; onEnd(true); } else onStep(`${cur}かくめ OK！ つぎは ${cur+1}かくめ`);
+      return;
+    }
+    over=true; fail.setAttribute("d",ink.getAttribute("d")); ink.setAttribute("d","");
+    onEnd(false, res==="rev"?`${cur+1}かくめの かく むきが はんたい…`:other>=0?`${cur+1}かくめに ${other+1}かくめを かいちゃった…`:`${cur+1}かくめが ちがうみたい…`);
+  }
+  function pt(e){ const p=new DOMPoint(e.clientX,e.clientY).matrixTransform(svg.getScreenCTM().inverse()); return [p.x,p.y]; }
+  svg.addEventListener("pointerdown",e=>{ if(over||pid!==null) return; if(e.pointerType==="pen") penSeen=true; if(penSeen&&e.pointerType==="touch") return; e.preventDefault(); pid=e.pointerId; try{svg.setPointerCapture(pid);}catch(_){} pts=[pt(e)]; ink.setAttribute("d",`M${pts[0][0]},${pts[0][1]}`); });
+  svg.addEventListener("pointermove",e=>{ if(e.pointerId!==pid||!pts) return; e.preventDefault(); let evs=e.getCoalescedEvents?e.getCoalescedEvents():[]; if(!evs.length) evs=[e]; for(const ev of evs){ const p=pt(ev), q=pts[pts.length-1]; if(Math.hypot(p[0]-q[0],p[1]-q[1])<.6) continue; pts.push(p); ink.setAttribute("d",ink.getAttribute("d")+` L${p[0]},${p[1]}`); } });
+  const end=e=>{ if(e.pointerId!==pid) return; pid=null; const p=pts; pts=null; if(p&&!over) judge(p); };
+  svg.addEventListener("pointerup",end); svg.addEventListener("pointercancel",e=>{ if(e.pointerId===pid){ pid=null; pts=null; ink.setAttribute("d",""); } });
+  ["touchstart","touchmove","touchend"].forEach(t=>svg.addEventListener(t,e=>{ if(e.cancelable) e.preventDefault(); },{passive:false}));
+  return {stop(){ over=true; }};
 }
 
 let penSeen=false; // ペンを使い始めたら、手のひら（指）のタッチは無視する
