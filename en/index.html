@@ -216,6 +216,9 @@ body:has(#pad) .nav{position:static;box-shadow:none;margin:0;padding:4px 0}
 .rei-item.now .rei-now{display:block}
 .rei-item.now .sent{font-weight:700}
 .rei-item.wait{opacity:.45}
+.wr-hint{text-align:center;margin:0 0 6px;display:flex;flex-direction:column;gap:2px;font-size:1.05rem}.wr-hint .jp{font-size:1rem}
+.su.lit{background:linear-gradient(transparent 55%,rgba(255,205,60,.8) 55%)}
+.btn.tix{flex-direction:column;gap:2px;background:#C8960C;border-color:#C8960C;color:#fff;text-align:center;padding:12px;animation:hop 1s ease-in-out 3}
 .rei-item.rdone .rei-tools .btn{opacity:.8}
 .nav .btn{flex:1;padding:12px;font-size:1.05rem}
 .scope{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
@@ -284,8 +287,8 @@ body:has(#pad) .nav{position:static;box-shadow:none;margin:0;padding:4px 0}
 </head>
 <body class="home">
 <div class="wrap" id="app"></div>
-<script src="data-g1.js?v=1"></script>
-<script src="app.js?v=1"></script>
+<script src="data-g1.js?v=2"></script>
+<script src="app.js?v=2"></script>
 <script>
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
 </script>

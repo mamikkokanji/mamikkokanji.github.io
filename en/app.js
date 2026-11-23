@@ -393,7 +393,7 @@ function lesson(k,startStep){
   const firstTime=!L[k]; let step=firstTime?0:Math.min(startStep||0,STEPS.length-1);
   const done={};
   function frame(body,canNext,nextLabel){
-    app.innerHTML=`<div class="top"><a class="pill" href="#/f/${ch}">‹ All kanji</a><span class="spacer"></span><span class="pill on" style="font-family:var(--f-k);font-size:1.1rem">${k}</span><span class="pill">${esc(shortM(k))}</span></div>
+    app.innerHTML=`<div class="top"><a class="pill" href="#/f/${ch}">‹ All kanji</a><span class="spacer"></span><span class="pill on" style="font-family:var(--f-k);font-size:1.1rem">${step===3?"？":k}</span><span class="pill">${esc(shortM(k))}</span></div>
     <div class="steps">${STEPS.map((s,i)=>`<button class="${i===step?"on":i<step?"dn":""} ${!firstTime?"jmp":""}" data-s="${i}" ${firstTime?'tabindex="-1"':""}>${i+1}<br>${s}</button>`).join("")}</div>
     <div class="lesson">${body}</div>
     <div class="nav"><button class="btn" id="prev" ${step===0?"disabled":""}>‹ Back</button><button class="btn pri" id="next" ${canNext||done[step]||!firstTime?"":"disabled"}>${nextLabel||"Next ›"}</button></div>`;
@@ -430,7 +430,7 @@ function lesson(k,startStep){
         $("#pp").innerHTML=pipsH(Math.min(round,NEED_WRITE),NEED_WRITE);
         $("#cnt").textContent=done[3]?`You wrote it! Write again if you like.`:inSent?`Write the kanji that goes in the box`:`Write it from memory`;
         const X=inSent&&!done[3]?I.x[(r-(NEED_WRITE-2))%I.x.length]:null;
-        $("#ctx").innerHTML=X?`<p class="sent" style="text-align:center">${ruby(X[0],k,{blank:true})}</p><p class="legend">${esc(X[1])}</p>`:"";
+        $("#ctx").innerHTML=X?`<p class="sent" style="text-align:center">${ruby(X[0],k,{blank:true})}</p><p class="legend">${esc(X[1])}</p>`:`<p class="wr-hint"><b>“${esc(shortM(k))}”</b><span class="jp">${I.on.map(x=>`<span class="y-on">${esc(x)}（${esc(hira(x))}）</span>`).join("・")}${I.on.length&&I.kun.length?"・":""}${I.kun.map(([a,b])=>`<span class="y-kun">${esc(a)}</span>${b?`<span class="okuri">(${esc(b)})</span>`:""}`).join("・")}</span></p>`;
         makePad($("#pad"),k,"write",()=>{ round++; $("#pp").innerHTML=pipsH(Math.min(round,NEED_WRITE),NEED_WRITE);
           if(round>=NEED_WRITE&&!done[3]){ unlock(); $("#cnt").textContent=`You wrote it! Excellent! Tap Next.`; nudge(); $("#ctx").innerHTML=""; }
           else if(round<NEED_WRITE) setTimeout(()=>{ msgFn(round===NEED_WRITE-2?"Now write it inside a sentence!":"One more time!",""); run(); },900); },msgFn); };
@@ -440,22 +440,26 @@ function lesson(k,startStep){
       frame(`${talk(ch,F.say.word)}<div class="card"><h3>Words with ${k} <span class="jp">ことば</span></h3><p class="legend" style="text-align:left">The reading of <mark>${k}</mark> is colored: <span class="y-on" style="font-weight:900">blue = on’yomi</span>, <span class="y-kun" style="font-weight:900">orange = kun’yomi</span>, <span class="y-sp" style="font-weight:900">purple = special reading</span>.</p>
       <div class="wlist">${I.w.map(([w,e])=>{ return `<div class="wrow"><span class="wk">${ruby(w,k)}</span>${sayBtn(readR(w),"Listen")}<span class="wm"><span class="roma">${esc(romaji(readR(w)))}</span><span class="roma"> · </span>${enHTML(e)}</span><span class="wt">${tgtHTML(w,k)}</span></div>`; }).join("")}</div></div>`,true);
     }else if(step===5){
-      const ACT=[["rep","🗣 Say it 3 times"],["hide","🙈 Hide furigana & read"]];
-      const st=I.x.map(()=>({rep:false,hide:false,n:0}));
-      frame(`${talk(ch,F.say.sent)}<div class="card"><h3>Example sentences <span class="jp">れいぶん</span></h3><p class="legend" style="text-align:left">Read the <b>highlighted</b> sentence: say it out loud <b>3 times</b>, then <b>hide the furigana</b> and read it once more. Tap 🔈 to hear it.</p><div class="rei-box">${I.x.map((x,i)=>`<div class="rei-item" id="ri${i}"><div class="rei-now">👉 Read this sentence</div><div class="rei-line"><p class="sent">${ruby(x[0],k)}</p>${sayBtn(plainR(x[0]),"Listen")}</div><span class="roma">${esc(x[2])}</span>${enHTML(x[1])}<div class="legend" style="text-align:left">${tgtHTML(x[0],k)}</div><div class="rei-tools">${ACT.map(([a,l])=>`<button class="btn" data-a="${a}" data-i="${i}">${l}</button>`).join("")}</div></div>`).join("")}</div><p class="count" id="cnt"></p></div>`,false);
+      const ACT=[["rep","🗣 Read it aloud"],["hide","🙈 Hide furigana & read"]];
+      const st=I.x.map(()=>({rep:false,hide:false}));
+      let busy=false;
+      frame(`${talk(ch,F.say.sent)}<div class="card"><h3>Example sentences <span class="jp">れいぶん</span></h3><p class="legend" style="text-align:left">① Press <b>“Read it aloud”</b> and read along with the <b style="background:rgba(255,205,60,.75)">yellow line</b>.<br>② Then <b>hide the furigana</b> and read it once more. Tap 🔈 to hear it.</p><div class="rei-box">${I.x.map((x,i)=>`<div class="rei-item" id="ri${i}"><div class="rei-now">▶ Read this sentence</div><div class="rei-line"><p class="sent">${ruby(x[0],k)}</p>${sayBtn(plainR(x[0]),"Listen")}</div><span class="roma">${esc(x[2])}</span>${enHTML(x[1])}<div class="legend" style="text-align:left">${tgtHTML(x[0],k)}</div><div class="rei-tools">${ACT.map(([a,l])=>`<button class="btn" data-a="${a}" data-i="${i}">${l}</button>`).join("")}</div></div>`).join("")}</div><p class="count" id="cnt"></p></div>`,false);
+      // split each sentence into units (one kana or one ruby word) so the yellow line moves along, line by line
+      I.x.forEach((x,i)=>{ const p=$("#ri"+i+" .sent"); [...p.childNodes].forEach(n=>{ if(n.nodeType===3){ const f=document.createDocumentFragment(); [...n.textContent].forEach(c=>{ const u=document.createElement("span"); u.className="su"; u.textContent=c; f.appendChild(u); }); p.replaceChild(f,n); } else { const u=document.createElement("span"); u.className="su"; p.replaceChild(u,n); u.appendChild(n); } }); });
+      const sweep=(i,then)=>{ const us=[...$("#ri"+i).querySelectorAll(".su")]; us.forEach(u=>u.classList.remove("lit")); busy=true; upd();
+        const n=us.reduce((a,u)=>a+Math.max(1,(u.querySelector("rt")||u).textContent.length),0), per=calm()?60:Math.max(1500,n*260)/n; let j=0;
+        const step=()=>{ if(j>=us.length){ busy=false; then(); upd(true); return; } const u=us[j++]; u.classList.add("lit"); setTimeout(step,per*Math.max(1,(u.querySelector("rt")||u).textContent.length)); };
+        step(); };
       const need=i=>st[i].rep&&st[i].hide;
       const upd=(scroll)=>{ const n=st.filter((x,i)=>need(i)).length; const cur=st.findIndex((x,i)=>!need(i));
-        I.x.forEach((x,i)=>{ const bx=$("#ri"+i); bx.classList.toggle("now",i===cur); bx.classList.toggle("wait",cur>=0&&i>cur); bx.querySelectorAll("[data-a]").forEach(b=>b.disabled=cur>=0&&i>cur); });
+        I.x.forEach((x,i)=>{ const bx=$("#ri"+i); bx.classList.toggle("now",i===cur); bx.classList.toggle("wait",cur>=0&&i>cur);
+          bx.querySelector('[data-a="rep"]').disabled=busy||i!==cur||st[i].rep; bx.querySelector('[data-a="hide"]').disabled=busy||i!==cur||!st[i].rep; });
         $("#cnt").textContent=n>=st.length?"You read them all! Great!":`Sentences done: ${n} / ${st.length}`;
         if(n>=st.length){ unlock(); nudge(); }
         else if(scroll){ const bx=$("#ri"+cur); setTimeout(()=>bx.scrollIntoView({behavior:calm()?"auto":"smooth",block:"center"}),350); } };
-      app.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{ const i=+b.dataset.i, a=b.dataset.a, bx=$("#ri"+i); const was=need(i);
-        if(a==="rep"){ st[i].n=Math.min(3,st[i].n+1); b.textContent=`🗣 Say it 3 times (${st[i].n}/3)`; if(st[i].n<3){ upd(); return; } }
-        if(a==="hide"){ if(!st[i].rep){ return; } const on=bx.classList.toggle("rt-hide"); b.textContent=on?"👀 Show furigana":"🙈 Hide furigana & read"; }
-        if(!st[i][a]){ st[i][a]=true; b.classList.add("done"); }
-        if(need(i)) bx.classList.add("rdone");
-        upd(!was&&need(i)); });
-      app.querySelectorAll('[data-a="hide"]').forEach(b=>{ b.title="First say it 3 times"; });
+      app.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{ if(busy) return; const i=+b.dataset.i, a=b.dataset.a, bx=$("#ri"+i);
+        if(a==="rep"){ sweep(i,()=>{ st[i].rep=true; b.classList.add("done"); b.textContent="✓ Read it aloud"; }); }
+        if(a==="hide"){ bx.classList.add("rt-hide"); sweep(i,()=>{ st[i].hide=true; b.classList.add("done"); b.textContent="✓ I read it!"; bx.classList.remove("rt-hide"); bx.classList.add("rdone"); }); } });
       upd();
     }else if(step===6){
       const qs=lessonQuiz(k); let qi=0;
@@ -507,14 +511,21 @@ function lesson(k,startStep){
 const kChoice=x=>({v:x,h:`<span class="ck">${x}</span>`});
 const kanaChoice=x=>({v:x,h:`<span class="ckana">${esc(x)}</span><span class="roma">${esc(romaji(x))}</span>`});
 // wrong readings for a word: swap the target kanji's reading with its other readings
+let VALID=null;
+function validReadings(w){ // every reading this app knows for the same written word
+  if(!VALID){ VALID={}; KS.forEach(x=>{ const I=K[x]; [...I.w,...(I.e||[])].forEach(([ww])=>{ const p=plainR(ww); (VALID[p]=VALID[p]||new Set()).add(readR(ww)); });
+    (VALID[x]=VALID[x]||new Set()); I.kun.forEach(([a,b])=>{ if(!b) VALID[x].add(a); }); I.on.forEach(o=>VALID[x].add(hira(o))); }); }
+  return VALID[plainR(w)]||new Set();
+}
 function wrongReadings(w,k,n){
-  const t=targetR(w,k), right=readR(w), out=new Set();
+  const t=targetR(w,k), right=readR(w), out=new Set(), ok=validReadings(w), add=s=>{ if(s!==right&&!ok.has(s)) out.add(s); };
   if(t&&t.g.length===1){
     const I=K[k]; const alts=[...I.on.map(hira),...I.kun.map(([a])=>a)].filter(a=>a!==t.y);
-    shuffle(alts).forEach(a=>{ const s=readR(w.replace(`{${t.g}|${t.y}|${t.t}}`,`{${t.g}|${a}}`)); if(s!==right) out.add(s); });
+    shuffle(alts).forEach(a=>{ const s=readR(w.replace(`{${t.g}|${t.y}|${t.t}}`,`{${t.g}|${a}}`)); add(s); });
   }
   const others=shuffle(KS.filter(x=>x!==k));
-  for(const o of others){ if(out.size>=n) break; const ww=pick(K[o].w)[0], s=readR(ww); if(s!==right&&Math.abs(s.length-right.length)<=2) out.add(s); }
+  for(const o of others){ if(out.size>=n) break; const ww=pick(K[o].w)[0], s=readR(ww); if(Math.abs(s.length-right.length)<=2) add(s); }
+  for(const o of others){ if(out.size>=n) break; add(readR(pick(K[o].w)[0])); }
   return shuffle([...out]).slice(0,n);
 }
 function meaningChoices(k,n){
@@ -563,10 +574,12 @@ function makeQ(pool,last){
     case "m2k": return {k,type,q:`Which kanji means…<span class="big-m">“${esc(shortM(k))}”</span>`,a:k,c:shuffle([k,...near(3)]).map(kChoice)};
     case "read": { const right=readR(word[0]); const wr=wrongReadings(word[0],k,3);
       return {k,type,q:`How do you read this word?<span class="big-w">${esc(plainR(word[0]))}</span><span class="legend" style="display:block">${esc(word[1])}</span>`,a:right,c:shuffle([right,...wr]).map(kanaChoice),word}; }
-    case "wmean": { const ow=shuffle(KS.filter(x=>x!==k)).slice(0,3).map(x=>pick(K[x].w)[1]);
+    case "wmean": { const ow=[]; for(const x of shuffle(KS.filter(x=>x!==k))){ const m=pick(K[x].w)[1]; if(m!==word[1]&&!ow.includes(m)) ow.push(m); if(ow.length>=3) break; }
       return {k,type,q:`What does this word mean?<span class="big-w">${ruby(word[0],k)}</span><span class="roma" style="display:block;text-align:center">${esc(romaji(readR(word[0])))}</span>`,a:word[1],c:shuffle([word[1],...ow]).map(x=>({v:x,h:esc(x)})),one:true,word}; }
-    case "blank": { const x=pick(I.x);
-      return {k,type,q:`Which kanji goes in the box?<span class="sent" style="display:block;text-align:center;margin-top:6px">${ruby(x[0],k,{blank:true})}</span><span class="legend" style="display:block">${esc(x[1])}</span>`,a:k,c:shuffle([k,...near(3)]).map(kChoice),sent:x}; }
+    case "blank": { const x=pick(I.x), bt=targetR(x[0],k);
+      const has=o=>bt&&bt.g.length===1&&[...K[o].on.map(hira),...K[o].kun.map(([a])=>a)].some(r=>sameReading(bt.y,r));
+      const bc=shuffle(SECS[secOf(k)].filter(o=>o!==k&&!has(o))); if(bc.length<3) bc.push(...shuffle(KS.filter(o=>o!==k&&!has(o)&&!bc.includes(o))));
+      return {k,type,q:`Which kanji goes in the box?<span class="sent" style="display:block;text-align:center;margin-top:6px">${ruby(x[0],k,{blank:true})}</span><span class="legend" style="display:block">${esc(x[1])}</span>`,a:k,c:shuffle([k,...bc.slice(0,3)]).map(kChoice),sent:x}; }
     case "write": return {k,type,write:true,q:`Write the kanji for <b style="color:var(--c)">“${esc(shortM(k))}”</b>${wt?`<span class="legend" style="display:block;margin-top:4px">as in <span class="jp" style="font-size:1rem">${ruby(word[0],k,{blank:true})}</span> (${esc(word[1])})</span>`:""}`,word};
     case "strokes": return {k,type,q:`How many strokes does this kanji have?<span class="big-k">${k}</span>`,a:I.s,c:nearNums(I.s).map(n=>({v:n,h:String(n)}))};
     case "order": { const h=Math.floor(Math.random()*I.s); return {k,type,order:h,q:`Which stroke is the <b style="color:var(--ng)">red</b> one? (1st, 2nd, …)`,a:h+1,c:nearNums(h+1).map(n=>({v:n,h:ord(n)}))}; }
@@ -599,7 +612,7 @@ function quiz(){
       const after=stageOf(ch);
       $("#heroBox").innerHTML=heroHTML(ch,true); const hb=$("#hero"); hb.classList.add("jump");
       if(after>before) setTimeout(()=>evolve(ch,after),900);
-      else if(tickets()>tBefore) setTimeout(()=>toast("🎟 You got a Play ticket!"),600);
+      if(tickets()>tBefore) cur.ticket=true;
     } else save();
     $("#sess").textContent=`✔ ${sess.ok} / ${sess.n}`;
   }
@@ -612,7 +625,7 @@ function quiz(){
   function feedback(ok,extra){
     const box=$("#qcard");
     const fb=document.createElement("div"); fb.className="fb";
-    fb.innerHTML=`<span class="res ${ok?"ok":"ng"}">${ok?pick(["Correct! ⭕","Great! ⭕","Nice! ⭕","Yes! ⭕"]):"Not quite ❌"}</span>${extra||""}${info()}<button class="btn pri" id="nextQ" style="padding:12px">Next question ›</button>`;
+    fb.innerHTML=`<span class="res ${ok?"ok":"ng"}">${ok?pick(["Correct! ⭕","Great! ⭕","Nice! ⭕","Yes! ⭕"]):"Not quite ❌"}</span>${extra||""}${cur.ticket?`<a class="btn tix" href="#/play">🎟 You got a Play ticket! <b>Go to the Play zone ›</b></a>`:""}${info()}<button class="btn pri" id="nextQ" style="padding:12px">Next question ›</button>`;
     box.appendChild(fb); bindSay(fb); $("#nextQ").onclick=next;
     requestAnimationFrame(()=>{ const r=$("#nextQ").getBoundingClientRect(); if(r.bottom>innerHeight-10) window.scrollBy({top:r.bottom-innerHeight+20,behavior:calm()?"auto":"smooth"}); });
   }
