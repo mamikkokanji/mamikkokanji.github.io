@@ -9,7 +9,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="かんじフレンズ">
 <meta property="og:title" content="かんじフレンズ">
-<meta property="og:description" content="パイレーツ・ドラゴン・ペンギン・ユニコーンといっしょに、小学1年生・2年生・6年生の漢字を楽しくおぼえるゲーム">
+<meta property="og:description" content="パイレーツ・ドラゴン・ペンギン・ユニコーンといっしょに、小学1〜6年生の漢字を楽しくおぼえるゲーム">
 <meta property="og:url" content="https://mamiariumi-oss.github.io/-app/">
 <meta property="og:image" content="https://mamiariumi-oss.github.io/-app/og-image-v2.png">
 <meta property="og:image:width" content="1200">
@@ -110,16 +110,16 @@ h1 .spk{color:#F2C230;font-size:1.3rem}
 </div>
 <script>
 const CHARS = [
-  {id:"pirate",  name:"漢字パイレーツ",  who:"海賊の男の子",   kyus:["10","9","5"], key:k=>`kanji-pirate-${k}kyu-v1`},
-  {id:"unicorn", name:"漢字ユニコーン",  who:"ユニコーン",     kyus:["10","9","5"], key:k=>`kanji-unicorn-${k}kyu-v1`},
-  {id:"hamster", name:"漢字ペンギン",  who:"ペンギン",     kyus:["10","9","5"], key:k=>`kanji-hamster-${k}kyu-v2`},
-  {id:"dragon",  name:"漢字ドラゴン",    who:"ドラゴン",       kyus:["10","9","5"], key:k=>k==="5"?"kanji-dragon-v1":`kanji-dragon-${k}kyu-v1`},
+  {id:"pirate",  name:"漢字パイレーツ",  who:"海賊の男の子",   kyus:["10","9","8","7","6","5"], key:k=>`kanji-pirate-${k}kyu-v1`},
+  {id:"unicorn", name:"漢字ユニコーン",  who:"ユニコーン",     kyus:["10","9","8","7","6","5"], key:k=>`kanji-unicorn-${k}kyu-v1`},
+  {id:"hamster", name:"漢字ペンギン",  who:"ペンギン",     kyus:["10","9","8","7","6","5"], key:k=>`kanji-hamster-${k}kyu-v2`},
+  {id:"dragon",  name:"漢字ドラゴン",    who:"ドラゴン",       kyus:["10","9","8","7","6","5"], key:k=>k==="5"?"kanji-dragon-v1":`kanji-dragon-${k}kyu-v1`},
 ];
-const KYU_TXT = {"10":"漢字 80字","9":"漢字 160字","5":"漢字 191字"};
-const GR = {"10":"1","9":"2","5":"6"};
+const KYU_TXT = {"10":"漢字 80字","9":"漢字 160字","8":"漢字 200字","7":"漢字 202字","6":"漢字 193字","5":"漢字 191字"};
+const GR = {"10":"1","9":"2","8":"3","7":"4","6":"5","5":"6"};
 const $ = id=>document.getElementById(id);
 function read(key){ try{ const v=JSON.parse(localStorage.getItem(key)||"null"); return v&&typeof v.correct==="number"?v:null; }catch(e){ return null; } }
-const SECN={"10":8,"9":10,"5":10}, LG={"10":"1","9":"2","5":"6"}, NK={"10":80,"9":160,"5":191};
+const SECN={"10":8,"9":10,"8":10,"7":10,"6":10,"5":10}, LG=GR, NK={"10":80,"9":160,"8":200,"7":202,"6":193,"5":191};
 function learnInfo(c,k){ try{ const v=JSON.parse(localStorage.getItem("kanji-learn-v1")||"{}"); const L=(v.learned||{})[c.id+"-"+LG[k]]||{}; return Object.keys(L).length; }catch(e){ return 0; } }
 function quizInfo(c,k){ const v=read(c.key(k)); return v?(+v.cleared||0):0; }
 function last(){ try{ return localStorage.getItem("kanji-app-last"); }catch(e){ return null; } }
@@ -130,7 +130,7 @@ function info(c,k){
 function render(open){
   $("grid").after($("panel"));
   $("grid").innerHTML = CHARS.map(c=>`<button type="button" class="chara ${c.id}" data-id="${c.id}" aria-expanded="${open===c.id}">
-      <img src="chara-${c.id}.png?v=5" alt="" width="366" height="322"><b>${c.name}</b><small>${c.kyus.map(k=>GR[k]+"年生").join("・")}</small></button>`).join("");
+      <img src="chara-${c.id}.png?v=5" alt="" width="366" height="322"><b>${c.name}</b><small>${GR[c.kyus[0]]}〜${GR[c.kyus[c.kyus.length-1]]}年生</small></button>`).join("");
   $("grid").querySelectorAll(".chara").forEach(b=>b.addEventListener("click",()=>{ const id=b.dataset.id; render(open===id?null:id); if(open!==id) $("panel").scrollIntoView({behavior:"smooth",block:"nearest"}); }));
   const c=CHARS.find(x=>x.id===open);
   $("panel").hidden=!c;
@@ -147,9 +147,9 @@ function render(open){
   }else{ $("grid").after($("panel"));
   }
 }
-const L=last(), lm=L&&L.match(/^learn:(pirate|dragon|hamster|unicorn)-(1|2|6)$/);
-const m=L&&L.match(/^(pirate|dragon|hamster|unicorn)-(10|9|5)$/), lc=m&&CHARS.find(c=>c.id===m[1]&&c.kyus.includes(m[2]));
-if(lm){ const c=CHARS.find(x=>x.id===lm[1]), k={"1":"10","2":"9","6":"5"}[lm[2]];
+const L=last(), lm=L&&L.match(/^learn:(pirate|dragon|hamster|unicorn)-([1-6])$/);
+const m=L&&L.match(/^(pirate|dragon|hamster|unicorn)-(10|9|8|7|6|5)$/), lc=m&&CHARS.find(c=>c.id===m[1]&&c.kyus.includes(m[2]));
+if(lm){ const c=CHARS.find(x=>x.id===lm[1]), k={"1":"10","2":"9","3":"8","4":"7","5":"6","6":"5"}[lm[2]];
   $("cont").hidden=false; $("cont").href=`learn.html?c=${c.id}&g=${lm[2]}`; $("cont").className="cont "+c.id;
   $("cont").innerHTML=`<img src="chara-${c.id}.png?v=5" alt="" width="84" height="68"><div><b>つづきから：${c.name} ${lm[2]}年生</b><span>📖 おぼえる（${learnInfo(c,k)} / ${NK[k]}字）</span></div><i>›</i>`;
 }else if(lc){
