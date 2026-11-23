@@ -795,7 +795,7 @@ function renderKaki(){
       <div class="pad kpad" id="kPad"></div>
       <div class="pad answer kans" id="ansPad" hidden></div>
     </div>
-    <p class="kmsg" id="kMsg" aria-live="polite">かきじゅんどおりに 1かくずつ かこう（ぜんぶで ${(KVG[t.k]||[]).length||t.s}かく・まちがえても 2かいまで やりなおせるよ）</p>
+    <p class="kmsg" id="kMsg" aria-live="polite">かきじゅんどおりに 1かくずつ かこう（ぜんぶで ${(KVG[t.k]||[]).length||t.s}かく・まちがえても 3かいまで やりなおせるよ）</p>
     <div class="padtools kt" id="padTools">
       <button type="button" class="btn ghost" id="redoBtn">↺ さいしょから</button>
       <button type="button" class="btn ghost" id="giveUp">わからない</button>
@@ -841,7 +841,7 @@ function kRes(pts,n){ const d=[0]; for(let i=1;i<pts.length;i++) d.push(d[i-1]+M
 function kLen(p){ let s=0; for(let i=1;i<p.length;i++) s+=Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]); return s; }
 function kDist(a,b){ let s=0; for(let i=0;i<a.length;i++) s+=Math.hypot(a[i][0]-b[i][0],a[i][1]-b[i][1]); return s/a.length; }
 // おぼえるモードの「みないで かく」と おなじ あまさ（TOL 17）。ヒントなし、1画 まちがえたら ×
-function kMakePad(host,k,onEnd,onStep){ const MAXMISS=3;
+function kMakePad(host,k,onEnd,onStep){ const MAXMISS=4;
   host.innerHTML=`<svg class="ksvg kdraw" viewBox="0 0 109 109">${kGrid}<g class="done" fill="none" stroke-linecap="round" stroke-linejoin="round"></g><path class="fail" fill="none" stroke="var(--bad)" stroke-dasharray="3 3" opacity=".7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path class="ink" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const svg=host.querySelector("svg"), done=svg.querySelector(".done"), ink=svg.querySelector(".ink"), fail=svg.querySelector(".fail");
   const st=kStroke(k), TOL=17, offs=[]; let cur=0, pts=null, pid=null, over=false;
