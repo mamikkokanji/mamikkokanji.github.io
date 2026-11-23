@@ -44,7 +44,19 @@
 .rei-item{border-radius:12px;padding:6px 8px;background:var(--card2,rgba(0,0,0,.03))}
 .rei-item.rdone{box-shadow:inset 0 0 0 2px var(--ok)}
 .rei-tag{font-size:.85rem;margin:2px 0 4px}
-.rei-item.rt-hide .rei-tag{visibility:hidden}
+.rei-item.rt-hide .rei-tag,.rei-item.rt-hide .imi{visibility:hidden}
+.imi{margin:6px 0 0;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--c) 10%,var(--surface));font-size:.95rem}
+.rei-tools .btn.imi-b{border-style:dashed}
+.rsw{background-image:linear-gradient(transparent 58%,rgba(255,205,60,.75) 58%);background-repeat:no-repeat;background-size:0% 100%;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.rsw.go{animation:rsw linear forwards}
+@keyframes rsw{to{background-size:100% 100%}}
+.rei-now{display:none;font-weight:900;color:var(--c);font-size:.9rem;margin-bottom:2px;animation:pzb 1s ease-in-out infinite alternate}
+@keyframes pzb{to{transform:translateX(4px)}}
+.rei-item.now{box-shadow:inset 0 0 0 3px var(--c);background:var(--surface)}
+.rei-item.now .rei-now{display:block}
+.rei-item.now .rei{font-weight:700}
+.rei-item.later{opacity:.4}
+.rei-item.rdone .rei-tools .btn:not(.done){display:none}
 .rei-tools{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .rei-tools .btn{padding:4px 12px;font-size:.82rem}
 .rei-tools .btn.done{background:var(--ok);border-color:var(--ok);color:#fff}
@@ -110,6 +122,13 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offse
 .btn{border:3px solid var(--c);background:var(--surface);color:var(--c);font-weight:900;border-radius:99px;padding:8px 18px;font-size:.95rem}
 .btn.pri{background:var(--c);color:#fff}
 .btn[disabled]{opacity:.35;cursor:default}
+.look-top{display:flex;gap:12px;align-items:center;justify-content:center}
+.look .kv{width:min(48vw,190px)}
+.look-side{display:flex;flex-direction:column;gap:8px;align-items:center;flex:1;min-width:0}
+.look-side .legend{margin:0;font-size:.78rem;text-align:center}
+.btn.sm{padding:6px 12px;font-size:.9rem}
+#next.pulse:not(:disabled){animation:npulse 1.2s ease-in-out infinite}
+@keyframes npulse{50%{transform:scale(1.05);box-shadow:0 0 0 6px color-mix(in srgb,var(--c) 30%,transparent)}}
 .facts{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:baseline;font-size:1rem}
 .facts dt{font-size:.8rem;font-weight:700;color:var(--muted)}
 .facts dd{margin:0;font-weight:700}
@@ -167,26 +186,26 @@ const KYU={"1":"10","2":"9","6":"5"}[GRADE];
 document.body.className=CH;
 const CHAR={
   pirate:{name:"漢字パイレーツ",who:"パイレーツ",box:"たからばこ",boxE:"🧰",
-    say:{hi:"いっしょに たからの かんじを さがそう！",look:"かきじゅんを よく みてね！",nari:"この かんじの ひみつだぜ！",trace:"うすい じを なぞってみよう！",write:"こんどは みないで かいてみよう！",word:"ことばと ぶんで つかってみよう！"},
+    say:{hi:"いっしょに たからの かんじを さがそう！",look:"かきじゅんと よみかたを みてね！",nari:"この かんじの ひみつだぜ！",trace:"うすい じを なぞってみよう！",write:"こんどは みないで かいてみよう！",word:"ことばと ぶんで つかってみよう！"},
     items:[["🪙","きんか"],["💎","ほうせき"],["🗺️","たからの ちず"],["🧭","コンパス"],["⚓","いかり"],["🐚","かいがら"],["🔭","ぼうえんきょう"],["🗝️","ふしぎな かぎ"],["💍","ゆびわ"],["📿","くびかざり"],["🍾","びんの てがみ"],["🦀","かに"],["🐙","たこ"],["🐠","ねったいぎょ"],["🦜","オウム"],["🏴‍☠️","かいぞくの はた"],["🪝","フック"],["🧱","きんの レンガ"],["🍖","ほねつき にく"],["🍌","バナナ"],["🥥","ヤシの み"],["🐢","うみがめ"],["🦈","サメ"],["🐳","くじら"]],
     special:[["👑","おうかん"],["⛵","かいぞくせん"],["🏝️","たからじま"],["🏆","きんの トロフィー"],["🔱","うみの やり"],["🌊","おおなみ"],["🐋","おおくじら"],["🌋","ひの やま"],["🎖️","くんしょう"],["🗿","なぞの せきぞう"]]},
   dragon:{name:"漢字ドラゴン",who:"ドラゴン",box:"ほうせきばこ",boxE:"🧰",
-    say:{hi:"かんじの ちからを あつめよう！",look:"かきじゅんを よく みてね！",nari:"この かんじの なりたちを おしえるよ！",trace:"うすい じを なぞってみよう！",write:"こんどは みないで かいてみよう！",word:"ことばと ぶんで つかってみよう！"},
+    say:{hi:"かんじの ちからを あつめよう！",look:"かきじゅんと よみかたを みてね！",nari:"この かんじの なりたちを おしえるよ！",trace:"うすい じを なぞってみよう！",write:"こんどは みないで かいてみよう！",word:"ことばと ぶんで つかってみよう！"},
     items:[["💎","ほうせき"],["🔥","ほのおの たま"],["⚡","いなずま"],["🌙","つきの いし"],["⭐","ほしの かけら"],["🔮","すいしょう"],["🍖","おにく"],["🍎","りんご"],["🪨","まほうの いわ"],["🌿","くすりそう"],["🍄","ふしぎな きのこ"],["🗡️","つるぎ"],["🛡️","たて"],["💠","あおい ほうせき"],["🔶","オレンジの ほうせき"],["🟢","みどりの ほうせき"],["🪶","はね"],["🦴","ほね"],["☄️","りゅうせい"],["🌈","にじの かけら"],["🧪","まほうの くすり"],["📜","まきもの"],["🪵","たきぎ"],["🍯","はちみつ"]],
     special:[["👑","りゅうの おうかん"],["🏯","りゅうの しろ"],["🌋","かざん"],["🥚","でんせつの たまご"],["🏆","きんの トロフィー"],["🐉","りゅうの おまもり"],["🌌","ぎんが"],["⛰️","りゅうの やま"],["🎖️","くんしょう"],["🔱","いかずちの やり"]]},
   hamster:{name:"漢字ペンギン",who:"ペンギン",box:"こおりの はこ",boxE:"🧊",
-    say:{hi:"いっしょに かんじを おぼえよう！",look:"かきじゅんを よく みてね！",nari:"この かんじの ひみつ、おしえるね！",trace:"うすい じを なぞってみよう！",write:"こんどは みないで かいてみよう！",word:"ことばと ぶんで つかってみよう！"},
+    say:{hi:"いっしょに かんじを おぼえよう！",look:"かきじゅんと よみかたを みてね！",nari:"この かんじの ひみつ、おしえるね！",trace:"うすい じを なぞってみよう！",write:"こんどは みないで かいてみよう！",word:"ことばと ぶんで つかってみよう！"},
     items:[["🐟","さかな"],["🦐","えび"],["🦑","いか"],["🐠","ねったいぎょ"],["🐡","ふぐ"],["🦀","かに"],["🐚","かいがら"],["🧊","こおり"],["❄️","ゆきの けっしょう"],["⛄","ゆきだるま"],["🧣","マフラー"],["🧤","てぶくろ"],["🧢","ぼうし"],["⛸️","スケートぐつ"],["🎿","スキー"],["🛷","そり"],["🪁","たこ"],["🎈","ふうせん"],["🧸","ぬいぐるみ"],["🍙","おにぎり"],["🍦","ソフトクリーム"],["🍧","かきごおり"],["⭐","ほし"],["🔦","かいちゅうでんとう"]],
     special:[["🏠","ペンギンの おうち"],["🛝","こおりの すべりだい"],["🌌","オーロラ"],["🎂","ケーキ"],["🏆","きんの トロフィー"],["🛏️","ふかふか ベッド"],["🎠","メリーゴーランド"],["🚂","きしゃ"],["🎖️","くんしょう"],["🏰","おしろ"]]},
   unicorn:{name:"漢字ユニコーン",who:"ユニコーン",box:"きらきらばこ",boxE:"💝",
-    say:{hi:"まほうの かんじを あつめよう！",look:"かきじゅんを よく みてね！",nari:"この かんじの なりたちだよ！",trace:"うすい じを なぞってみよう！",write:"こんどは みないで かいてみよう！",word:"ことばと ぶんで つかってみよう！"},
+    say:{hi:"まほうの かんじを あつめよう！",look:"かきじゅんと よみかたを みてね！",nari:"この かんじの なりたちだよ！",trace:"うすい じを なぞってみよう！",write:"こんどは みないで かいてみよう！",word:"ことばと ぶんで つかってみよう！"},
     items:[["🌟","ほし"],["🌸","さくら"],["🌈","にじ"],["🦋","ちょうちょ"],["🍭","キャンディ"],["💐","はなたば"],["🎀","リボン"],["💖","ハート"],["🔮","まほうの たま"],["🌙","おつきさま"],["☁️","くも"],["🌷","チューリップ"],["🧁","カップケーキ"],["🍬","あめ"],["🫧","しゃぼんだま"],["🪄","まほうの つえ"],["💎","ほうせき"],["🌼","ひなぎく"],["🍓","いちご"],["🎐","ふうりん"],["🐚","かいがら"],["🪽","はね"],["🍀","よつばの クローバー"],["🌺","ハイビスカス"]],
     special:[["👑","ティアラ"],["🏰","おしろ"],["🎠","メリーゴーランド"],["🌌","ほしぞら"],["🏆","きんの トロフィー"],["👗","ドレス"],["🧚","ようせい"],["🎆","はなび"],["🎖️","くんしょう"],["🌠","ながれぼし"]]},
 }[CH];
 const TEST_KEY={pirate:k=>`kanji-pirate-${k}kyu-v1`,dragon:k=>k==="5"?"kanji-dragon-v1":`kanji-dragon-${k}kyu-v1`,hamster:k=>`kanji-hamster-${k}kyu-v2`,unicorn:k=>`kanji-unicorn-${k}kyu-v1`}[CH](KYU);
 const D=window.LEARN_DATA;
 const KS=D.list.map(r=>r[0]);
-const INFO={}; D.list.forEach(r=>INFO[r[0]]={k:r[0],s:+r[1],bu:r[2],buN:r[3],yomi:r[4],imi:r[5],words:r[6].split("/"),type:D.nari[r[0]][0],nari:D.nari[r[0]][1],rei:D.info[r[0]].rei,on:D.info[r[0]].on,kun:D.info[r[0]].kun,w:D.info[r[0]].w});
+const INFO={}; D.list.forEach(r=>INFO[r[0]]={k:r[0],s:+r[1],bu:r[2],buN:r[3],yomi:r[4],imi:r[5],words:r[6].split("/"),type:D.nari[r[0]][0],nari:D.nari[r[0]][1],rei:D.info[r[0]].rei,on:D.info[r[0]].on,kun:D.info[r[0]].kun,w:D.info[r[0]].w,reim:D.info[r[0]].reim||[]});
 // ばしょ（クイズの 島・国・マップと 同じ 区切り）
 const SEC_N=KS.length<=80?8:10;
 const SECS=Array.from({length:SEC_N},(_,i)=>KS.slice(Math.round(i*KS.length/SEC_N),Math.round((i+1)*KS.length/SEC_N)));
@@ -399,7 +418,7 @@ function box(){
 
 // ---------- 画面：1字を おぼえる ----------
 const STEPS=["みる","なりたち","なぞる","かく","ことば","れいぶん","たしかめ"];
-const NEED_TRACE=3, NEED_WRITE=5, PER_ITEM=5;
+const NEED_TRACE=1, NEED_WRITE=1, PER_ITEM=5;
 function yomiHTML(I){
   const on=I.on.map(x=>`<span class="y-on">${esc(x)}</span>`).join("・");
   const kun=I.kun.map(([a,b])=>`<span class="y-kun">${esc(a)}</span>${b?`<span class="okuri">（${esc(b)}）</span>`:""}`).join("・");
@@ -426,12 +445,13 @@ function lesson(k){
   function show(){
     if(step>=STEPS.length) return finish();
     if(step===0){
-      frame(`${talk(CHAR.say.look)}<div class="card"><div class="big">${kanjiSVG(k)}</div><div class="row"><button class="btn" id="again">▶ もういちど みる</button></div>
-      <p class="legend">いろの じゅんばんが かきじゅんだよ：<b style="color:var(--s1)">1 あか</b> → <b style="color:var(--s2)">2 あお</b> → <b style="color:var(--s3)">3 きいろ</b> → <b style="color:var(--s4)">4 みどり</b> → <b style="color:var(--s5)">5 ちゃいろ</b> → <b style="color:var(--s6)">6 くろ</b> → <b style="color:var(--s7)">7 オレンジ</b> → <b style="color:var(--s8)">8 むらさき</b>…</p>
-      <h3>よみかた</h3>${yomiHTML(I)}
+      frame(`${talk(CHAR.say.look)}<div class="card look"><div class="look-top"><div class="big">${kanjiSVG(k)}</div><div class="look-side"><button class="btn sm" id="again">▶ もういちど</button><p class="legend">いろの じゅんに かくよ<br><b style="color:var(--s1)">1 あか</b>→<b style="color:var(--s2)">2 あお</b>→<b style="color:var(--s3)">3 きいろ</b>…</p></div></div></div>
+      <div class="card"><h3>よみかた</h3>${yomiHTML(I)}
       <p class="legend" style="text-align:left"><span class="y-on">おんよみ は カタカナ</span>、<span class="y-kun">くんよみ は ひらがな</span>で かくよ。（ ）の ところは おくりがな。</p>
-      <dl class="facts"><dt>いみ</dt><dd>${esc(I.imi)}</dd><dt>かくすう</dt><dd>${I.s}かく</dd><dt>ぶしゅ</dt><dd>${esc(I.bu)}（${esc(I.buN)}）</dd></dl></div>`,true);
+      <dl class="facts"><dt>いみ</dt><dd>${esc(I.imi)}</dd><dt>かくすう</dt><dd>${I.s}かく</dd><dt>ぶしゅ</dt><dd>${esc(I.bu)}（${esc(I.buN)}）</dd></dl>
+      <p class="count" style="text-align:center">よめたら「つぎへ」を おしてね 👇</p></div>`,true);
       const svg=app.querySelector(".kv"); animate(svg,k); $("#again").onclick=()=>animate(svg,k);
+      const nb=$("#next"); setTimeout(()=>{ if(nb&&nb.isConnected) nb.classList.add("pulse"); }, Math.min(9000,1200+strokePts(k).reduce((a,s)=>a+Math.max(260,s.len*11)+220,0)));
     }else if(step===1){
       frame(`${talk(CHAR.say.nari)}<div class="card"><span class="badge" style="align-self:flex-start">${TYPE_TXT[I.type]||I.type}</span><div class="nari-k">${k}</div><p class="nari">${esc(I.nari)}</p></div>`,true);
     }else if(step===2){
@@ -444,7 +464,7 @@ function lesson(k){
       let round=0;
       frame(`${talk(CHAR.say.write)}<div class="card"><p class="count" id="cnt"></p><div id="pp"></div><div id="ctx"></div><div class="big" id="pad"></div><p class="msg" id="msg" aria-live="polite"></p><div class="row"><button class="btn" id="peek">👀 おてほんを みる</button><button class="btn" id="redo">↺ かきなおす</button></div></div>`,false);
       const go=()=>{
-        const r=Math.min(round,NEED_WRITE-1), inSent=r>=NEED_WRITE-2;  // 4・5かいめは れいぶんの □ に かく
+        const r=Math.min(round,NEED_WRITE-1), inSent=NEED_WRITE>=3&&r>=NEED_WRITE-2;  // 4・5かいめは れいぶんの □ に かく
         $("#pp").innerHTML=pips(Math.min(round,NEED_WRITE),NEED_WRITE);
         $("#cnt").textContent=done[3]?`${NEED_WRITE}かい かけたね！`:inSent?`れいぶんの □ に はいる かんじを かこう（${round+1} / ${NEED_WRITE}かいめ）`:`おてほんなしで かこう（${round+1} / ${NEED_WRITE}かいめ）`;
         $("#ctx").innerHTML=inSent&&!done[3]?`<p class="sentence">${sentenceBlank(I.rei[(r-(NEED_WRITE-2))%I.rei.length],k)}</p>`:"";
@@ -457,20 +477,19 @@ function lesson(k){
       frame(`${talk(CHAR.say.word)}<div class="card"><h3>「${k}」を つかった ことば</h3><p class="legend" style="text-align:left">「${k}」の よみが <span class="y-on">おんよみ（カタカナ）</span>か <span class="y-kun">くんよみ（ひらがな）</span>か、いみと いっしょに おぼえよう。</p>
       <div class="wlist">${I.w.map(w=>`<div class="wrow"><span class="wk">${wordRuby(w,k)}</span><span class="wm">${esc(w[6])}</span><span class="wt">「${k}」は ${TAG[w[5]]} ${w[5]?`<b class="y-${w[5]}">${esc(w[5]==="on"?kata(w[3]):kunFull(I,w[3],kanaAfter(w[0],k)))}</b>`:""}</span></div>`).join("")}</div></div>`,true);
     }else if(step===5){
-      const ACT=[["say","🔈 よむ"],["rep","🗣 3かい こえに だして よむ"],["hide","🙈 かくして よむ"]];
-      const st=I.rei.map(()=>({say:false,rep:false,hide:false,n:0}));
-      const speak=(i,rate)=>{ try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(reiPlain(I.rei[i]).replace(/ /g,"")); u.lang="ja-JP"; u.rate=rate; speechSynthesis.speak(u); }catch(e){} };
-      frame(`${talk("こえに だして よんで、ぶんごと おぼえよう！")}<div class="card"><h3>れいぶん</h3><p class="legend" style="text-align:left">ぶんごとに 「よむ」→「3かい こえに だして よむ」→「かくして よむ」の じゅんに やってみよう。</p><div class="rei-box" id="rb">${I.rei.map((r,i)=>{ const t=reiType(r,k); return `<div class="rei-item" id="ri${i}"><p class="rei">${ruby(r,k)}</p><div class="rei-tag">${TAG[t.t]} <b class="y-${t.t}">${esc(t.t==="kun"?kunFull(I,t.y,t.a):t.y)}</b></div><div class="rei-tools">${ACT.map(([a,l])=>`<button class="btn" data-a="${a}" data-i="${i}">${l}</button>`).join("")}</div></div>`; }).join("")}</div>
+      const st=I.rei.map(()=>({n:0,hide:false})); let cur=0, busy=false;
+      frame(`${talk("こえに だして よんで、ぶんごと おぼえよう！")}<div class="card"><h3>れいぶん</h3><p class="legend" style="text-align:left">① <b>「🗣 こえに だして よむ」</b>を 3かい おす<br>② <b>「🙈 かくして よむ」</b>で ふりがな なしで よむ<br>きいろい せんが のびる ところを いっしょに よもう。</p><div class="rei-box" id="rb">${I.rei.map((r,i)=>{ const t=reiType(r,k); return `<div class="rei-item" id="ri${i}"><div class="rei-now">👉 いま この ぶんを よもう</div><p class="rei"><span class="rsw">${ruby(r,k)}</span></p><div class="rei-tag">${TAG[t.t]} <b class="y-${t.t}">${esc(t.t==="kun"?kunFull(I,t.y,t.a):t.y)}</b></div><div class="rei-tools"><button class="btn" data-a="rep" data-i="${i}">🗣 こえに だして よむ（0/3）</button><button class="btn" data-a="hide" data-i="${i}" disabled>🙈 かくして よむ</button>${(I.reim||[])[i]?`<button class="btn imi-b" data-m="${i}">📖 ことばの いみ</button>`:""}</div>${(I.reim||[])[i]?`<p class="imi" id="im${i}" hidden>「<b>${esc(I.reim[i][0])}</b>」（${esc(I.reim[i][1])}）は、${esc(I.reim[i][2])}。</p>`:""}</div>`; }).join("")}</div>
       <p class="count" id="cnt"></p></div>`,false);
-      const upd=()=>{ const n=st.filter(x=>x.say&&x.rep&&x.hide).length; $("#cnt").textContent=n>=st.length?"ぜんぶ よめたね！ すごい！":`よめた ぶん ${n} / ${st.length}`; if(n>=st.length) unlock(); };
-      app.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{ const i=+b.dataset.i, a=b.dataset.a, box=$("#ri"+i);
-        if(a==="say") speak(i,.85);
-        if(a==="rep"){ st[i].n=Math.min(3,st[i].n+1); b.textContent=`🗣 3かい こえに だして よむ（${st[i].n}/3）`; if(st[i].n<3){ upd(); return; } }
-        if(a==="hide"){ const on=box.classList.toggle("rt-hide"); b.textContent=on?"👀 ふりがなを だす":"🙈 かくして よむ"; }
-        if(!st[i][a]){ st[i][a]=true; b.classList.add("done"); }
-        if(st[i].say&&st[i].rep&&st[i].hide) box.classList.add("rdone");
-        upd(); });
-      upd();
+      const view=()=>{ I.rei.forEach((_,i)=>{ const box=$("#ri"+i); box.classList.toggle("now",i===cur); box.classList.toggle("later",i>cur); box.classList.toggle("rdone",i<cur);
+          box.querySelector('[data-a="rep"]').disabled=busy||i!==cur||st[i].n>=3; box.querySelector('[data-a="hide"]').disabled=busy||i!==cur||st[i].n<3; });
+        $("#cnt").textContent=cur>=st.length?"ぜんぶ よめたね！ すごい！":`よめた ぶん ${cur} / ${st.length}`; if(cur>=st.length) unlock(); };
+      const sweep=(i,then)=>{ const sw=$("#ri"+i+" .rsw"); const len=reiPlain(I.rei[i]).replace(/ /g,"").length; sw.classList.remove("go"); void sw.offsetWidth; sw.style.animationDuration=Math.max(1.5,len*.28)+"s"; sw.classList.add("go"); busy=true; view(); sw.onanimationend=()=>{ busy=false; then(); view(); }; };
+      app.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{ const p=$("#im"+b.dataset.m); p.hidden=!p.hidden; b.textContent=p.hidden?"📖 ことばの いみ":"📖 いみを とじる"; });
+      app.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{ const i=+b.dataset.i, a=b.dataset.a, box=$("#ri"+i); if(busy||i!==cur) return;
+        if(a==="rep"){ st[i].n++; b.textContent=`🗣 こえに だして よむ（${st[i].n}/3）`; if(st[i].n>=3) b.classList.add("done"); sweep(i,()=>{}); }
+        if(a==="hide"){ box.classList.add("rt-hide"); sweep(i,()=>{ b.classList.add("done"); b.textContent="✓ よめた！"; box.classList.remove("rt-hide"); cur++; const nx=$("#ri"+cur); if(nx) nx.scrollIntoView({behavior:"smooth",block:"center"}); }); }
+      });
+      view();
     }else if(step===6){
       const qs=makeQuiz(I); let qi=0;
       frame(`${talk("さいごに たしかめよう！ ぜんぶ できたら れんしゅう かんりょう！")}<div class="card" id="quiz"></div>`,false,"れんしゅう かんりょう！ ✨");
@@ -537,7 +556,7 @@ function makeQuiz(I){
     qs.push({q:`<span class="sentence" style="display:block">${sentenceBlank(r,k)}</span>□に はいる かんじは？`,a:k,c:shuffle([k,...pool]).map(x=>({v:x,h:`<span style="font-family:var(--f-k);font-size:1.6rem">${x}</span>`}))}); }
   // 4) れいぶんの よみは おんよみ？ くんよみ？
   { const cand=I.rei.filter(r=>reiType(r,k).t); if(cand.length){ const r=pick(cand), t=reiType(r,k);
-    qs.push({q:`<span class="sentence" style="display:block">${ruby(r.replace(/\{([^|}]+)\|([^|}]+)(?:\|[a-z]*)?\}/g,(m,a,b)=>`{${a}|${hira(b)}}`),k)}</span>この ぶんの「${k}」（${esc(hira(t.y))}）は おんよみ？ くんよみ？`,a:t.t,c:[{v:"on",h:`<span class="y-on">おんよみ</span>`},{v:"kun",h:`<span class="y-kun">くんよみ</span>`}]}); } }
+    qs.push({q:`<span class="sentence" style="display:block">${ruby(r.replace(/\{([^|}]+)\|([^|}]+)(?:\|[a-z]*)?\}/g,(m,a,b)=>`{${a}|${a===k?hira(b)+"・"+kata(b):hira(b)}}`),k)}</span>この ぶんの「${k}」（${esc(hira(t.y))}・${esc(kata(t.y))}）は おんよみ？ くんよみ？`,a:t.t,c:[{v:"on",h:`<span class="y-on">おんよみ</span>`},{v:"kun",h:`<span class="y-kun">くんよみ</span>`}]}); } }
   return qs;
 }
 home();
