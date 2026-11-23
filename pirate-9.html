@@ -253,7 +253,7 @@ html,body{overscroll-behavior-y:none}
 .pad.kans{display:block}
 .kmsg{margin:0;text-align:center;font-weight:700;color:var(--muted);min-height:1.5em}
 .kmsg.ok{color:var(--ok)} .kmsg.ng{color:var(--bad)}
-.padtools.kt{grid-template-columns:1fr}
+.padtools.kt{grid-template-columns:1fr 1fr}
 </style>
 
 </head>
@@ -860,8 +860,9 @@ function renderKaki(){
       <div class="pad kpad" id="kPad"></div>
       <div class="pad answer kans" id="ansPad" hidden></div>
     </div>
-    <p class="kmsg" id="kMsg" aria-live="polite">かきじゅんどおりに 1かくずつ かこう（ぜんぶで ${(KVG[t.k]||[]).length||t.s}かく）</p>
+    <p class="kmsg" id="kMsg" aria-live="polite">かきじゅんどおりに 1かくずつ かこう（ぜんぶで ${(KVG[t.k]||[]).length||t.s}かく・まちがえても 2かいまで やりなおせるよ）</p>
     <div class="padtools kt" id="padTools">
+      <button type="button" class="btn ghost" id="redoBtn">↺ さいしょから</button>
       <button type="button" class="btn ghost" id="giveUp">わからない</button>
     </div>
     <div id="selfCheck" hidden></div>`;
@@ -873,10 +874,11 @@ function renderKaki(){
     $("padTools").innerHTML=`<button type="button" class="btn ok" id="sOk">○ かけた</button><button type="button" class="btn ghost" id="sNg">× まちがえた</button>`;
     showModel(); $("padTools").hidden=false; $("sOk").onclick=()=>grade(true); $("sNg").onclick=()=>grade(false); return;
   }
-  const pad=kMakePad(host,t.k,(ok,info)=>{
+  let pad=null; const mk=()=>kMakePad(host,t.k,(ok,info)=>{
     if(ok){ msg("せいかい！ かきじゅんも ばっちり","ok"); showModel(); setTimeout(()=>grade(true),500); }
     else { msg(info,"ng"); showModel(); setTimeout(()=>grade(false),900); }
-  },s=>msg(s,"ok"));
+  },(s,c)=>msg(s,c||"ok"),()=>pad.misses); pad=mk();
+  $("redoBtn").addEventListener("click",()=>{ if(pad.over()) return; const m=pad.misses; pad.stop(); pad=mk(); pad.misses=m; msg("さいしょから かこう（1かくめから）",""); });
   $("giveUp").addEventListener("click",()=>{ pad.stop(); msg("こたえと かきじゅんを みてみよう","ng"); showModel(); grade(false); });
 }
 const kNS="http://www.w3.org/2000/svg", kPTS={};
@@ -904,8 +906,8 @@ function kRes(pts,n){ const d=[0]; for(let i=1;i<pts.length;i++) d.push(d[i-1]+M
 function kLen(p){ let s=0; for(let i=1;i<p.length;i++) s+=Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]); return s; }
 function kDist(a,b){ let s=0; for(let i=0;i<a.length;i++) s+=Math.hypot(a[i][0]-b[i][0],a[i][1]-b[i][1]); return s/a.length; }
 // おぼえるモードの「みないで かく」と おなじ あまさ（TOL 17）。ヒントなし、1画 まちがえたら ×
-function kMakePad(host,k,onEnd,onStep){
-  host.innerHTML=`<svg class="ksvg kdraw" viewBox="0 0 109 109">${kGrid}<g class="done" fill="none" stroke-linecap="round" stroke-linejoin="round"></g><path class="fail" fill="none" stroke="var(--bad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path class="ink" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+function kMakePad(host,k,onEnd,onStep){ const MAXMISS=3;
+  host.innerHTML=`<svg class="ksvg kdraw" viewBox="0 0 109 109">${kGrid}<g class="done" fill="none" stroke-linecap="round" stroke-linejoin="round"></g><path class="fail" fill="none" stroke="var(--bad)" stroke-dasharray="3 3" opacity=".7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path class="ink" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   const svg=host.querySelector("svg"), done=svg.querySelector(".done"), ink=svg.querySelector(".ink"), fail=svg.querySelector(".fail");
   const st=kStroke(k), TOL=17, offs=[]; let cur=0, pts=null, pid=null, over=false;
   const cen=p=>{ let x=0,y=0; p.forEach(q=>{x+=q[0];y+=q[1];}); return [x/p.length,y/p.length]; };
@@ -932,8 +934,10 @@ function kMakePad(host,k,onEnd,onStep){
       cur++; if(cur>=st.length){ over=true; onEnd(true); } else onStep(`${cur}かくめ OK！ つぎは ${cur+1}かくめ`);
       return;
     }
-    over=true; fail.setAttribute("d",ink.getAttribute("d")); ink.setAttribute("d","");
-    onEnd(false, res==="rev"?`${cur+1}かくめの かく むきが はんたい…`:other>=0?`${cur+1}かくめに ${other+1}かくめを かいちゃった…`:`${cur+1}かくめが ちがうみたい…`);
+    api.misses++; fail.setAttribute("d",ink.getAttribute("d")); ink.setAttribute("d","");
+    const why=res==="rev"?`${cur+1}かくめの かく むきが はんたい…`:other>=0?`${cur+1}かくめに ${other+1}かくめを かいちゃった…`:`${cur+1}かくめが ちがうみたい…`;
+    if(api.misses<MAXMISS){ const ft=fail._t=(fail._t||0)+1; setTimeout(()=>{ if(fail._t===ft) fail.setAttribute("d",""); },800); onStep(`${why} もういちど ${cur+1}かくめを かこう（あと ${MAXMISS-api.misses}かい）`,"ng"); return; }
+    over=true; onEnd(false, why);
   }
   function pt(e){ const p=new DOMPoint(e.clientX,e.clientY).matrixTransform(svg.getScreenCTM().inverse()); return [p.x,p.y]; }
   svg.addEventListener("pointerdown",e=>{ if(over||pid!==null) return; if(e.pointerType==="pen") penSeen=true; if(penSeen&&e.pointerType==="touch") return; e.preventDefault(); pid=e.pointerId; try{svg.setPointerCapture(pid);}catch(_){} pts=[pt(e)]; ink.setAttribute("d",`M${pts[0][0]},${pts[0][1]}`); });
@@ -941,7 +945,7 @@ function kMakePad(host,k,onEnd,onStep){
   const end=e=>{ if(e.pointerId!==pid) return; pid=null; const p=pts; pts=null; if(p&&!over) judge(p); };
   svg.addEventListener("pointerup",end); svg.addEventListener("pointercancel",e=>{ if(e.pointerId===pid){ pid=null; pts=null; ink.setAttribute("d",""); } });
   ["touchstart","touchmove","touchend"].forEach(t=>svg.addEventListener(t,e=>{ if(e.cancelable) e.preventDefault(); },{passive:false}));
-  return {stop(){ over=true; }};
+  const api={misses:0, stop(){ over=true; }, over:()=>over}; return api;
 }
 
 let penSeen=false; // ペンを使い始めたら、手のひら（指）のタッチは無視する
