@@ -10,8 +10,8 @@
 <meta property="og:site_name" content="かんじフレンズ">
 <meta property="og:title" content="かんじフレンズ">
 <meta property="og:description" content="パイレーツ・ドラゴン・ペンギン・ユニコーンといっしょに、小学1〜6年生の漢字を楽しくおぼえるゲーム">
-<meta property="og:url" content="https://mamiariumi-oss.github.io/-app/">
-<meta property="og:image" content="https://mamiariumi-oss.github.io/-app/og-image-v4.png">
+<meta property="og:url" content="https://mamikkokanji.github.io/">
+<meta property="og:image" content="https://mamikkokanji.github.io/og-image-v4.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -98,6 +98,25 @@ h1 .spk{color:#F2C230;font-size:1.3rem}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .chara{border-color:var(--line)}}
 :root[data-theme="dark"] .chara{border-color:var(--line)}
 </style>
+<script>
+/* まえの アドレスから きろくを ひきつぐ。#kfimport=g:<gzip base64url> または j:<base64url JSON> */
+(function(){
+  var h=location.hash, m=h.match(/[#&]kfimport=([gj]):([A-Za-z0-9_-]+)/); if(!m) return;
+  var done=function(n){ try{ sessionStorage.setItem("kf-imported",String(n)); }catch(e){} location.replace(location.pathname+location.search); };
+  try{
+    var b=atob(m[2].replace(/-/g,"+").replace(/_/g,"/")), u=new Uint8Array(b.length); for(var i=0;i<b.length;i++) u[i]=b.charCodeAt(i);
+    var apply=function(txt){ var o=JSON.parse(txt), n=0; for(var k in o){ if(!/^kanji/.test(k)) continue; try{ if(localStorage.getItem(k)===null){ localStorage.setItem(k,o[k]); n++; } }catch(e){} } done(n); };
+    if(m[1]==="j") apply(new TextDecoder().decode(u));
+    else new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream("gzip"))).text().then(apply,function(){ done(0); });
+  }catch(e){ done(0); }
+})();
+</script>
+<script>
+addEventListener("DOMContentLoaded",function(){ var n=null; try{ n=sessionStorage.getItem("kf-imported"); sessionStorage.removeItem("kf-imported"); }catch(e){} if(n===null) return;
+  var d=document.createElement("div"); d.textContent=(+n>0)?"まえの きろくを ひきつぎました ✓ / Progress moved ✓":"ひきつぐ きろくは ありませんでした";
+  d.style.cssText="position:fixed;left:50%;top:16px;transform:translateX(-50%);z-index:9999;background:#2A2430;color:#fff;padding:10px 18px;border-radius:999px;font-weight:700;font-size:15px;box-shadow:0 6px 20px rgba(0,0,0,.25)";
+  document.body.appendChild(d); setTimeout(function(){ d.remove(); },4000); });
+</script>
 </head>
 <body>
 <div class="wrap">
