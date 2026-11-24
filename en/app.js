@@ -446,7 +446,7 @@ function lesson(k,startStep){
       $("#peek").onclick=()=>{ const h=$("#pad"); h.innerHTML=kanjiSVG(k); animate(h.querySelector("svg"),k); $("#peek").disabled=true; setTimeout(()=>{ $("#peek").disabled=false; run(); },animTime(k)); };
     }else if(step===4){
       frame(`${talk(ch,F.say.word)}<div class="card"><h3>Words with ${k} <span class="jp">ことば</span></h3><p class="legend" style="text-align:left">The reading of <mark>${k}</mark> is colored: <span class="y-on" style="font-weight:900">blue = on’yomi</span>, <span class="y-kun" style="font-weight:900">orange = kun’yomi</span>, <span class="y-sp" style="font-weight:900">purple = special reading</span>.</p>
-      <div class="wlist">${I.w.map(([w,e])=>{ return `<div class="wrow"><span class="wk">${ruby(w,k)}</span>${sayBtn(readR(w),"Listen")}<span class="wm"><span class="roma">${esc(romaji(readR(w)))}</span><span class="roma"> · </span>${enHTML(e)}</span><span class="wt">${tgtHTML(w,k)}</span></div>`; }).join("")}</div></div>`,true);
+      <div class="wlist">${I.w.map(([w,e])=>{ return `<div class="wrow"><span class="wk">${ruby(w,k)}</span><span class="wm"><span class="roma">${esc(romaji(readR(w)))}</span><span class="roma"> · </span>${enHTML(e)}</span><span class="wt">${tgtHTML(w,k)}</span></div>`; }).join("")}</div></div>`,true);
     }else if(step===5){
       const ACT=[["rep","🗣 Read it aloud"],["hide","🙈 Hide furigana & read"]];
       const st=I.x.map(()=>({rep:false,hide:false}));
