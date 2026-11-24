@@ -42,7 +42,7 @@
   --hamster:#4CC3D4; --hamster-soft:#163A40; --unicorn:#B48BE8; --unicorn-soft:#352A4A; color-scheme:dark}
 [hidden]{display:none!important}
 html,body{min-height:100%}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.6;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.6;margin:0;word-break:keep-all;overflow-wrap:anywhere;text-wrap:pretty}
 .wrap{max-width:560px;margin:0 auto;padding-block:max(20px,env(safe-area-inset-top,0px)) 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:16px}
 h1{font-size:1.7rem;font-weight:900;margin:0;letter-spacing:.06em;text-align:center}
 .lead{margin:-8px 0 0;text-align:center;color:var(--muted);font-size:.9rem}
@@ -144,7 +144,7 @@ function quizInfo(c,k){ const v=read(c.key(k)); return v?(+v.cleared||0):0; }
 function last(){ try{ return localStorage.getItem("kanji-app-last"); }catch(e){ return null; } }
 function info(c,k){
   const v=read(c.key(k));
-  return v&&v.answered ? `正解 <b>${v.correct}</b> 問（${v.answered}問とき）` : "はじめから";
+  return v&&v.answered ? `正解 <b>${v.correct}</b> / ${v.answered}問` : "はじめから";
 }
 function render(open){
   $("grid").after($("panel"));

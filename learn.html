@@ -56,7 +56,7 @@
 .rei-item.now .rei-now{display:block}
 .rei-item.now .rei{font-weight:700}
 .rei-item.later{opacity:.4}
-.rei-item.rdone .rei-tools .btn:not(.done){display:none}
+.rei-item.rdone .rei-tools .btn:not(.done):not(.imi-b){display:none}
 .rei-tools{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .rei-tools .btn{padding:4px 12px;font-size:.82rem}
 .rei-tools .btn.done{background:var(--ok);border-color:var(--ok);color:#fff}
@@ -74,7 +74,7 @@
 [hidden]{display:none!important}
 *{box-sizing:border-box}
 html,body{min-height:100%}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.6;margin:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.6;margin:0;word-break:keep-all;overflow-wrap:anywhere;-webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .wrap{max-width:560px;margin:0 auto;padding-block:max(12px,env(safe-area-inset-top,0px)) 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
@@ -159,6 +159,7 @@ body:has(.kv) .nav{position:static}
 .prize h2{margin:0;font-size:1.3rem}
 .box{font-size:5.5rem;line-height:1;background:none;border:0;padding:0;animation:wob 1.2s ease-in-out infinite}
 @keyframes wob{0%,100%{transform:rotate(0)}20%{transform:rotate(-8deg)}40%{transform:rotate(8deg)}60%{transform:rotate(-4deg)}}
+.got .stamp{display:block;margin:0 auto;transform:rotate(-8deg)}
 .got{font-size:5.5rem;line-height:1;animation:pop .6s cubic-bezier(.3,1.6,.5,1)}
 @keyframes pop{0%{transform:scale(.2) rotate(-30deg);opacity:0}100%{transform:none;opacity:1}}
 .got-name{font-weight:900;font-size:1.2rem;color:var(--c)}
@@ -493,7 +494,7 @@ function lesson(k){
       app.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{ const p=$("#im"+b.dataset.m); p.hidden=!p.hidden; b.textContent=p.hidden?"📖 ことばの いみ":"📖 いみを とじる"; });
       app.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{ const i=+b.dataset.i, a=b.dataset.a, box=$("#ri"+i); if(busy||i!==cur) return;
         if(a==="rep"){ st[i].n++; b.textContent="✓ こえに だして よめた"; b.classList.add("done"); sweep(i,()=>{}); }
-        if(a==="hide"){ box.classList.add("rt-hide"); sweep(i,()=>{ b.classList.add("done"); b.textContent="✓ よめた！"; box.classList.remove("rt-hide"); cur++; const nx=$("#ri"+cur); if(nx) nx.scrollIntoView({behavior:"smooth",block:"center"}); }); }
+        if(a==="hide"){ box.classList.add("rt-hide"); sweep(i,()=>{ b.classList.add("done"); b.textContent="✓ よめた！"; box.classList.remove("rt-hide"); const ip=$("#im"+i), ib=box.querySelector("[data-m]"); if(ip&&ib){ ip.hidden=false; ib.textContent="📖 いみを とじる"; } cur++; const nx=$("#ri"+cur); if(nx) nx.scrollIntoView({behavior:"smooth",block:"center"}); }); }
       });
       view();
     }else if(step===6){
@@ -527,7 +528,7 @@ function lesson(k){
     function showBox(){
       if(!gifts.length){
         const left=PER_ITEM-(cnt%PER_ITEM);
-        ov.innerHTML=`<div class="prize"><h2>「${k}」 ${firstTime?"れんしゅう かんりょう！":"ふくしゅう できた！"}</h2><div class="got">💮</div>
+        ov.innerHTML=`<div class="prize"><h2>「${k}」 ${firstTime?"れんしゅう かんりょう！":"ふくしゅう できた！"}</h2><div class="got"><svg class="stamp" viewBox="0 0 100 100" width="132" height="132" role="img" aria-label="よく できました"><g fill="#FFE6F0" stroke="#E2579A" stroke-width="3" stroke-linejoin="round"><path transform="rotate(0 50 50)" d="M50 52C26 42 23 10 40 3L50 11L60 3C77 10 74 42 50 52Z"/><path transform="rotate(72 50 50)" d="M50 52C26 42 23 10 40 3L50 11L60 3C77 10 74 42 50 52Z"/><path transform="rotate(144 50 50)" d="M50 52C26 42 23 10 40 3L50 11L60 3C77 10 74 42 50 52Z"/><path transform="rotate(216 50 50)" d="M50 52C26 42 23 10 40 3L50 11L60 3C77 10 74 42 50 52Z"/><path transform="rotate(288 50 50)" d="M50 52C26 42 23 10 40 3L50 11L60 3C77 10 74 42 50 52Z"/></g><circle cx="50" cy="51" r="26" fill="#FFF5F9" stroke="#E2579A" stroke-width="1.5" stroke-dasharray="3 2.5"/><g fill="#D63A83" font-weight="900" text-anchor="middle" dominant-baseline="central" style="font-family:var(--f-ui);font-size:9px"><text x="50" y="44.5">よく</text><text x="50" y="57.5">できました</text></g></svg></div>
         ${firstTime?`<p style="margin:0;font-weight:700">あと ${left}字 れんしゅうすると アイテムが もらえるよ！</p>${pips(PER_ITEM-left,PER_ITEM)}`:`<p style="margin:0">ふくしゅう えらい！</p>`}<div class="row">${nav()}</div></div>`; bind(); return; }
       const g=gifts[gi];
       ov.innerHTML=`<div class="prize">${g.sp?`<span class="sp-tag">「${placeName(chapOf(k))}」の かんじを ぜんぶ おぼえた！</span>`:`<span class="sp-tag">${PER_ITEM}字 れんしゅう できた！</span>`}<h2>「${k}」 れんしゅう かんりょう！</h2><button class="box" id="open" aria-label="あける">${g.sp?"🎁":CHAR.boxE}</button><p style="margin:0;font-weight:700">タップして あけてね</p></div>`;
