@@ -95,19 +95,26 @@ function ruby(s,k,opt){
   return esc(s).replace(RB,(m,a,b,t)=>{
     if(opt.blank&&t&&a.includes(k)) return `<ruby><span class="blank"></span><rt class="y-${t}">${esc(b)}</rt></ruby>`;
     const cls=t&&!opt.nocolor?` class="y-${t}"`:"";
-    const r=`<ruby>${a}<rt${cls}>${b}</rt></ruby>`;
-    return t&&a.includes(k)?`<mark>${r}</mark>`:r; });
+    const r=`<ruby>${a}<rt${cls}>${opt.both&&t&&a.includes(k)?`${b}・${kata(b)}`:b}</rt></ruby>`;
+    return t&&a.includes(k)?`<mark${opt.nocolor?' class="plain"':""}>${r}</mark>`:r; });
 }
 const plainR=s=>s.replace(RB,(m,a)=>a);           // 漢字かなまじり
 const readR=s=>s.replace(RB,(m,a,b)=>b);           // ぜんぶ かな
-function tgtHTML(w,k){ // 「学 = ガッ GAK」: on'yomi in katakana / CAPITALS
+function tgtHTML(w,k,sent){ // 「学 = ガッ GAK」: on'yomi in katakana / CAPITALS
   RB.lastIndex=0; let m, t=null; while((m=RB.exec(w))){ if(m[1].includes(k)&&m[3]){ t={g:m[1],y:m[2],t:m[3],end:m.index+m[0].length}; break; } }
   if(!t) return "";
   const nx=readR(w.slice(t.end))[0]||""; let r=romaji(t.y);
   if(/っ$/.test(t.y)&&nx){ r=romaji(t.y+nx); r=r.slice(0,r.length-romaji(nx).length); }
   if(t.t==="on") r=r.toUpperCase();
-  return `${TAGS[t.t]} ${esc(t.g)} = <b class="y-${t.t}">${esc(t.t==="on"?`${kata(t.y)}（${t.y}）`:t.y)}</b> <span class="roma">${esc(r)}</span>`;
+  const al=sent?altR(w,k,true):(altR(w,k)?[plainR(w),altR(w,k)]:null);
+  return `${TAGS[t.t]} ${esc(t.g)} = <b class="y-${t.t}">${esc(t.t==="on"?`${kata(t.y)}（${t.y}）`:t.y)}</b> <span class="roma">${esc(r)}</span>${al?`<span class="also">${esc(al[0])} can also be read <b class="jp">${esc(al[1])}</b> <span class="roma">${esc(romaji(al[1]))}</span>. Both are correct.</span>`:""}`;
 }
+// 十本 じゅっぽん/じっぽん のように、どちらの読みも正しいもの
+const ALT={"十":{"じっ":"じゅっ","じゅっ":"じっ"}};
+function altR(w,k,part){ const t=targetR(w,k), a=t&&ALT[k]&&ALT[k][t.y]; if(!a) return null;
+  const w2=w.replace(`{${t.g}|${t.y}|${t.t}}`,`{${t.g}|${a}}`); if(!part) return readR(w2);
+  // 文の中では、対象の字を ふくむ 漢字のまとまり（十本 など）だけ
+  const m=w2.match(new RegExp(`(?:\\{[^}]*\\})*\\{${t.g}\\|${a}\\}(?:\\{[^}]*\\})*`)); return m?[plainR(m[0]),readR(m[0])]:null; }
 function targetR(s,k){ RB.lastIndex=0; let m; while((m=RB.exec(s))){ if(m[1].includes(k)&&m[3]) return {g:m[1],y:m[2],t:m[3]}; } return null; }
 const TAGS={on:'<span class="tag on">On’yomi</span>',kun:'<span class="tag kun">Kun’yomi</span>',sp:'<span class="tag sp">Special</span>'};
 const TYPE={pic:["Picture kanji","象形","It started as a drawing of a real thing."],sym:["Sign kanji","指事","It uses simple marks to show an idea."],comb:["Combined kanji","会意・形声","It is made by putting kanji parts together."]};
@@ -443,7 +450,7 @@ function lesson(k,startStep){
       const ACT=[["rep","🗣 Read it aloud"],["hide","🙈 Hide furigana & read"]];
       const st=I.x.map(()=>({rep:false,hide:false}));
       let busy=false;
-      frame(`${talk(ch,F.say.sent)}<div class="card"><h3>Example sentences <span class="jp">れいぶん</span></h3><p class="legend" style="text-align:left">① Press <b>“Read it aloud”</b> and read along with the <b style="background:rgba(255,205,60,.75)">yellow line</b>.<br>② Then <b>hide the furigana</b> and read it once more. Tap 🔈 to hear it.</p><div class="rei-box">${I.x.map((x,i)=>`<div class="rei-item" id="ri${i}"><div class="rei-now">▶ Read this sentence</div><div class="rei-line"><p class="sent">${ruby(x[0],k)}</p>${sayBtn(plainR(x[0]),"Listen")}</div><span class="roma">${esc(x[2])}</span>${enHTML(x[1])}<div class="legend" style="text-align:left">${tgtHTML(x[0],k)}</div><div class="rei-tools">${ACT.map(([a,l])=>`<button class="btn" data-a="${a}" data-i="${i}">${l}</button>`).join("")}</div></div>`).join("")}</div><p class="count" id="cnt"></p></div>`,false);
+      frame(`${talk(ch,F.say.sent)}<div class="card"><h3>Example sentences <span class="jp">れいぶん</span></h3><p class="legend" style="text-align:left">① Press <b>“Read it aloud”</b> and read along with the <b style="background:rgba(255,205,60,.75)">yellow line</b>.<br>② Then <b>hide the furigana</b> and read it once more. Tap 🔈 to hear it.</p><div class="rei-box">${I.x.map((x,i)=>`<div class="rei-item" id="ri${i}"><div class="rei-now">▶ Read this sentence</div><div class="rei-line"><p class="sent">${ruby(x[0],k)}</p>${sayBtn(plainR(x[0]),"Listen")}</div><span class="roma">${esc(x[2])}</span>${enHTML(x[1])}<div class="legend" style="text-align:left">${tgtHTML(x[0],k,true)}</div><div class="rei-tools">${ACT.map(([a,l])=>`<button class="btn" data-a="${a}" data-i="${i}">${l}</button>`).join("")}</div></div>`).join("")}</div><p class="count" id="cnt"></p></div>`,false);
       // split each sentence into units (one kana or one ruby word) so the yellow line moves along, line by line
       I.x.forEach((x,i)=>{ const p=$("#ri"+i+" .sent"); [...p.childNodes].forEach(n=>{ if(n.nodeType===3){ const f=document.createDocumentFragment(); [...n.textContent].forEach(c=>{ const u=document.createElement("span"); u.className="su"; u.textContent=c; f.appendChild(u); }); p.replaceChild(f,n); } else { const u=document.createElement("span"); u.className="su"; p.replaceChild(u,n); u.appendChild(n); } }); });
       const sweep=(i,then)=>{ const us=[...$("#ri"+i).querySelectorAll(".su")]; us.forEach(u=>u.classList.remove("lit")); busy=true; upd();
@@ -513,7 +520,7 @@ const kanaChoice=x=>({v:x,h:`<span class="ckana">${esc(x)}</span><span class="ro
 // wrong readings for a word: swap the target kanji's reading with its other readings
 let VALID=null;
 function validReadings(w){ // every reading this app knows for the same written word
-  if(!VALID){ VALID={}; KS.forEach(x=>{ const I=K[x]; [...I.w,...(I.e||[])].forEach(([ww])=>{ const p=plainR(ww); (VALID[p]=VALID[p]||new Set()).add(readR(ww)); });
+  if(!VALID){ VALID={}; KS.forEach(x=>{ const I=K[x]; [...I.w,...(I.e||[])].forEach(([ww])=>{ const p=plainR(ww); (VALID[p]=VALID[p]||new Set()).add(readR(ww)); const al=altR(ww,x); if(al) VALID[p].add(al); });
     (VALID[x]=VALID[x]||new Set()); I.kun.forEach(([a,b])=>{ if(!b) VALID[x].add(a); }); I.on.forEach(o=>VALID[x].add(hira(o))); }); }
   return VALID[plainR(w)]||new Set();
 }
@@ -546,7 +553,7 @@ function lessonQuiz(k){
   // 4) on or kun
   { const cand=I.x.filter(x=>{ const t=targetR(x[0],k); return t&&t.t!=="sp"; });
     if(cand.length){ const x=pick(cand), t=targetR(x[0],k);
-      qs.push({q:`<span class="sent" style="display:block">${ruby(x[0],k,{nocolor:true})}</span>In this sentence, is <b>${k}</b> (${esc(hira(t.y))} / ${esc(kata(t.y))}) read with on’yomi or kun’yomi?`,a:t.t,c:[{v:"on",h:`<span class="y-on">On’yomi</span>`},{v:"kun",h:`<span class="y-kun">Kun’yomi</span>`}],after:t.t==="on"?"On’yomi readings came from Chinese.":"Kun’yomi is the native Japanese word."}); } }
+      qs.push({q:`<span class="sent" style="display:block">${ruby(x[0],k,{nocolor:true,both:true})}</span>In this sentence, is <b>${k}</b> (${esc(hira(t.y))}・${esc(kata(t.y))}) read with on’yomi or kun’yomi?`,a:t.t,c:[{v:"on",h:`<span class="y-on">On’yomi</span>`},{v:"kun",h:`<span class="y-kun">Kun’yomi</span>`}],after:t.t==="on"?"On’yomi readings came from Chinese.":"Kun’yomi is the native Japanese word."}); } }
   return qs;
 }
 

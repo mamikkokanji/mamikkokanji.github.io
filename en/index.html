@@ -154,6 +154,8 @@ h2.sec{margin:6px 0 0;font-size:1rem;font-weight:900}
 .wrow .wt{grid-column:1/-1;font-size:.75rem;color:var(--muted);font-weight:700}
 .say{border:2px solid var(--line);background:var(--surface);border-radius:99px;width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;font-size:1rem;flex:none}
 mark{background:none;color:var(--c);font-weight:900}
+span.also{display:block;font-size:.85rem;color:var(--muted);margin-top:2px}span.also b{color:var(--ink)}
+mark.plain{color:var(--ink);text-decoration:underline 3px var(--line,#ccc);text-underline-offset:6px}
 ruby rt{font-size:.5em;color:var(--muted);font-weight:700;font-family:var(--f-jp)}
 rt.y-on{color:var(--on)} rt.y-kun{color:var(--kun)} rt.y-sp{color:var(--sp)}
 .sent{font-family:var(--f-jp);font-size:1.2rem;line-height:2.25;margin:0}
@@ -308,8 +310,8 @@ addEventListener("DOMContentLoaded",function(){ var n=null; try{ n=sessionStorag
 </head>
 <body class="home">
 <div class="wrap" id="app"></div>
-<script src="data-g1.js?v=3"></script>
-<script src="app.js?v=3"></script>
+<script src="data-g1.js?v=5"></script>
+<script src="app.js?v=5"></script>
 <script>
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
 </script>
