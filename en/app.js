@@ -694,7 +694,7 @@ function memory(pool){
     b.classList.add("open"); b.innerHTML=c.kind==="k"?`<span class="ck">${c.k}</span>`:`<span>${esc(shortM(c.k))}</span>`; open.push([b,c]);
     if(open.length===2){
       turns++; $("#turns").textContent="Turns: "+turns; const [[b1,c1],[b2,c2]]=open; open=[];
-      if(c1.k===c2.k&&c1.kind!==c2.kind){ b1.classList.add("done"); b2.classList.add("done"); found++; const I=K[c1.k]; $("#msg").innerHTML=`<span class="jp" style="font-family:var(--f-k)">${c1.k}</span> = ${esc(I.m)}`; $("#msg").className="msg ok"; speak(I.kun.length?I.kun[0][0]+I.kun[0][1]:I.on[0]);
+      if(c1.k===c2.k&&c1.kind!==c2.kind){ b1.classList.add("done"); b2.classList.add("done"); found++; const I=K[c1.k]; const w0=I.w[0]; $("#msg").innerHTML=`<span class="jp" style="font-family:var(--f-k)">${c1.k}</span> = ${esc(I.m)} · <span class="jp">${ruby(w0[0],c1.k)}</span>`; $("#msg").className="msg ok";
         if(found===6){ const best=S.play.best.memory; if(!best||turns<best){ S.play.best.memory=turns; save(); } setTimeout(()=>done("🃏 All pairs found!",`${turns} turns${!best||turns<best?" · New best! 🏆":""}`),700); } }
       else{ lock=true; $("#msg").textContent="Not a pair. Try again!"; $("#msg").className="msg ng"; setTimeout(()=>{ [b1,b2].forEach(x=>{ x.classList.remove("open"); x.innerHTML=`<span class="back">${FR[ch].place}</span>`; }); lock=false; },900); }
     }
