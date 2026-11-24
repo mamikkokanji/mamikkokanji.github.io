@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex">
+<title>英語版 音声チェック</title>
+<style>
+:root{--bg:#FBF7EF;--card:#fff;--ink:#2A2430;--mut:#7A7080;--line:#E8DFD0;--acc:#1E8496;--ng:#C0392B}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Zen Maru Gothic","Hiragino Maru Gothic ProN",sans-serif}
+header{position:sticky;top:0;background:var(--bg);border-bottom:2px solid var(--line);padding:10px 16px;z-index:5}
+h1{font-size:1.1rem;margin:0 0 8px}
+.tabs,.ctl{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ctl{margin-top:8px}
+button{font:inherit;border:2px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;color:var(--ink)}
+button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.small{font-size:.8rem;color:var(--mut)}
+main{padding:12px 16px 80px;max-width:760px;margin:0 auto}
+.row{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:8px 10px;margin:6px 0}
+.row.now{border-color:#F2B630;box-shadow:0 0 0 3px #FFE9A8}
+.row.ng{border-color:var(--ng);background:#FFF1EF}
+.k{font-size:1.3rem;font-weight:700;min-width:1.6em;text-align:center}
+.s{font-size:1.05rem;line-height:2}
+.s rt{font-size:.55em;color:var(--mut)}
+.n{font-size:.7rem;color:var(--mut)}
+.b{grid-column:1/-1;display:flex;gap:4px;flex-wrap:wrap}
+.b button{padding:4px 10px}
+.row.ng .mark.sel{background:var(--ng);color:#fff;border-color:var(--ng)}
+.memo{grid-column:1/-1;display:none;font:inherit;padding:6px;border:2px solid var(--line);border-radius:8px}
+.row.ng .memo{display:block}
+textarea{width:100%;box-sizing:border-box;min-height:120px;margin-top:8px;font:inherit}
+</style></head><body>
+<header>
+<h1>英語版（1年生）の音声チェック</h1>
+<div class="tabs" id="tabs"></div>
+<div class="ctl"><button id="all">▶ 上から順に ぜんぶ再生</button><button id="stop">■ とめる</button><span class="small" id="st"></span></div>
+<div class="small">おかしい音は「読みちがい」か「発音へん」を押してください。正しい読み方や気になる所があれば、出てくる欄に書いてください。この端末に記録されます。さいごに一覧をコピーして送ってください。</div>
+</header>
+<main><div id="list"></div><h3>おかしい音の一覧</h3><textarea id="out" readonly></textarea><button id="copy">コピー</button></main>
+<script src="../data-g1.js"></script>
+<script>
+const LS="kf-en-voice-check-v1"; let NG={}; try{ NG=JSON.parse(localStorage.getItem(LS)||"{}"); }catch(e){}
+const save=()=>{ try{ localStorage.setItem(LS,JSON.stringify(NG)); }catch(e){} };
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const hira=s=>String(s).replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60));
+const RB=/\{([^|}]+)\|([^|}]+)(?:\|[a-z]*)?\}/g;
+const ruby=s=>esc(s).replace(RB,(m,a,b)=>`<ruby>${a}<rt>${hira(b)}</rt></ruby>`);
+const readR=s=>String(s).replace(RB,"$2");
+const txt=s=>String(s).replace(RB,"$1（$2）");
+const TYPES=[["all","ぜんぶ"],["x","例文"],["w","ことば"],["y","読みの一覧"]];
+const TN={x:"例文",w:"ことば",on:"音読み",kun:"訓読み"};
+let rows=[], au=null, run=false, idx=-1, filt="all";
+fetch("voice/manifest.json?"+Date.now()).then(r=>r.json()).then(V=>{
+  const seen=new Set(), D=window.KDATA;
+  const add=(k,t,disp,key)=>{ const f=V[hira(key).trim()]; if(!f||seen.has(f)) return; seen.add(f); rows.push({k,t,disp,f}); };
+  D.secs.forEach(([_,ks])=>ks.forEach(k=>{ const I=D.k[k];
+    (I.x||[]).forEach(x=>add(k,"x",x[0],readR(x[0])));
+    (I.w||[]).forEach(w=>add(k,"w",w[0],readR(w[0])));
+    if(I.on.length) add(k,"on",I.on.join("、"),I.on.join("、"));
+    if(I.kun.length){ const t=I.kun.map(([a,b])=>a+b).join("、"); add(k,"kun",t,t); } }));
+  const tabs=document.getElementById("tabs");
+  TYPES.forEach(([id,l])=>{ const b=document.createElement("button"); b.textContent=l; b.dataset.f=id; b.onclick=()=>{ filt=id; render(); }; tabs.appendChild(b); });
+  render(); });
+const shown=r=>filt==="all"||filt===r.t||(filt==="y"&&(r.t==="on"||r.t==="kun"));
+function render(){ stop(); idx=-1;
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.f===filt));
+  const L=rows.map((r,i)=>[r,i]).filter(([r])=>shown(r));
+  document.getElementById("list").innerHTML=L.map(([r,i],j)=>`<div class="row" id="r${i}" data-j="${j}"><span class="k">${esc(r.k)}</span><span><span class="s">${ruby(r.disp)}</span><br><span class="n">${TN[r.t]}　${j+1} / ${L.length}</span></span>
+    <span class="b"><button data-p="${i}">▶ 再生</button><button class="mark" data-m="${i}" data-t="yomi">読みちがい</button><button class="mark" data-m="${i}" data-t="oto">発音へん</button></span>
+    <input class="memo" data-memo="${i}" placeholder="正しい読み方・気になる所（なくてもOK）"></div>`).join("");
+  document.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{ run=false; play(+b.dataset.p); });
+  document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{ const r=rows[+b.dataset.m], t=b.dataset.t;
+    if(NG[r.f]&&NG[r.f].t===t) delete NG[r.f]; else NG[r.f]={k:r.k,ty:r.t,x:r.disp,t,memo:(NG[r.f]||{}).memo||""}; save(); mark(+b.dataset.m); out(); });
+  document.querySelectorAll("[data-memo]").forEach(m=>{ const r=rows[+m.dataset.memo]; m.value=(NG[r.f]||{}).memo||""; m.oninput=()=>{ if(NG[r.f]){ NG[r.f].memo=m.value; save(); out(); } }; });
+  L.forEach(([r,i])=>mark(i));
+  document.getElementById("st").textContent=`${L.length}こ`; out(); }
+const order=()=>[...document.querySelectorAll("#list .row")].map(e=>+e.id.slice(1));
+function play(i){ if(au) au.pause(); document.querySelectorAll(".row.now").forEach(e=>e.classList.remove("now")); idx=i; if(i==null){ run=false; return; }
+  const el=document.getElementById("r"+i); el.classList.add("now"); el.scrollIntoView({block:"center",behavior:"smooth"});
+  const nxt=()=>{ const o=order(), p=o.indexOf(i); return o[p+1]; };
+  au=new Audio("voice/"+rows[i].f); au.onended=()=>{ if(run) setTimeout(()=>play(nxt()),500); }; au.onerror=()=>{ if(run) play(nxt()); }; au.play().catch(()=>{}); }
+function stop(){ run=false; if(au) au.pause(); }
+document.getElementById("all").onclick=()=>{ const o=order(); run=true; play(idx>=0&&o.includes(idx)?idx:o[0]); };
+document.getElementById("stop").onclick=stop;
+function mark(i){ const el=document.getElementById("r"+i); if(!el) return; const f=rows[i].f; el.classList.toggle("ng",!!NG[f]); el.querySelectorAll(".mark").forEach(b=>b.classList.toggle("sel",!!NG[f]&&NG[f].t===b.dataset.t)); }
+function out(){ document.getElementById("out").value=Object.entries(NG).map(([f,v])=>`${v.t==="oto"?"［発音］":"［読み］"}${v.k} ${TN[v.ty]}：${txt(v.x)}${v.memo?"　→ "+v.memo:""}　#${f}`).join("\n"); }
+document.getElementById("copy").onclick=()=>{ const t=document.getElementById("out"); t.select(); try{ navigator.clipboard.writeText(t.value); }catch(e){ document.execCommand("copy"); } };
+</script></body></html>
