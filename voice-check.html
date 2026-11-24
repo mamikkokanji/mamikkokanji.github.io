@@ -22,18 +22,18 @@ main{padding:12px 16px 80px;max-width:760px;margin:0 auto}
 .b{display:flex;gap:4px}
 .b button{padding:4px 10px}
 .mark{border-color:var(--line)}
-.row.ng .mark{background:var(--ng);color:#fff;border-color:var(--ng)}
+.row.ng .mark.sel{background:var(--ng);color:#fff;border-color:var(--ng)}
 textarea{width:100%;box-sizing:border-box;min-height:120px;margin-top:8px;font:inherit}
 </style></head><body>
 <header>
 <h1>例文の音声チェック（確認用）</h1>
 <div class="tabs" id="tabs"></div>
 <div class="ctl"><button id="all">▶ 上から順に ぜんぶ再生</button><button id="stop">■ とめる</button><span class="small" id="st"></span></div>
-<div class="small">読みがおかしい文は「おかしい」を押してください。この端末に記録されます。さいごに「おかしい文の一覧」をコピーして送ってください。</div>
+<div class="small">読みがおかしい文は「読みちがい」か「発音へん」を押してください。この端末に記録されます。さいごに「おかしい文の一覧」をコピーして送ってください。</div>
 </header>
 <main><div id="list"></div><h3>おかしい文の一覧</h3><textarea id="out" readonly></textarea><button id="copy">コピー</button></main>
 <script>
-const K="kf-voice-check-v1"; let NG={}; try{ NG=JSON.parse(localStorage.getItem(K)||"{}"); }catch(e){}
+const K="kf-voice-check-v2"; let NG={}; try{ NG=JSON.parse(localStorage.getItem(K)||"{}"); }catch(e){}
 const save=()=>{ try{ localStorage.setItem(K,JSON.stringify(NG)); }catch(e){} };
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const kata=s=>s; const hira=s=>s.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60));
@@ -45,9 +45,9 @@ function load(g){ stop(); [...tabs.children].forEach((b,i)=>b.classList.toggle("
   const s=document.createElement("script"); window.LEARN_DATA=null; s.src=`learn-${g}.js?v=${Date.now()}`; s.onload=()=>{ G=g; render(window.LEARN_DATA); }; document.body.appendChild(s); }
 function render(D){ rows=[]; const seen=new Set();
   D.list.forEach(r=>{ const k=r[0], I=D.info[k]; (I.rei||[]).forEach((x,i)=>{ const f=(I.rv||[])[i]; if(!f||seen.has(f)) return; seen.add(f); rows.push({k,x,f}); }); });
-  document.getElementById("list").innerHTML=rows.map((r,i)=>`<div class="row${NG[r.f]?" ng":""}" id="r${i}"><span class="k">${esc(r.k)}</span><span><span class="s">${ruby(r.x)}</span><br><span class="n">${i+1} / ${rows.length}　${r.f}</span></span><span class="b"><button data-p="${i}">▶</button><button class="mark" data-m="${i}">おかしい</button></span></div>`).join("");
+  document.getElementById("list").innerHTML=rows.map((r,i)=>`<div class="row${NG[r.f]?" ng":""}" id="r${i}"><span class="k">${esc(r.k)}</span><span><span class="s">${ruby(r.x)}</span><br><span class="n">${i+1} / ${rows.length}　${r.f}</span></span><span class="b"><button data-p="${i}">▶</button><button class="mark" data-m="${i}" data-t="yomi">読みちがい</button><button class="mark" data-m="${i}" data-t="oto">発音へん</button></span></div>`).join("");
   document.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{ run=false; play(+b.dataset.p); });
-  document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{ const r=rows[+b.dataset.m]; if(NG[r.f]) delete NG[r.f]; else NG[r.f]={g:G,k:r.k,x:r.x}; save(); b.closest(".row").classList.toggle("ng",!!NG[r.f]); out(); });
+  document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{ const r=rows[+b.dataset.m], t=b.dataset.t; if(NG[r.f]&&NG[r.f].t===t) delete NG[r.f]; else NG[r.f]={g:G,k:r.k,x:r.x,t}; save(); mark(b.closest(".row"),r.f); out(); }); rows.forEach((r,i)=>mark(document.getElementById("r"+i),r.f));
   document.getElementById("st").textContent=`${rows.length}文`; out(); }
 function play(i){ if(au){ au.pause(); } document.querySelectorAll(".row.now").forEach(e=>e.classList.remove("now")); idx=i; if(i>=rows.length){ run=false; return; }
   const el=document.getElementById("r"+i); el.classList.add("now"); el.scrollIntoView({block:"center",behavior:"smooth"});
@@ -55,7 +55,8 @@ function play(i){ if(au){ au.pause(); } document.querySelectorAll(".row.now").fo
 function stop(){ run=false; if(au) au.pause(); }
 document.getElementById("all").onclick=()=>{ run=true; play(idx>=0&&idx<rows.length?idx:0); };
 document.getElementById("stop").onclick=stop;
-function out(){ document.getElementById("out").value=Object.values(NG).map(v=>`${v.g}年 ${v.k}：${v.x.replace(/\{([^|}]+)\|([^|}]+)(?:\|[a-z]*)?\}/g,"$1（$2）")}`).join("\n"); }
+function mark(el,f){ el.classList.toggle("ng",!!NG[f]); el.querySelectorAll(".mark").forEach(b=>b.classList.toggle("sel",!!NG[f]&&NG[f].t===b.dataset.t)); }
+function out(){ document.getElementById("out").value=Object.values(NG).map(v=>`${v.t==="oto"?"［発音］":"［読み］"}${v.g}年 ${v.k}：${v.x.replace(/\{([^|}]+)\|([^|}]+)(?:\|[a-z]*)?\}/g,"$1（$2）")}`).join("\n"); }
 document.getElementById("copy").onclick=()=>{ const t=document.getElementById("out"); t.select(); try{ navigator.clipboard.writeText(t.value); }catch(e){ document.execCommand("copy"); } };
 load(1);
 </script></body></html>
