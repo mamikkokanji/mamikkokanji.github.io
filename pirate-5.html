@@ -254,6 +254,7 @@ html,body{overscroll-behavior-y:none}
 .kmsg{margin:0;text-align:center;font-weight:700;color:var(--muted);min-height:1.5em}
 .kmsg.ok{color:var(--ok)} .kmsg.ng{color:var(--bad)}
 .padtools.kt{grid-template-columns:1fr 1fr}
+.evo{z-index:90}.evo-box{max-height:calc(100dvh - 32px);overflow-y:auto}
 </style>
 
 </head>
@@ -695,7 +696,7 @@ function buildQuestion(type,t){
 function pirateSVG(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||""; const f=n>=8?1:0;
   return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><g class="bob"><image href="cut/pirate-${f}.webp" x="4" y="4" width="152" height="152" preserveAspectRatio="xMidYMax meet"/></g></svg>`; }
 function pirateSVGTile(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||"";
-  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><defs><clipPath id="evc${n}"><rect x="4" y="14" width="152" height="132" rx="22"/></clipPath></defs><g class="bob"><rect x="4" y="14" width="152" height="132" rx="22" fill="#fff"/><image href="evo/pirate-${n}.webp" x="4" y="14" width="152" height="132" preserveAspectRatio="xMidYMid slice" clip-path="url(#evc${n})"/></g></svg>`; }
+  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><defs><clipPath id="evc${n}"><rect x="4" y="21" width="152" height="118" rx="20"/></clipPath></defs><g class="bob"><rect x="4" y="21" width="152" height="118" rx="20" fill="#fff"/><image href="evo/pirate-${n}.webp" x="4" y="21" width="152" height="118" preserveAspectRatio="xMidYMid slice" clip-path="url(#evc${n})"/></g></svg>`; }
 function pirateSVG_old(st){
   const sc = 0.66 + st*0.024;
   const S = 'stroke="var(--ink)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
