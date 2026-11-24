@@ -38,7 +38,8 @@
 .wrow .wk{font-size:1.5rem;font-weight:700;line-height:1.2}
 .wrow .wk ruby rt{font-size:.5em}
 .wrow .wm{font-size:.92rem;line-height:1.5}
-.wrow .wt{grid-column:1/-1;font-size:.75rem;color:var(--muted)}
+.wrow .wt{grid-column:1/-1;font-size:.75rem;color:var(--muted);display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.vb{margin-left:auto;font:inherit;font-size:1.1rem;line-height:1;border:2px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer}
 .rei-box{display:flex;flex-direction:column;gap:6px}
 .rei-item.rt-hide ruby rt{visibility:hidden}
 .rei-item{border-radius:12px;padding:6px 8px;background:var(--card2,rgba(0,0,0,.03))}
@@ -207,7 +208,7 @@ const CHAR={
 const TEST_KEY={pirate:k=>`kanji-pirate-${k}kyu-v1`,dragon:k=>k==="5"?"kanji-dragon-v1":`kanji-dragon-${k}kyu-v1`,hamster:k=>`kanji-hamster-${k}kyu-v2`,unicorn:k=>`kanji-unicorn-${k}kyu-v1`}[CH](KYU);
 const D=window.LEARN_DATA;
 const KS=D.list.map(r=>r[0]);
-const INFO={}; D.list.forEach(r=>INFO[r[0]]={k:r[0],s:+r[1],bu:r[2],buN:r[3],yomi:r[4],imi:r[5],words:r[6].split("/"),type:D.nari[r[0]][0],nari:D.nari[r[0]][1],rei:D.info[r[0]].rei,on:D.info[r[0]].on,kun:D.info[r[0]].kun,w:D.info[r[0]].w,reim:D.info[r[0]].reim||[]});
+const INFO={}; D.list.forEach(r=>INFO[r[0]]={k:r[0],s:+r[1],bu:r[2],buN:r[3],yomi:r[4],imi:r[5],words:r[6].split("/"),type:D.nari[r[0]][0],nari:D.nari[r[0]][1],rei:D.info[r[0]].rei,on:D.info[r[0]].on,kun:D.info[r[0]].kun,w:D.info[r[0]].w,reim:D.info[r[0]].reim||[],rv:D.info[r[0]].rv||[],wv:D.info[r[0]].wv||[]});
 // ばしょ（クイズの 島・国・マップと 同じ 区切り）
 const SEC_N=KS.length<=80?8:10;
 const SECS=Array.from({length:SEC_N},(_,i)=>KS.slice(Math.round(i*KS.length/SEC_N),Math.round((i+1)*KS.length/SEC_N)));
@@ -234,6 +235,8 @@ function kunFull(I,y,after){ if(!after) return y; const o=(I.kun||[]).find(([st,
 function kanaAfter(w,k){ const m=w.slice(w.indexOf(k)+1).match(/^[ぁ-ゖ]*/); return m?m[0]:""; }
 function reiPlain(r){ return r.replace(/\{([^|}]+)\|([^|}]+)(?:\|[a-z]*)?\}/g,(m,a,b)=>hira(b)); }
 function hira(s){ return s.replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60)); }
+let curAu=null; function stopV(){ try{ if(curAu) curAu.pause(); }catch(e){} curAu=null; }
+function playV(f){ stopV(); try{ curAu=new Audio("voice/"+f); const p=curAu.play(); if(p&&p.catch) p.catch(()=>{}); return curAu; }catch(e){ return null; } }
 function kata(s){ return s.replace(/[ぁ-ゖ]/g,c=>String.fromCharCode(c.charCodeAt(0)+0x60)); }
 const TAG={on:'<span class="tag on">おんよみ</span>',kun:'<span class="tag kun">くんよみ</span>',"":'<span class="tag sp">とくべつな よみ</span>'};
 // ことばの よみ：その字の ぶぶんは おん＝カタカナ、くん＝ひらがな
@@ -433,6 +436,7 @@ function lesson(k){
   const I=INFO[k]; let step=0; const firstTime=!L[k];
   const done={};  // ステップごとの おわり
   function frame(body,canNext,nextLabel){
+    stopV();
     app.innerHTML=`<div class="top"><button class="pill" id="quit">‹ いちらん</button><span class="spacer"></span><span class="pill on" style="font-family:var(--f-k);font-size:1.1rem">${step===3?"？":k}</span></div>
     <div class="steps">${STEPS.map((s,i)=>`<span class="${i===step?"on":i<step?"dn":""}">${i+1}<br>${s}</span>`).join("")}</div>
     <div class="lesson">${body}</div>
@@ -477,7 +481,8 @@ function lesson(k){
       $("#peek").onclick=()=>{ const h=$("#pad"); h.innerHTML=kanjiSVG(k); animate(h.querySelector("svg"),k); $("#peek").disabled=true; setTimeout(()=>{ $("#peek").disabled=false; go(); }, Math.min(9000,1200+strokePts(k).reduce((a,s)=>a+Math.max(260,s.len*11)+220,0))); };
     }else if(step===4){
       frame(`${talk(CHAR.say.word)}<div class="card"><h3>「${k}」を つかった ことば</h3><p class="legend" style="text-align:left">「${k}」の よみが <span class="y-on">おんよみ（カタカナ）</span>か <span class="y-kun">くんよみ（ひらがな）</span>か、いみと いっしょに おぼえよう。</p>
-      <div class="wlist">${I.w.map(w=>`<div class="wrow"><span class="wk">${wordRuby(w,k)}</span><span class="wm">${esc(w[6])}</span><span class="wt">「${k}」は ${TAG[w[5]]} ${w[5]?`<b class="y-${w[5]}">${esc(w[5]==="on"?kata(w[3]):kunFull(I,w[3],kanaAfter(w[0],k)))}</b>`:""}</span></div>`).join("")}</div></div>`,true);
+      <div class="wlist">${I.w.map((w,j)=>`<div class="wrow"><span class="wk">${wordRuby(w,k)}</span><span class="wm">${esc(w[6])}</span><span class="wt">「${k}」は ${TAG[w[5]]} ${w[5]?`<b class="y-${w[5]}">${esc(w[5]==="on"?kata(w[3]):kunFull(I,w[3],kanaAfter(w[0],k)))}</b>`:""}${(I.wv||[])[j]?`<button class="vb" data-v="${I.wv[j]}" aria-label="きく">🔈</button>`:""}</span></div>`).join("")}</div></div>`,true);
+      app.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>playV(b.dataset.v));
     }else if(step===5){
       const st=I.rei.map(()=>({n:0,hide:false})); let cur=0, busy=false;
       frame(`${talk("こえに だして よんで、ぶんごと おぼえよう！")}<div class="card"><h3>れいぶん</h3><p class="legend" style="text-align:left">① <b>「🗣 こえに だして よむ」</b>を おして いっしょに よむ<br>② <b>「🙈 かくして よむ」</b>で ふりがな なしで よむ<br>きいろい せんが のびる ところを いっしょに よもう。</p><div class="rei-box" id="rb">${I.rei.map((r,i)=>{ const t=reiType(r,k); return `<div class="rei-item" id="ri${i}"><div class="rei-now">▶ いま この ぶんを よもう</div><p class="rei"><span class="rsw">${ruby(r,k)}</span></p><div class="rei-tag">${TAG[t.t]} <b class="y-${t.t}">${esc(t.t==="kun"?kunFull(I,t.y,t.a):t.y)}</b></div><div class="rei-tools"><button class="btn" data-a="rep" data-i="${i}">🗣 こえに だして よむ</button><button class="btn" data-a="hide" data-i="${i}" disabled>🙈 かくして よむ</button>${(I.reim||[])[i]?`<button class="btn imi-b" data-m="${i}">📖 ことばの いみ</button>`:""}</div>${(I.reim||[])[i]?`<p class="imi" id="im${i}" hidden>「<b>${esc(I.reim[i][0])}</b>」（${esc(I.reim[i][1])}）は、${esc(I.reim[i][2])}。</p>`:""}</div>`; }).join("")}</div>
@@ -486,14 +491,14 @@ function lesson(k){
           box.querySelector('[data-a="rep"]').disabled=busy||i!==cur||st[i].n>=1; box.querySelector('[data-a="hide"]').disabled=busy||i!==cur||st[i].n<1; });
         $("#cnt").textContent=cur>=st.length?"ぜんぶ よめたね！ すごい！":`よめた ぶん ${cur} / ${st.length}`; if(cur>=st.length) unlock(); };
       app.querySelectorAll(".rsw").forEach(sw=>{ const ns=[...sw.childNodes]; sw.textContent=""; ns.forEach(n=>{ if(n.nodeType===3){ for(const ch of n.textContent){ const e=document.createElement("span"); e.className="rc"; e.textContent=ch; sw.appendChild(e); } } else { const e=document.createElement("span"); e.className="rc"; e.appendChild(n); sw.appendChild(e); } }); });
-      const sweep=(i,then)=>{ const sw=$("#ri"+i+" .rsw"); const cs=[...sw.querySelectorAll(".rc")]; const w=cs.map(c=>{ const rt=[...c.querySelectorAll("rt,rp")].reduce((a,e)=>a+e.textContent.replace(/\s/g,"").length,0); const n=c.textContent.replace(/\s/g,"").length-rt; return n>0?n:0.3; });
-        const tot=w.reduce((a,b)=>a+b,0), dur=Math.max(1.5,tot*.28)*1000*(window.__swScale||1); let t=0;
+      const sweep=(i,then,dOv)=>{ const sw=$("#ri"+i+" .rsw"); const cs=[...sw.querySelectorAll(".rc")]; const w=cs.map(c=>{ const rt=[...c.querySelectorAll("rt,rp")].reduce((a,e)=>a+e.textContent.replace(/\s/g,"").length,0); const n=c.textContent.replace(/\s/g,"").length-rt; return n>0?n:0.3; });
+        const tot=w.reduce((a,b)=>a+b,0), dur=dOv||Math.max(1.5,tot*.28)*1000*(window.__swScale||1); let t=0;
         sw.classList.remove("go"); cs.forEach(c=>{ c.style.transitionDuration="0s"; c.style.transitionDelay="0s"; }); void sw.offsetWidth;
         cs.forEach((c,j)=>{ const d=dur*w[j]/tot; c.style.transitionDuration=d+"ms"; c.style.transitionDelay=t+"ms"; t+=d; });
         sw.classList.add("go"); busy=true; view(); setTimeout(()=>{ busy=false; then(); view(); },dur+50); };
       app.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{ const p=$("#im"+b.dataset.m); p.hidden=!p.hidden; b.textContent=p.hidden?"📖 ことばの いみ":"📖 いみを とじる"; });
       app.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>{ const i=+b.dataset.i, a=b.dataset.a, box=$("#ri"+i); if(busy||i!==cur) return;
-        if(a==="rep"){ st[i].n++; b.textContent="✓ こえに だして よめた"; b.classList.add("done"); sweep(i,()=>{}); }
+        if(a==="rep"){ st[i].n++; b.textContent="✓ こえに だして よめた"; b.classList.add("done"); const vf=(I.rv||[])[i]; if(!vf){ sweep(i,()=>{}); return; } busy=true; view(); let go1=false; const go=d=>{ if(go1) return; go1=true; sweep(i,()=>{},d); }; const au=playV(vf); if(!au){ go(); return; } au.addEventListener("playing",()=>go(isFinite(au.duration)&&au.duration>0?au.duration*1000*(window.__swScale||1):0)); au.addEventListener("error",()=>go()); setTimeout(()=>go(),1500); }
         if(a==="hide"){ box.classList.add("rt-hide"); sweep(i,()=>{ b.classList.add("done"); b.textContent="✓ よめた！"; box.classList.remove("rt-hide"); const ip=$("#im"+i), ib=box.querySelector("[data-m]"); if(ip&&ib){ ip.hidden=false; ib.textContent="📖 いみを とじる"; } cur++; const nx=$("#ri"+cur); if(nx) nx.scrollIntoView({behavior:"smooth",block:"center"}); }); }
       });
       view();
@@ -562,7 +567,7 @@ function makeQuiz(I){
   { const r=pick(I.rei), sec=SECS[chapOf(k)].filter(x=>x!==k); const pool=shuffle(sec.length>=2?sec:others.slice()).slice(0,2);
     qs.push({q:`<span class="sentence" style="display:block">${sentenceBlank(r,k)}</span>□に はいる かんじは？`,a:k,c:shuffle([k,...pool]).map(x=>({v:x,h:`<span style="font-family:var(--f-k);font-size:1.6rem">${x}</span>`}))}); }
   // 4) れいぶんの よみは おんよみ？ くんよみ？
-  { const cand=I.rei.filter(r=>reiType(r,k).t); if(cand.length){ const r=pick(cand), t=reiType(r,k);
+  { const cand=I.rei.filter(r=>reiType(r,k).t&&r.split("{"+k+"|").length===2&&!new RegExp("\\{[^|}]*"+k+"[^|}]*\\|").test(r.replace("{"+k+"|",""))); if(cand.length){ const r=pick(cand), t=reiType(r,k);
     qs.push({q:`<span class="sentence" style="display:block">${ruby(r.replace(/\{([^|}]+)\|([^|}]+)(?:\|[a-z]*)?\}/g,(m,a,b)=>`{${a}|${a===k?hira(b)+"・"+kata(b):hira(b)}}`),k)}</span>この ぶんの「${k}」（${esc(hira(t.y))}・${esc(kata(t.y))}）は おんよみ？ くんよみ？`,a:t.t,c:[{v:"on",h:`<span class="y-on">おんよみ</span>`},{v:"kun",h:`<span class="y-kun">くんよみ</span>`}]}); } }
   return qs;
 }
