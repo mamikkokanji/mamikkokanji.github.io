@@ -121,15 +121,16 @@ const TYPE={pic:["Picture kanji","象形","It started as a drawing of a real thi
 function enHTML(t){ return `<span class="en ${S.set.en==="tap"?"cover":""}" onclick="this.classList.remove('cover')">${esc(t)}</span>`; }
 
 // ---------- speech ----------
-let jaVoice=null;
-function pickVoice(){ try{ const v=speechSynthesis.getVoices(); jaVoice=v.find(x=>/^ja/i.test(x.lang))||null; }catch(e){} }
-try{ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }catch(e){}
-const canSpeak=()=>"speechSynthesis" in window;
-function speak(text,rate){
-  if(!S.set.sound||!canSpeak()) return;
-  try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.lang="ja-JP"; if(jaVoice) u.voice=jaVoice; u.rate=rate||.85; speechSynthesis.speak(u); }catch(e){}
+// 声は Google Cloud TTS（Callirrhoe）で 先に作った mp3（voice/）。ないものは 鳴らさない。
+const VOICE=window.KVOICE||{};
+const vkey=t=>hira(String(t)).trim();
+const hasVoice=t=>!!VOICE[vkey(t)];
+let curAudio=null;
+function speak(text){
+  if(!S.set.sound) return; const f=VOICE[vkey(text)]; if(!f) return;
+  try{ if(curAudio){ curAudio.pause(); } curAudio=new Audio("voice/"+f); curAudio.play().catch(()=>{}); }catch(e){}
 }
-const sayBtn=(text,label)=>canSpeak()?`<button class="say" data-say="${esc(text)}" aria-label="${esc(label||"Listen")}">🔈</button>`:"";
+const sayBtn=(text,label)=>hasVoice(text)?`<button class="say" data-say="${esc(text)}" aria-label="${esc(label||"Listen")}">🔈</button>`:"";
 function bindSay(root){ (root||app).querySelectorAll("[data-say]").forEach(b=>b.onclick=e=>{ e.stopPropagation(); speak(b.dataset.say); }); }
 
 // ---------- KanjiVG strokes ----------
@@ -450,7 +451,7 @@ function lesson(k,startStep){
       const ACT=[["rep","🗣 Read it aloud"],["hide","🙈 Hide furigana & read"]];
       const st=I.x.map(()=>({rep:false,hide:false}));
       let busy=false;
-      frame(`${talk(ch,F.say.sent)}<div class="card"><h3>Example sentences <span class="jp">れいぶん</span></h3><p class="legend" style="text-align:left">① Press <b>“Read it aloud”</b> and read along with the <b style="background:rgba(255,205,60,.75)">yellow line</b>.<br>② Then <b>hide the furigana</b> and read it once more. Tap 🔈 to hear it.</p><div class="rei-box">${I.x.map((x,i)=>`<div class="rei-item" id="ri${i}"><div class="rei-now">▶ Read this sentence</div><div class="rei-line"><p class="sent">${ruby(x[0],k)}</p>${sayBtn(plainR(x[0]),"Listen")}</div><span class="roma">${esc(x[2])}</span>${enHTML(x[1])}<div class="legend" style="text-align:left">${tgtHTML(x[0],k,true)}</div><div class="rei-tools">${ACT.map(([a,l])=>`<button class="btn" data-a="${a}" data-i="${i}">${l}</button>`).join("")}</div></div>`).join("")}</div><p class="count" id="cnt"></p></div>`,false);
+      frame(`${talk(ch,F.say.sent)}<div class="card"><h3>Example sentences <span class="jp">れいぶん</span></h3><p class="legend" style="text-align:left">① Press <b>“Read it aloud”</b> and read along with the <b style="background:rgba(255,205,60,.75)">yellow line</b>.<br>② Then <b>hide the furigana</b> and read it once more. Tap 🔈 to hear it.</p><div class="rei-box">${I.x.map((x,i)=>`<div class="rei-item" id="ri${i}"><div class="rei-now">▶ Read this sentence</div><div class="rei-line"><p class="sent">${ruby(x[0],k)}</p>${sayBtn(readR(x[0]),"Listen")}</div><span class="roma">${esc(x[2])}</span>${enHTML(x[1])}<div class="legend" style="text-align:left">${tgtHTML(x[0],k,true)}</div><div class="rei-tools">${ACT.map(([a,l])=>`<button class="btn" data-a="${a}" data-i="${i}">${l}</button>`).join("")}</div></div>`).join("")}</div><p class="count" id="cnt"></p></div>`,false);
       // split each sentence into units (one kana or one ruby word) so the yellow line moves along, line by line
       I.x.forEach((x,i)=>{ const p=$("#ri"+i+" .sent"); [...p.childNodes].forEach(n=>{ if(n.nodeType===3){ const f=document.createDocumentFragment(); [...n.textContent].forEach(c=>{ const u=document.createElement("span"); u.className="su"; u.textContent=c; f.appendChild(u); }); p.replaceChild(f,n); } else { const u=document.createElement("span"); u.className="su"; p.replaceChild(u,n); u.appendChild(n); } }); });
       const sweep=(i,then)=>{ const us=[...$("#ri"+i).querySelectorAll(".su")]; us.forEach(u=>u.classList.remove("lit")); busy=true; upd();
@@ -551,9 +552,12 @@ function lessonQuiz(k){
   { const x=pick(I.x), sec=SECS[secOf(k)].filter(y=>y!==k);
     qs.push({q:`<span class="sent" style="display:block;text-align:center">${ruby(x[0],k,{blank:true})}</span><span class="legend" style="display:block">${esc(x[1])}</span>Which kanji goes in the box?`,a:k,c:shuffle([k,...shuffle(sec).slice(0,2)]).map(kChoice)}); }
   // 4) on or kun
-  { const cand=I.x.filter(x=>{ const t=targetR(x[0],k); return t&&t.t!=="sp"; });
+  // 字が 文の中に 1回だけ ある 文を つかう（ふじ山は日本で一ばんたかい山です のように 2回あると 答えが 2つになる）
+  { const once=w=>plainR(w).split(k).length===2;
+    let cand=I.x.filter(x=>{ const t=targetR(x[0],k); return t&&t.t!=="sp"&&once(x[0]); }), inWord=false;
+    if(!cand.length){ cand=I.w.filter(w=>{ const t=targetR(w[0],k); return t&&t.t!=="sp"&&once(w[0]); }); inWord=true; }
     if(cand.length){ const x=pick(cand), t=targetR(x[0],k);
-      qs.push({q:`<span class="sent" style="display:block">${ruby(x[0],k,{nocolor:true,both:true})}</span>In this sentence, is <b>${k}</b> (${esc(hira(t.y))}・${esc(kata(t.y))}) read with on’yomi or kun’yomi?`,a:t.t,c:[{v:"on",h:`<span class="y-on">On’yomi</span>`},{v:"kun",h:`<span class="y-kun">Kun’yomi</span>`}],after:t.t==="on"?"On’yomi readings came from Chinese.":"Kun’yomi is the native Japanese word."}); } }
+      qs.push({q:`<span class="sent" style="display:block">${ruby(x[0],k,{nocolor:true,both:true})}</span>In this ${inWord?"word":"sentence"}, is <b>${k}</b> (${esc(hira(t.y))}・${esc(kata(t.y))}) read with on’yomi or kun’yomi?`,a:t.t,c:[{v:"on",h:`<span class="y-on">On’yomi</span>`},{v:"kun",h:`<span class="y-kun">Kun’yomi</span>`}],after:t.t==="on"?"On’yomi readings came from Chinese.":"Kun’yomi is the native Japanese word."}); } }
   return qs;
 }
 
@@ -653,7 +657,6 @@ function quiz(){
         const c=cur.c[+b.dataset.i], ok=c.v===cur.a;
         box.querySelectorAll(".choices button").forEach((x,i)=>{ x.disabled=true; if(cur.c[i].v===cur.a) x.classList.add(ok?"ok":"ans"); });
         if(!ok) b.classList.add("ng");
-        if(cur.type==="read"||cur.type==="wmean") speak(readR(cur.word[0]));
         record(ok); feedback(ok);
       });
     }
