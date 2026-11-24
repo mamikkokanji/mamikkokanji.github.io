@@ -1697,9 +1697,9 @@ function hoi(a){
   const KEYS=["up","down","left","right"], R=6; let round=0, pts=0; const res=[]; a.score(0);
   // むきごとの絵（MAさんの絵 hoi2-<kind>-<front|right|left|down>.png）。うえ は正面の絵をそらせる
   const HSRC=(k,d)=>`hoi2-${k}-${d}.png?v=1`;
-  ["kid",CH].forEach(k=>["front","right","left","down"].forEach(d=>{const i=new Image(); i.src=HSRC(k,d);}));
+  ["kid",CH].forEach(k=>["front","up","right","left","down"].forEach(d=>{const i=new Image(); i.src=HSRC(k,d);}));
   function turn(el,kind,dir){
-    el.src=HSRC(kind,(!dir||dir==="up")?"front":dir);
+    el.src=HSRC(kind,dir||"front");
     el.style.transform=dir==="up"?"perspective(420px) translateY(-9%) rotateX(24deg) scale(1.04)":"";
     el.classList.remove("pop"); void el.offsetWidth; if(dir) el.classList.add("pop");
   }
