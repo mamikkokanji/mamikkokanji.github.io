@@ -1,0 +1,19 @@
+{
+  "name": "kanji-friends-ios",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "prepare-www": "python3 prepare_www.py",
+    "sync": "python3 prepare_www.py && npx cap sync",
+    "open": "npx cap open ios",
+    "open:android": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/core": "8.6.2",
+    "@capacitor/ios": "8.6.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.6.2"
+  }
+}

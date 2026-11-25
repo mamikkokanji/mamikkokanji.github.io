@@ -180,6 +180,7 @@ body:has(.kv) .nav{position:static}
 </head>
 <body>
 <div class="wrap" id="app"></div>
+<script src="pay.js?v=1"></script>
 <script>(function(){ const g=new URLSearchParams(location.search).get("g"); document.write('<script src="learn-'+(["1","2","3","4","5","6"].includes(g)?g:"1")+'.js?v=1"><\/script>'); })();</script>
 <script>
 const P=new URLSearchParams(location.search);
@@ -570,6 +571,7 @@ function makeQuiz(I){
     qs.push({q:`<span class="sentence" style="display:block">${ruby(r.replace(/\{([^|}]+)\|([^|}]+)(?:\|[a-z]*)?\}/g,(m,a,b)=>`{${a}|${a===k?hira(b)+"・"+kata(b):hira(b)}}`),k)}</span>この ぶんの「${k}」（${esc(hira(t.y))}・${esc(kata(t.y))}）は おんよみ？ くんよみ？`,a:t.t,c:[{v:"on",h:`<span class="y-on">おんよみ</span>`},{v:"kun",h:`<span class="y-kun">くんよみ</span>`}]}); } }
   return qs;
 }
+if(window.KF_PAY) KF_PAY.guardLearn();
 home();
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
 </script>

@@ -76,6 +76,13 @@ h1{font-size:1.7rem;font-weight:900;margin:0;letter-spacing:.06em;text-align:cen
 .md .pb i{display:block;height:100%;background:var(--c)}
 .md:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .note{font-size:.78rem;color:var(--muted);text-align:center;margin:0}
+.paybox{background:var(--surface,#fff);border:2px solid var(--line,#e5e0d8);border-radius:18px;padding:14px 16px;margin:0 0 4px;font-size:.88rem;line-height:1.6}
+.paybox h2{margin:0 0 4px;font-size:.95rem}.paybox p{margin:4px 0}
+.paybtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.paybtns button{font:inherit;font-weight:800;border:0;border-radius:12px;padding:10px 14px;background:#E08A2E;color:#fff;cursor:pointer;flex:1 1 auto}
+.paybtns button.sub{background:transparent;color:var(--ink,#333);border:2px solid var(--line,#e5e0d8)}
+.pbmsg{min-height:1.2em;font-weight:700}
+.gr h3 small.lk{margin-left:6px;color:#B4541A}
 .pirate{--c:var(--pirate);--soft:var(--pirate-soft)} .dragon{--c:var(--dragon);--soft:var(--dragon-soft)}
 .hamster{--c:var(--hamster);--soft:var(--hamster-soft)} .unicorn{--c:var(--unicorn);--soft:var(--unicorn-soft)}
 
@@ -125,8 +132,10 @@ addEventListener("DOMContentLoaded",function(){ var n=null; try{ n=sessionStorag
   <a class="cont" id="cont" hidden></a>
   <div class="grid" id="grid"></div>
   <section class="panel" id="panel" hidden aria-live="polite"></section>
+  <section class="paybox" id="paybox" hidden></section>
   <p class="note">記録はこのスマホ（ブラウザ）に保存されます。キャラや学年ごとに、べつべつに進みます。</p>
 </div>
+<script src="pay.js?v=1"></script>
 <script>
 const CHARS = [
   {id:"pirate",  name:"漢字パイレーツ",  who:"海賊の男の子",   kyus:["10","9","8","7","6","5"], key:k=>`kanji-pirate-${k}kyu-v1`},
@@ -137,6 +146,7 @@ const CHARS = [
 const KYU_TXT = {"10":"漢字 80字","9":"漢字 160字","8":"漢字 200字","7":"漢字 202字","6":"漢字 193字","5":"漢字 191字"};
 const GR = {"10":"1","9":"2","8":"3","7":"4","6":"5","5":"6"};
 const $ = id=>document.getElementById(id);
+const PAY=window.KF_PAY||null;
 function read(key){ try{ const v=JSON.parse(localStorage.getItem(key)||"null"); return v&&typeof v.correct==="number"?v:null; }catch(e){ return null; } }
 const SECN={"10":8,"9":10,"8":10,"7":10,"6":10,"5":10}, LG=GR, NK={"10":80,"9":160,"8":200,"7":202,"6":193,"5":191};
 function learnInfo(c,k){ try{ const v=JSON.parse(localStorage.getItem("kanji-learn-v1")||"{}"); const L=(v.learned||{})[c.id+"-"+LG[k]]||{}; return Object.keys(L).length; }catch(e){ return 0; } }
@@ -157,7 +167,7 @@ function render(open){
     $("panel").className="panel "+c.id;
     const PL={pirate:"島",unicorn:"国",hamster:"ばしょ",dragon:"ばしょ"}[c.id];
     $("panel").innerHTML=`<h2>${c.name}：学年と モードを えらぶ</h2>`+c.kyus.map(k=>{ const n=learnInfo(c,k), q=quizInfo(c,k);
-      return `<div class="gr"><h3>${GR[k]}年生 <small>${KYU_TXT[k]}</small></h3><div class="two">
+      return `<div class="gr"><h3>${GR[k]}年生 <small>${KYU_TXT[k]}</small>${PAY&&!PAY.free(GR[k],1)?`<small class="lk">🔒 さいしょの ${PL}だけ むりょう</small>`:""}</h3><div class="two">
       <a class="md" href="learn.html?c=${c.id}&g=${LG[k]}"><b>📖 おぼえる</b><span>おぼえた ${n} / ${NK[k]}字</span><span class="pb"><i style="width:${n/NK[k]*100}%"></i></span></a>
       <a class="md" href="${c.id}-${k}.html"><b>✏️ クイズ</b><span>${PL} ${q} / ${SECN[k]} クリア・${info(c,k).replace(/<\/?b>/g,"")}</span><span class="pb"><i style="width:${q/SECN[k]*100}%"></i></span></a></div></div>`; }).join("");
     // えらんだキャラの段のすぐ下に出す
@@ -176,6 +186,19 @@ if(lm){ const c=CHARS.find(x=>x.id===lm[1]), k={"1":"10","2":"9","3":"8","4":"7"
   $("cont").innerHTML=`<img src="chara-${lc.id}.png?v=5" alt="" width="84" height="68"><div><b>つづきから：${lc.name} ${GR[m[2]]}年生</b><span>✏️ クイズ・${info(lc,m[2]).replace(/<\/?b>/g,"")}</span></div><i>›</i>`;
 }
 render(null);
+// 有料のしくみ（アプリのときだけ）：買う・購入を復元
+if(PAY&&PAY.enforced){
+  const pb=$("paybox"); pb.hidden=false;
+  const draw=()=>{ if(PAY.owned()){ pb.innerHTML=`<p>✅ 2〜6年生も ぜんぶ ひらいています。ありがとう！</p>`; return; }
+    pb.innerHTML=`<h2>おうちの方へ</h2><p>1年生ぜんぶと、2〜6年生の さいしょの ばしょは むりょうです。「ぜんぶ ひらく」（買い切り）で、2〜6年生の ぜんぶの ばしょが あそべます。</p>`+
+      (PAY.store?`<div class="paybtns"><button type="button" id="pbBuy">🔓 ぜんぶ ひらく</button><button type="button" id="pbRestore" class="sub">購入を復元</button></div><p class="pbmsg" id="pbMsg" aria-live="polite"></p>`:"");
+    if(!PAY.store) return;
+    $("pbBuy").onclick=()=>PAY.open();
+    PAY.loadPrice().then(p=>{ if(p) $("pbBuy").textContent=`🔓 ぜんぶ ひらく（${p}）`; });
+    $("pbRestore").onclick=()=>{ $("pbMsg").textContent="たしかめています…"; PAY.restore().then(ok=>{ if(ok){ location.reload(); } else $("pbMsg").textContent="この Apple ID では まだ 買われていないようです。"; }).catch(()=>{ $("pbMsg").textContent="うまく いきませんでした。もう一度 ためしてね。"; }); };
+  };
+  draw();
+}
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
 </script>
 </body>

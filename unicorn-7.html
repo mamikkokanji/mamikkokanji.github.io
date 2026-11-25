@@ -43,6 +43,8 @@
 .wrap>.room .stats,.wrap>.nest .stats{flex-wrap:nowrap;white-space:nowrap;overflow:hidden}
 </style>
 <script>try{localStorage.setItem("kanji-app-last","unicorn-7")}catch(e){}</script>
+<script>window.KF_GRADE="4";</script>
+<script src="pay.js?v=1"></script>
 <title>漢字ユニコーン 4年生</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
@@ -1906,7 +1908,7 @@ if((CH==="pirate"||CH==="unicorn") && typeof renderSea==="function"){
   }
 })();
 </script>
-
+<script>if(window.KF_PAY) KF_PAY.guardQuiz();</script>
 <script>
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
 </script>

@@ -43,6 +43,8 @@
 .wrap>.room .stats,.wrap>.nest .stats{flex-wrap:nowrap;white-space:nowrap;overflow:hidden}
 </style>
 <script>try{localStorage.setItem("kanji-app-last","dragon-8")}catch(e){}</script>
+<script>window.KF_GRADE="3";</script>
+<script src="pay.js?v=1"></script>
 <title>漢字ドラゴン 3年生</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600&family=Zen+Maru+Gothic:wght@500;700;900&display=swap">
@@ -1658,7 +1660,8 @@ if((CH==="pirate"||CH==="unicorn") && typeof renderSea==="function"){
       const i=state.sec;
       if(i===state.cleared&&secDone(i)){
         state.cleared=i+1;
-        if(i+1<N){ state.sec=i+1; state.chap=null; msg=`🎉 「${nameOf(i)}」クリア！ つぎは「${nameOf(i+1)}」へ しゅっぱつ！`; }
+        if(i+1<N&&window.KF_PAY&&!KF_PAY.free(window.KF_GRADE,i+1)){ msg=`🎉 「${nameOf(i)}」クリア！ つぎの ばしょは 🔒「ぜんぶ ひらく」で いけるよ`; setTimeout(()=>KF_PAY.open(),900); }
+        else if(i+1<N){ state.sec=i+1; state.chap=null; msg=`🎉 「${nameOf(i)}」クリア！ つぎは「${nameOf(i+1)}」へ しゅっぱつ！`; }
         else msg=`🏆 ぜんぶの ばしょを クリア！ すごい！`;
       }
       save();
@@ -1712,7 +1715,7 @@ if((CH==="pirate"||CH==="unicorn") && typeof renderSea==="function"){
   renderQuestion=function(){ const r=_rq.apply(this,arguments); render(); return r; };
 })();
 </script>
-
+<script>if(window.KF_PAY) KF_PAY.guardQuiz();</script>
 <script>
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
 </script>
