@@ -1,0 +1,11 @@
+{
+  "appId": "io.github.mamikkokanji.kanjifriends",
+  "appName": "かんじフレンズ",
+  "webDir": "www",
+  "backgroundColor": "#FFF8EE",
+  "ios": {
+    "contentInset": "never",
+    "scrollEnabled": true,
+    "backgroundColor": "#FFF8EE"
+  }
+}
