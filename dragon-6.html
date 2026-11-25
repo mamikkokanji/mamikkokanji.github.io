@@ -588,9 +588,9 @@ function makeQuestion(){
 
 // ---------- dragon drawing ----------
 function dragonSVG(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||""; const f=n>=8?1:0;
-  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><g class="bob"><image href="cut/dragon-${f}.webp" x="4" y="4" width="152" height="152" preserveAspectRatio="xMidYMax meet"/></g></svg>`; }
+  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><g class="bob"><image href="evo/dragon-${n}.webp" x="4" y="4" width="152" height="152" preserveAspectRatio="xMidYMax meet"/></g></svg>`; }
 function dragonSVGTile(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||"";
-  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><defs><clipPath id="evc${n}"><rect x="4" y="21" width="152" height="118" rx="20"/></clipPath></defs><g class="bob"><rect x="4" y="21" width="152" height="118" rx="20" fill="#fff"/><image href="evo/dragon-${n}.webp" x="4" y="21" width="152" height="118" preserveAspectRatio="xMidYMid slice" clip-path="url(#evc${n})"/></g></svg>`; }
+  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><defs><clipPath id="evc${n}"><rect x="4" y="21" width="152" height="118" rx="20"/></clipPath></defs><g class="bob"><rect x="4" y="21" width="152" height="118" rx="20" fill="#fff"/><image href="evo/dragon-${n}.webp" x="4" y="23" width="152" height="114" preserveAspectRatio="xMidYMid meet" clip-path="url(#evc${n})"/></g></svg>`; }
 function dragonSVG_old(stage){
   if(stage===0){
     return `<svg viewBox="0 0 160 160" role="img" aria-label="ふしぎなたまご"><g class="bob">
