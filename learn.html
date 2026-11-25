@@ -491,7 +491,7 @@ function lesson(k){
         $("#cnt").textContent=cur>=st.length?"ぜんぶ よめたね！ すごい！":`よめた ぶん ${cur} / ${st.length}`; if(cur>=st.length) unlock(); };
       app.querySelectorAll(".rsw").forEach(sw=>{ const ns=[...sw.childNodes]; sw.textContent=""; ns.forEach(n=>{ if(n.nodeType===3){ for(const ch of n.textContent){ const e=document.createElement("span"); e.className="rc"; e.textContent=ch; sw.appendChild(e); } } else { const e=document.createElement("span"); e.className="rc"; e.appendChild(n); sw.appendChild(e); } }); });
       const sweep=(i,then,dOv)=>{ const sw=$("#ri"+i+" .rsw"); const cs=[...sw.querySelectorAll(".rc")]; const w=cs.map(c=>{ const rt=[...c.querySelectorAll("rt,rp")].reduce((a,e)=>a+e.textContent.replace(/\s/g,"").length,0); const n=c.textContent.replace(/\s/g,"").length-rt; return n>0?n:0.3; });
-        const tot=w.reduce((a,b)=>a+b,0), dur=dOv||Math.max(1.5,tot*.28)*1000*(window.__swScale||1); let t=0;
+        const tot=w.reduce((a,b)=>a+b,0), dur=dOv||Math.max(1.2,tot*.2)*1000*(window.__swScale||1); let t=0;
         sw.classList.remove("go"); cs.forEach(c=>{ c.style.transitionDuration="0s"; c.style.transitionDelay="0s"; }); void sw.offsetWidth;
         cs.forEach((c,j)=>{ const d=dur*w[j]/tot; c.style.transitionDuration=d+"ms"; c.style.transitionDelay=t+"ms"; t+=d; });
         sw.classList.add("go"); busy=true; view(); setTimeout(()=>{ busy=false; then(); view(); },dur+50); };
