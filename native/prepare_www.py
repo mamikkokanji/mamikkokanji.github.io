@@ -23,7 +23,7 @@ def local_css(url):
     css=re.sub(r"url\((https://fonts\.gstatic\.com/[^)]+)\)",fetch,css)
     name="f-"+hashlib.md5(url.encode()).hexdigest()[:10]+".css"
     open(os.path.join(W,"fonts",name),"w").write(css); cache[url]="fonts/"+name; return cache[url]
-SAFE_TOP='<style id="kf-safe-top">html{padding-top:env(safe-area-inset-top,0px)}#kf-sb{position:fixed;left:0;right:0;top:0;height:env(safe-area-inset-top,0px);background:var(--bg,#FFF8EE);z-index:2147483000;pointer-events:none;transform:translateZ(0)}</style>\n'
+SAFE_TOP='<style id="kf-safe-top">html{padding-top:env(safe-area-inset-top,0px)}#kf-sb{position:fixed;left:0;right:0;top:0;height:env(safe-area-inset-top,0px);background:var(--bg,#FFF8EE);z-index:2147483000;pointer-events:none;transform:translateZ(0)}.sheet{top:env(safe-area-inset-top,0px)}</style>\n'
 n=0
 for dp,_,fs in os.walk(W):
     for f in fs:
