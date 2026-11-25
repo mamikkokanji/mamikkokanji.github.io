@@ -23,6 +23,7 @@ def local_css(url):
     css=re.sub(r"url\((https://fonts\.gstatic\.com/[^)]+)\)",fetch,css)
     name="f-"+hashlib.md5(url.encode()).hexdigest()[:10]+".css"
     open(os.path.join(W,"fonts",name),"w").write(css); cache[url]="fonts/"+name; return cache[url]
+SAFE_TOP='<style id="kf-safe-top">html{padding-top:env(safe-area-inset-top,0px)}html::before{content:"";position:fixed;left:0;right:0;top:0;height:env(safe-area-inset-top,0px);background:var(--bg,#FFF8EE);z-index:2147483000;pointer-events:none}</style>\n'
 n=0
 for dp,_,fs in os.walk(W):
     for f in fs:
@@ -31,6 +32,9 @@ for dp,_,fs in os.walk(W):
         s=re.sub(r'<link[^>]+href="https://fonts\.(googleapis|gstatic)\.com"[^>]*>\s*',"",s)
         s=re.sub(r'href="(https://fonts\.googleapis\.com/css2\?[^"]+)"',lambda m:'href="'+local_css(m.group(1))+'"',s)
         s=re.sub(r'<meta property="og:[^>]*>\s*|<meta name="twitter:[^>]*>\s*',"",s)
+        # アプリでは 画面の上の 時計・電池の ところに 重ならないように する（Web版は かえない）
+        if "</head>" in s and "kf-safe-top" not in s:
+            s=s.replace("</head>",SAFE_TOP+"</head>",1)
         if s!=o: open(p,"w",encoding="utf-8").write(s); n+=1
 left=[]
 for dp,_,fs in os.walk(W):
