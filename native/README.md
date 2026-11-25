@@ -18,3 +18,9 @@
 4. メニュー Build → Generate Signed App Bundle / APK → Android App Bundle → 新しい鍵（Create new…）を作って保存。**この鍵ファイルとパスワードは なくさないように**（更新のたびに使います）。
 5. できた app-release.aab を Play Console にアップロード。
 - アプリID は `io.github.mamikkokanji.kanjifriends`。バージョンは android/app/build.gradle の versionCode（毎回 1 ずつ上げる）と versionName。
+
+## アプリ内課金（買い切り「ぜんぶ ひらく」）
+- 製品ID：`io.github.mamikkokanji.kanjifriends.all`（非消耗型）。App Store Connect で同じIDで作る。
+- むりょう：1年生ぜんぶ ＋ 2〜6年生の さいしょの ばしょ。ほかはロック（サイト直下の pay.js）。
+- iOS のしくみ：ios/App/App/KFStore.swift（StoreKit 2。getProduct・purchase・restore・owned）。SceneDelegate で KFBridgeViewController を使い、そこでプラグインを登録。
+- Android はまだ課金なし（ロックもしない）。Web版は pay.js の WEB_LOCK で きりかえ。
