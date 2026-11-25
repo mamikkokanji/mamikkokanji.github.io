@@ -696,9 +696,9 @@ function buildQuestion(type,t){
 
 // ---------- ユニコーンの絵（オリジナルキャラクター） ----------
 function unicornSVG(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||""; const f=n>=8?1:0;
-  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><g class="bob"><image href="cut/unicorn-${f}.webp" x="4" y="4" width="152" height="152" preserveAspectRatio="xMidYMax meet"/></g></svg>`; }
+  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><g class="bob"><image href="evo/unicorn-${n}.webp" x="4" y="4" width="152" height="152" preserveAspectRatio="xMidYMax meet"/></g></svg>`; }
 function unicornSVGTile(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||"";
-  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><defs><clipPath id="evc${n}"><rect x="4" y="21" width="152" height="118" rx="20"/></clipPath></defs><g class="bob"><rect x="4" y="21" width="152" height="118" rx="20" fill="#fff"/><image href="evo/unicorn-${n}.webp" x="4" y="21" width="152" height="118" preserveAspectRatio="xMidYMid slice" clip-path="url(#evc${n})"/></g></svg>`; }
+  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><defs><clipPath id="evc${n}"><rect x="4" y="21" width="152" height="118" rx="20"/></clipPath></defs><g class="bob"><rect x="4" y="21" width="152" height="118" rx="20" fill="#fff"/><image href="evo/unicorn-${n}.webp" x="4" y="23" width="152" height="114" preserveAspectRatio="xMidYMid meet" clip-path="url(#evc${n})"/></g></svg>`; }
 function unicornSVG_old(st){
   const sc = 0.66 + st*0.024;
   const S = 'stroke="var(--ink)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';

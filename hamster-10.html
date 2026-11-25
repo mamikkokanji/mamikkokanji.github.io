@@ -580,10 +580,10 @@ const STAGES = [
   {name:"こどもの ペンギン", text:"よちよち あるけるように なった！"},
   {name:"わかものの ペンギン", text:"せが のびて、たくましく なってきた！"},
   {name:"おとなの ペンギン", text:"つばさを ひろげて、りっぱな おとなに なった！"},
-  {name:"ぼうしの ペンギン", text:"あかい ぼうしを かぶって、おでかけ きぶん！"},
+  {name:"ぼうしの ペンギン", text:"むぎわらぼうしを かぶって、おでかけ きぶん！"},
   {name:"マフラーの ペンギン", text:"しましまの マフラーで ぽかぽか！"},
-  {name:"うみの ペンギン", text:"ゴーグルを つけて、うみに もぐるよ！"},
-  {name:"せいじゃの ペンギン", text:"おうかんと つえを もった、かしこい ペンギン！"},
+  {name:"うみの ペンギン", text:"セーラーふくで、うみへ しゅっぱつ！"},
+  {name:"せいじゃの ペンギン", text:"まほうの ぼうしと つえを もった、かしこい ペンギン！"},
   {name:"つばさの ペンギン", text:"つばさを ぱたぱた、げんき いっぱい！"},
   {name:"ほしの ペンギン", text:"きらきらの ほしに かこまれた！"},
   {name:"みずうみの ペンギン", text:"うきわで みずうみを すいすい！"},
@@ -741,9 +741,9 @@ function buildQuestion(type,t){
 
 // ---------- ペンギンの絵 ----------
 function hamsterSVG(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||""; const f=n>=8?1:0;
-  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><g class="bob"><image href="cut/hamster-${f}.webp" x="4" y="4" width="152" height="152" preserveAspectRatio="xMidYMax meet"/></g></svg>`; }
+  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><g class="bob"><image href="evo/hamster-${n}.webp" x="4" y="4" width="152" height="152" preserveAspectRatio="xMidYMax meet"/></g></svg>`; }
 function hamsterSVGTile(st){ const n=Math.max(0,Math.min(14,st|0)); const nm=(STAGES[n]&&STAGES[n].name)||"";
-  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><defs><clipPath id="evc${n}"><rect x="4" y="21" width="152" height="118" rx="20"/></clipPath></defs><g class="bob"><rect x="4" y="21" width="152" height="118" rx="20" fill="#fff"/><image href="evo/hamster-${n}.webp" x="4" y="21" width="152" height="118" preserveAspectRatio="xMidYMid slice" clip-path="url(#evc${n})"/></g></svg>`; }
+  return `<svg viewBox="0 0 160 160" role="img" aria-label="${nm}"><defs><clipPath id="evc${n}"><rect x="4" y="21" width="152" height="118" rx="20"/></clipPath></defs><g class="bob"><rect x="4" y="21" width="152" height="118" rx="20" fill="#fff"/><image href="evo/hamster-${n}.webp" x="4" y="23" width="152" height="114" preserveAspectRatio="xMidYMid meet" clip-path="url(#evc${n})"/></g></svg>`; }
 function hamsterSVG_old(st){
   // ペンギンの絵（関数名は CH+"SVG" で よばれるので そのまま）
   const sc = 0.74 + st*0.029;
