@@ -325,23 +325,23 @@ function heroHTML(ch,sticky){
   ${sticky?`<div class="bar"><i style="width:${st>=14?100:(c%PER)/PER*100}%"></i></div><p>${st>=14?"Fully grown! Amazing!":`${need} more correct to grow`}</p>`:`<p>Kanji learned: <b>${n}</b> / ${KS.length}</p><div class="bar"><i style="width:${n/KS.length*100}%"></i></div>`}</div></div>`;
 }
 function hub(){
-  const ch=S.ch; theme(ch); const F=FR[ch], fs=FS(ch);
+  const ch=S.ch; theme(ch); const F=FR[ch], fs=FS(ch); const qm=QM(ch); save();
   const n=KS.filter(k=>L[k]).length, nk=nextK();
   const star=k=>`<span class="st">${L[k]?"<b>★</b>":"☆"}${stOk(k)?"<b>★</b>":"☆"}${stOk(k,"write")?"<b>★</b>":"☆"}</span>`;
   let chaps="";
   SECS.forEach((ks,c)=>{
     const spi=fs.sp[c];
-    chaps+=`<section class="chap" ${nk&&secOf(nk)===c?'id="cur"':""}><h2>${F.place} ${c+1}. ${esc(SEC_NAMES[c])} <span class="cnt">${ks.filter(k=>L[k]).length}/${ks.length}</span><span class="sp ${spi!=null?"got":""}" title="Learn them all for a special prize">${spi!=null?F.special[spi][0]:"🎁"}</span></h2><div class="tiles">`+
+    chaps+=`<section class="chap" ${nk&&secOf(nk)===c?'id="cur"':""}><h2>${F.place} ${c+1}. ${esc(SEC_NAMES[c])} <span class="cnt">${ks.filter(k=>L[k]).length}/${ks.length}</span>${c<qm.cleared?`<span class="qclr" title="Quiz cleared">✏️★</span>`:""}<span class="sp ${spi!=null?"got":""}" title="Learn them all for a special prize">${spi!=null?F.special[spi][0]:"🎁"}</span></h2><div class="tiles">`+
       ks.map(k=>`<button class="tile ${L[k]?"done":""} ${k===nk?"next":""}" data-k="${k}" aria-label="${k}, ${esc(shortM(k))}${L[k]?", learned":""}">${k}<span class="tm">${esc(shortM(k))}</span>${star(k)}</button>`).join("")+`</div></section>`;
   });
   const t=tickets();
   app.innerHTML=`<div class="top"><a class="pill" href="#/">‹ Friends</a><span class="spacer"></span><a class="pill" href="#/box">${F.boxE} ${esc(F.box)} (${Object.keys(fs.items).length+Object.keys(fs.sp).length})</a><button class="pill" id="setBtn" aria-label="Settings">⚙</button></div>
   ${heroHTML(ch)}
-  <div class="modes"><a href="#/learn/${nk||KS[0]}" class="on">📖 Learn<small>おぼえる</small></a><a href="#/quiz">✏️ Quiz<small>クイズ</small></a><a href="#/play">🎪 Play<small>あそびば</small>${t?`<span class="n">${t}</span>`:""}</a></div>
+  <div class="modes"><a href="#/learn/${nk||KS[0]}" class="on">📖 Learn<small>おぼえる</small></a><a href="#/quiz">✏️ Quiz<small>クイズ · ★ ${qm.cleared}/${SECS.length}</small></a><a href="#/play">🎪 Play<small>あそびば</small>${t?`<span class="n">${t}</span>`:""}</a></div>
   ${nk?`<a class="btn pri" href="#/learn/${nk}" style="padding:14px;font-size:1.08rem">Learn the next kanji: <span style="font-family:var(--f-k);font-size:1.4rem;margin:0 4px">${nk}</span> (${esc(shortM(nk))}) ›</a>`:`<p class="msg ok">You learned all ${KS.length} kanji! Try the quiz!</p>`}
   <details class="tip"><summary>How it works</summary>
   <p><b>Learn</b>: 7 short steps for each kanji: watch the stroke order, read its story, trace it, write it, then meet real words and sentences. Every ${PER_ITEM} kanji you learn, you get a prize for your ${esc(F.box.toLowerCase())}.</p>
-  <p><b>Quiz</b>: every ${PER} correct answers, your ${esc(F.who)} grows to a new stage (15 stages!). Every ${TICKET} correct answers give you a ticket for the <b>Play</b> zone.</p>
+  <p><b>Quiz</b>: each group is one ${F.stop}. Answer every kanji in it correctly once to clear it and open the next ${F.stop}. Every ${PER} correct answers, your ${esc(F.who)} grows to a new stage (15 stages!). Every ${TICKET} correct answers give you a ticket for the <b>Play</b> zone.</p>
   <p>Stars on each kanji: ★ learned · ★ correct in the quiz · ★ written correctly in the quiz.</p></details>
   ${chaps}
   <div class="card"><h3>${esc(F.who)}'s growth</h3><div class="evo-row">${STAGES[ch].map((nm,i)=>`<figure class="${i>stageOf(ch)?"lock":""} ${i===stageOf(ch)?"now":""}"><img src="${evoImg(ch,i)}" alt="" loading="lazy"><figcaption>${i<=stageOf(ch)?esc(nm):"?"}</figcaption></figure>`).join("")}</div></div>`;
@@ -494,9 +494,9 @@ function lesson(k,startStep){
     }
     save();
     const ov=document.createElement("div"); ov.className="ov "+ch; document.body.appendChild(ov);
-    let gi=0; const nk=nextK();
-    const nav=()=>`${nk?`<button class="btn pri" id="nx">Next: <span style="font-family:var(--f-k);margin:0 4px">${nk}</span> (${esc(shortM(nk))}) ›</button>`:""}<button class="btn" id="ok">All kanji</button>`;
-    const bind=()=>{ $("#ok").onclick=()=>{ ov.remove(); go("#/f/"+ch); }; $("#nx")&&($("#nx").onclick=()=>{ ov.remove(); go("#/learn/"+nk); }); };
+    let gi=0; const nk=nextK(); const gci=secOf(k), grpDone=SECS[gci].every(x=>L[x]);
+    const nav=()=>`${grpDone?`<button class="btn pri" id="qz">✏️ Quiz: ${esc(SEC_NAMES[gci])} ›</button>`:""}${nk?`<button class="btn ${grpDone?"":"pri"}" id="nx">Next: <span style="font-family:var(--f-k);margin:0 4px">${nk}</span> (${esc(shortM(nk))}) ›</button>`:""}<button class="btn" id="ok">All kanji</button>`;
+    const bind=()=>{ $("#ok").onclick=()=>{ ov.remove(); go("#/f/"+ch); }; $("#nx")&&($("#nx").onclick=()=>{ ov.remove(); go("#/learn/"+nk); }); $("#qz")&&($("#qz").onclick=()=>{ ov.remove(); const qm=QM(ch); qm.sec=Math.min(gci,Math.min(qm.cleared,SECS.length-1)); save(); go("#/quiz"); }); };
     function showBox(){
       if(!gifts.length){
         const left=PER_ITEM-(cnt%PER_ITEM);
@@ -649,7 +649,7 @@ function quiz(){
   function feedback(ok,extra){
     const box=$("#qcard");
     const fb=document.createElement("div"); fb.className="fb";
-    fb.innerHTML=`<span class="res ${ok?"ok":"ng"}">${ok?pick(["Correct! ⭕","Great! ⭕","Nice! ⭕","Yes! ⭕"]):"Not quite ❌"}</span>${extra||""}${cur.cleared!=null?`<div class="isle-clear">🎉 You cleared “${esc(SEC_NAMES[cur.cleared])}”!${cur.cleared>=NS-1?` You cleared every ${STOP}!`:""}</div>`:""}${cur.ticket?`<a class="btn tix" href="#/play">🎟 You got a Play ticket! <b>Go to the Play zone ›</b></a>`:""}${info()}${cur.cleared!=null&&cur.cleared<NS-1?`<button class="btn pri" id="nextQ" style="padding:12px">Next ${STOP}: ${esc(SEC_NAMES[cur.cleared+1])} ›</button>`:`<button class="btn pri" id="nextQ" style="padding:12px">Next question ›</button>`}`;
+    fb.innerHTML=`<span class="res ${ok?"ok":"ng"}">${ok?pick(["Correct! ⭕","Great! ⭕","Nice! ⭕","Yes! ⭕"]):"Not quite ❌"}</span>${extra||""}${cur.cleared!=null?`<div class="isle-clear">🎉 You cleared “${esc(SEC_NAMES[cur.cleared])}”!${cur.cleared>=NS-1?` You cleared every ${STOP}!`:""}</div>`:""}${cur.ticket?`<a class="btn tix" href="#/play">🎟 You got a Play ticket! <b>Go to the Play zone ›</b></a>`:""}${info()}${cur.cleared!=null&&cur.cleared<NS-1&&SECS[cur.cleared+1].some(x=>!L[x])?`<a class="btn" href="#/learn/${SECS[cur.cleared+1].find(x=>!L[x])}">📖 Learn “${esc(SEC_NAMES[cur.cleared+1])}” first</a>`:""}${cur.cleared!=null&&cur.cleared<NS-1?`<button class="btn pri" id="nextQ" style="padding:12px">Next ${STOP}: ${esc(SEC_NAMES[cur.cleared+1])} ›</button>`:`<button class="btn pri" id="nextQ" style="padding:12px">Next question ›</button>`}`;
     box.appendChild(fb); bindSay(fb); const goNext=cur.cleared!=null&&cur.cleared<NS-1;
     $("#nextQ").onclick=()=>{ if(goNext){ qm.sec=cur.cleared+1; save(); drawMap(); last=null; } next(); };
     requestAnimationFrame(()=>{ const r=$("#nextQ").getBoundingClientRect(); if(r.bottom>innerHeight-10) window.scrollBy({top:r.bottom-innerHeight+20,behavior:calm()?"auto":"smooth"}); });
@@ -696,7 +696,7 @@ function play(game){
     return game==="memory"?memory(usable):rain(usable);
   }
   const t=tickets();
-  app.innerHTML=`<div class="top"><a class="pill" href="#/f/${ch}">‹ All kanji</a><span class="spacer"></span><span class="pill">🎟 ${t} ticket${t===1?"":"s"}</span></div>
+  app.innerHTML=`<div class="top"><a class="pill" href="#/f/${ch}">‹ All kanji</a><span class="spacer"></span><a class="pill" href="#/quiz">✏️ Quiz</a><span class="pill">🎟 ${t} ticket${t===1?"":"s"}</span></div>
   <div class="hero"><img src="${evoImg(ch)}" alt=""><div><h1>🎪 Play zone <span class="jp" style="font-size:.85rem">あそびば</span></h1><p>Every ${TICKET} correct quiz answers give you 1 ticket. One game uses 1 ticket.</p><div class="bar"><i style="width:${(totalCorrect()%TICKET)/TICKET*100}%"></i></div><p>${TICKET-(totalCorrect()%TICKET)} more correct answers for the next ticket</p></div></div>
   <div class="games">
    <button class="game" data-g="memory" ${t?"":"disabled"}><span class="gi">🃏</span><span><b>Kanji Memory</b><small>Match each kanji with its English meaning. Fewer turns is better!</small></span><span class="legend">${S.play.best.memory?`Best: ${S.play.best.memory} turns`:""}</span></button>
@@ -762,8 +762,8 @@ function rain(pool){
 function done(title,sub){
   kira(); const ch=S.ch;
   const ov=document.createElement("div"); ov.className="ov "+ch;
-  ov.innerHTML=`<div class="prize"><img class="evo" src="${evoImg(ch)}" alt=""><h2>${esc(title)}</h2><p style="margin:0;font-weight:800">${esc(sub)}</p><div class="row"><button class="btn pri" id="dOk">Back to Play zone</button></div></div>`;
-  document.body.appendChild(ov); $("#dOk").onclick=()=>{ ov.remove(); go("#/play"); };
+  ov.innerHTML=`<div class="prize"><img class="evo" src="${evoImg(ch)}" alt=""><h2>${esc(title)}</h2><p style="margin:0;font-weight:800">${esc(sub)}</p><div class="row"><button class="btn pri" id="dQ">✏️ Back to the quiz</button><button class="btn" id="dOk">Play zone${tickets()?` (🎟 ${tickets()})`:""}</button></div></div>`;
+  document.body.appendChild(ov); $("#dOk").onclick=()=>{ ov.remove(); go("#/play"); }; $("#dQ").onclick=()=>{ ov.remove(); go("#/quiz"); };
 }
 
 applySettings();
