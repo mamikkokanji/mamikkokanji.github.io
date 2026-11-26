@@ -37,8 +37,9 @@ const FR={
   special:[["👑","dragon crown"],["🏯","dragon castle"],["🌋","volcano"],["🥚","legendary egg"],["🏆","gold trophy"],["🐉","dragon charm"],["🌌","galaxy"],["⛰️","dragon mountain"],["🎖️","medal"],["🔱","thunder spear"]]},
 };
 const CHS=["pirate","unicorn","penguin","dragon"];
-const PER=8;            // correct answers per evolution stage
-const TICKET=10;        // correct answers per play ticket
+// growth (MA 2026-11-26): the friend grows with the grade's progress = kanji learned + kanji found in this friend's quiz.
+// The last stage (15) comes only when every kanji is learned and every island is cleared.
+const TICKET=12;        // correct answers per play ticket
 const PER_ITEM=5;       // kanji learned per item
 
 // ---------- state ----------
@@ -56,7 +57,10 @@ const FS=ch=>S.fr[ch]=S.fr[ch]||{correct:0,items:{},sp:{}};
 const L=S.learned;
 const totalCorrect=()=>CHS.reduce((a,c)=>a+((S.fr[c]&&S.fr[c].correct)||0),0);
 const tickets=()=>Math.max(0,Math.floor(totalCorrect()/TICKET)-S.play.used);
-const stageOf=ch=>Math.min(14,Math.floor(FS(ch).correct/PER));
+const GMAX=()=>KS.length*2;
+const growPts=ch=>KS.filter(k=>L[k]).length+Object.keys(QM(ch).found).length;
+const stageOf=ch=>{ const g=growPts(ch); return g>=GMAX()?14:Math.min(13,Math.floor(g*14/GMAX())); };
+const nextStageAt=st=>Math.ceil((st+1)*GMAX()/14);
 const evoImg=(ch,n)=>`img/evo/${ch}-${n==null?stageOf(ch):n}.webp`;
 function applySettings(){
   const b=document.body.classList;
@@ -319,10 +323,10 @@ function home(){
 
 // ---------- screen: friend hub ----------
 function heroHTML(ch,sticky){
-  const st=stageOf(ch), c=FS(ch).correct, need=st>=14?0:PER-(c%PER);
+  const st=stageOf(ch), g=growPts(ch), lo=st?nextStageAt(st-1):0, hi=st>=13?GMAX():nextStageAt(st), need=st>=14?0:hi-g;
   const n=KS.filter(k=>L[k]).length;
   return `<div class="hero ${sticky?"sticky":""}" id="hero"><img src="${evoImg(ch,st)}" alt="${esc(STAGES[ch][st])}"><div><h1>${FR[ch].name}</h1><div class="stage">Stage ${st+1}: ${esc(STAGES[ch][st])}</div>
-  ${sticky?`<div class="bar"><i style="width:${st>=14?100:(c%PER)/PER*100}%"></i></div><p>${st>=14?"Fully grown! Amazing!":`${need} more correct to grow`}</p>`:`<p>Kanji learned: <b>${n}</b> / ${KS.length}</p><div class="bar"><i style="width:${n/KS.length*100}%"></i></div>`}</div></div>`;
+  ${sticky?`<div class="bar"><i style="width:${st>=14?100:(g-lo)/(hi-lo)*100}%"></i></div><p>${st>=14?"Fully grown! Amazing!":`${need} more kanji to grow`}</p>`:`<p>Kanji learned: <b>${n}</b> / ${KS.length}</p><div class="bar"><i style="width:${n/KS.length*100}%"></i></div>`}</div></div>`;
 }
 function hub(){
   const ch=S.ch; theme(ch); const F=FR[ch], fs=FS(ch); const qm=QM(ch); save();
@@ -341,7 +345,7 @@ function hub(){
   ${nk?`<a class="btn pri" href="#/learn/${nk}" style="padding:14px;font-size:1.08rem">Learn the next kanji: <span style="font-family:var(--f-k);font-size:1.4rem;margin:0 4px">${nk}</span> (${esc(shortM(nk))}) ›</a>`:`<p class="msg ok">You learned all ${KS.length} kanji! Try the quiz!</p>`}
   <details class="tip"><summary>How it works</summary>
   <p><b>Learn</b>: 7 short steps for each kanji: watch the stroke order, read its story, trace it, write it, then meet real words and sentences. Every ${PER_ITEM} kanji you learn, you get a prize for your ${esc(F.box.toLowerCase())}.</p>
-  <p><b>Quiz</b>: each group is one ${F.stop}. Answer every kanji in it correctly once to clear it and open the next ${F.stop}. Every ${PER} correct answers, your ${esc(F.who)} grows to a new stage (15 stages!). Every ${TICKET} correct answers give you a ticket for the <b>Play</b> zone.</p>
+  <p><b>Quiz</b>: each group is one ${F.stop}. Answer every kanji in it correctly once to clear it and open the next ${F.stop}. Your ${esc(F.who)} grows as you go: every kanji you learn and every kanji you find in the quiz helps. Learn all ${KS.length} kanji and clear every ${F.stop} to reach the last stage (15 stages!). Every ${TICKET} correct answers give you a ticket for the <b>Play</b> zone.</p>
   <p>Stars on each kanji: ★ learned · ★ correct in the quiz · ★ written correctly in the quiz.</p></details>
   ${chaps}
   <div class="card"><h3>${esc(F.who)}'s growth</h3><div class="evo-row">${STAGES[ch].map((nm,i)=>`<figure class="${i>stageOf(ch)?"lock":""} ${i===stageOf(ch)?"now":""}"><img src="${evoImg(ch,i)}" alt="" loading="lazy"><figcaption>${i<=stageOf(ch)?esc(nm):"?"}</figcaption></figure>`).join("")}</div></div>`;
@@ -486,8 +490,8 @@ function lesson(k,startStep){
     }
   }
   function finish(){
-    const rec=L[k]||{n:0}; rec.n=(rec.n||0)+1; rec.t=Date.now(); L[k]=rec;
-    const gifts=[]; const cnt=KS.filter(x=>L[x]).length;
+    const stBefore=stageOf(ch); const rec=L[k]||{n:0}; rec.n=(rec.n||0)+1; rec.t=Date.now(); L[k]=rec;
+    const gifts=[]; const cnt=KS.filter(x=>L[x]).length; const stAfter=stageOf(ch);
     if(firstTime){
       if(cnt%PER_ITEM===0) gifts.push(giveItem(ch));
       const ci=secOf(k); if(SECS[ci].every(x=>L[x])){ const sp=giveSpecial(ch,ci); if(sp) gifts.push(sp); }
@@ -512,6 +516,7 @@ function lesson(k,startStep){
       };
     }
     showBox();
+    if(stAfter>stBefore) setTimeout(()=>evolve(ch,stAfter),700);
   }
   show();
 }
@@ -565,7 +570,7 @@ function lessonQuiz(k){
 const QT={k2m:18,m2k:18,read:20,wmean:10,blank:12,write:14,strokes:4,order:4};
 // Quiz map (same as the Japanese version): one ${stop} per group, find every kanji (answer it correctly once) to open the next one.
 function QM(ch){ const fs=FS(ch);
-  if(!fs.found||typeof fs.found!=="object"){ fs.found={}; KS.forEach(k=>{ const s=S.st[k]; if(s&&Object.values(s).some(v=>v[0]>0)) fs.found[k]=1; }); }
+  if(!fs.found||typeof fs.found!=="object"){ fs.found={}; if(fs.correct>0) KS.forEach(k=>{ const s=S.st[k]; if(s&&Object.values(s).some(v=>v[0]>0)) fs.found[k]=1; }); }
   if(typeof fs.cleared!=="number") fs.cleared=0;
   while(fs.cleared<SECS.length&&SECS[fs.cleared].every(k=>fs.found[k])) fs.cleared++;
   const open=Math.min(fs.cleared,SECS.length-1);
@@ -628,10 +633,11 @@ function quiz(){
   };
   document.addEventListener("keydown",onKey); leaveCurrent=()=>document.removeEventListener("keydown",onKey);
   function record(ok){
+    const stB=stageOf(ch);
     const s=S.st[cur.k]=S.st[cur.k]||{}; const t=s[cur.type]=s[cur.type]||[0,0]; t[ok?0:1]++;
     S.q.answered=(S.q.answered||0)+1; sess.n++;
     if(ok){ qm.found[cur.k]=1; const si=qm.sec; if(qm.cleared<=si&&SECS[si].every(k=>qm.found[k])){ qm.cleared=si+1; cur.cleared=si; } }
-    if(ok){ S.q.correct=(S.q.correct||0)+1; sess.ok++; const before=stageOf(ch), tBefore=tickets(); FS(ch).correct++; save();
+    if(ok){ S.q.correct=(S.q.correct||0)+1; sess.ok++; const before=stB, tBefore=tickets(); FS(ch).correct++; save();
       const after=stageOf(ch);
       $("#heroBox").innerHTML=heroHTML(ch,true); const hb=$("#hero"); hb.classList.add("jump");
       if(after>before) setTimeout(()=>evolve(ch,after),900);
@@ -687,23 +693,40 @@ function evolve(ch,st){
 }
 
 // ---------- screen: play zone ----------
+// Play zone games: more games open as you clear islands in the quiz (MA 2026-11-26)
+const MEMG={id:"memory",icon:"🃏",name:"Kanji Memory",desc:"Match each kanji with its English meaning. Fewer turns is better!",unit:"turns",own:true};
+const RAING={id:"rain",icon:"🌧️",name:"Kanji Rain",desc:"Kanji fall from the sky. Tap the one that matches the meaning, as fast as you can!",unit:"",own:true};
+const PGAMES={
+ pirate:[[0,MEMG],[1,{id:"treasure",icon:"💰",name:"Treasure Hunt",desc:"Dig the sand to find 3 treasures. You can dig 10 times.",unit:"treasures"}],[3,RAING],[5,{id:"target",icon:"💣",name:"Cannon Targets",desc:"Tap the targets to fire your cannon!",unit:"hits"}]],
+ unicorn:[[0,MEMG],[1,{id:"feed",icon:"⭐",name:"Catch the Stars",desc:"Tap the shooting stars to collect them!",unit:"stars"}],[3,RAING],[5,{id:"hoi",icon:"↗️",name:"Look This Way!",desc:"6 rounds against the Unicorn!",unit:"points"}]],
+ penguin:[[0,MEMG],[1,{id:"feed",icon:"🐟",name:"Feed the Penguin",desc:"Tap the fish to feed the penguin!",unit:"fish"}],[3,RAING],[5,{id:"cups",icon:"⛄",name:"Where’s the Penguin?",desc:"The igloos get mixed up. Watch where the penguin goes!",unit:"found"}]],
+ dragon:[[0,MEMG],[1,{id:"target",icon:"🎯",name:"Fire Targets",desc:"Tap the targets to breathe fire on them!",unit:"hits"}],[3,RAING],[5,{id:"hoi",icon:"↗️",name:"Look This Way!",desc:"6 rounds against the Dragon!",unit:"points"}]],
+};
+function startGame(ch,g){
+  if(tickets()<1) return; S.play.used++; save();
+  if(g.own){ play._paid=true; go("#/play/"+g.id); return; }
+  const key=ch+"-"+g.id;
+  KGAMES.open({ch,name:FR[ch].who,img:evoImg(ch),game:g,
+    onEnd(v){ const old=S.play.best[key]; const better=old==null||v>old; if(better) S.play.best[key]=v; save(); return {best:S.play.best[key],better,old,left:tickets()}; },
+    again(){ startGame(ch,g); }, toQuiz(){ go("#/quiz"); }, onClose(){ if(location.hash==="#/play") play(); }});
+}
 function play(game){
-  const ch=S.ch; theme(ch);
+  const ch=S.ch; theme(ch); const F=FR[ch], qm=QM(ch);
   const pool=KS.filter(k=>L[k]||stOk(k)); const usable=pool.length>=6?pool:KS.slice(0,Math.max(6,pool.length));
   if(game==="memory"||game==="rain"){
     if(!play._paid){ go("#/play"); return; }
     play._paid=false;
     return game==="memory"?memory(usable):rain(usable);
   }
-  const t=tickets();
+  const t=tickets(), GL=PGAMES[ch];
+  const bestOf=g=>S.play.best[g.own?g.id:ch+"-"+g.id];
   app.innerHTML=`<div class="top"><a class="pill" href="#/f/${ch}">‹ All kanji</a><span class="spacer"></span><a class="pill" href="#/quiz">✏️ Quiz</a><span class="pill">🎟 ${t} ticket${t===1?"":"s"}</span></div>
   <div class="hero"><img src="${evoImg(ch)}" alt=""><div><h1>🎪 Play zone <span class="jp" style="font-size:.85rem">あそびば</span></h1><p>Every ${TICKET} correct quiz answers give you 1 ticket. One game uses 1 ticket.</p><div class="bar"><i style="width:${(totalCorrect()%TICKET)/TICKET*100}%"></i></div><p>${TICKET-(totalCorrect()%TICKET)} more correct answers for the next ticket</p></div></div>
-  <div class="games">
-   <button class="game" data-g="memory" ${t?"":"disabled"}><span class="gi">🃏</span><span><b>Kanji Memory</b><small>Match each kanji with its English meaning. Fewer turns is better!</small></span><span class="legend">${S.play.best.memory?`Best: ${S.play.best.memory} turns`:""}</span></button>
-   <button class="game" data-g="rain" ${t?"":"disabled"}><span class="gi">🌧️</span><span><b>Kanji Rain</b><small>Kanji fall from the sky. Tap the one that matches the meaning, as fast as you can!</small></span><span class="legend">${S.play.best.rain?`Best: ${S.play.best.rain}`:""}</span></button>
+  <div class="games">${GL.map(([need,g],i)=>{ const lock=qm.cleared<need;
+    return `<button class="game ${lock?"lock":""}" data-i="${i}" ${t&&!lock?"":"disabled"}><span class="gi">${lock?"🔒":g.icon}</span><span><b>${esc(g.name)}</b><small>${lock?`Clear ${need} ${F.stop}${need>1?"s":""} in the quiz to open this game (${qm.cleared}/${need})`:esc(g.desc)}</small></span><span class="legend">${!lock&&bestOf(g)!=null?`Best: ${bestOf(g)}${g.unit?" "+g.unit:""}`:""}</span></button>`; }).join("")}
   </div>
   ${t?"":`<a class="btn pri" href="#/quiz">✏️ Go to the quiz to earn tickets</a>`}`;
-  app.querySelectorAll(".game").forEach(b=>b.onclick=()=>{ if(tickets()<1) return; S.play.used++; save(); play._paid=true; go("#/play/"+b.dataset.g); });
+  app.querySelectorAll(".game").forEach(b=>b.onclick=()=>{ const [need,g]=GL[+b.dataset.i]; if(qm.cleared<need) return; startGame(ch,g); });
   window.scrollTo(0,0);
 }
 function memory(pool){
