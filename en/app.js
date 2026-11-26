@@ -110,7 +110,8 @@ function tgtHTML(w,k,sent){ // 「学 = ガッ GAK」: on'yomi in katakana / CAP
   const nx=readR(w.slice(t.end))[0]||""; let r=romaji(t.y);
   if(/っ$/.test(t.y)&&nx){ r=romaji(t.y+nx); r=r.slice(0,r.length-romaji(nx).length); }
   if(t.t==="on") r=r.toUpperCase();
-  const al=sent?altR(w,k,true):(altR(w,k)?[plainR(w),altR(w,k)]:null);
+  let al=sent?altR(w,k,true):(altR(w,k)?[plainR(w),altR(w,k)]:null);
+  if(!al&&/\{日\|にっ\}\{本\|ぽん\}/.test(w)) al=["日本","にほん"]; // 日本 にっぽん／にほん どちらも正しい
   return `${TAGS[t.t]} ${esc(t.g)} = <b class="y-${t.t}">${esc(t.t==="on"?`${kata(t.y)}（${t.y}）`:t.y)}</b> <span class="roma">${esc(r)}</span>${al?`<span class="also">${esc(al[0])} can also be read <b class="jp">${esc(al[1])}</b> <span class="roma">${esc(romaji(al[1]))}</span>. Both are correct.</span>`:""}`;
 }
 // 十本 じゅっぽん/じっぽん のように、どちらの読みも正しいもの
@@ -459,7 +460,7 @@ function lesson(k,startStep){
       // split each sentence into units (one kana or one ruby word) so the yellow line moves along, line by line
       I.x.forEach((x,i)=>{ const p=$("#ri"+i+" .sent"); [...p.childNodes].forEach(n=>{ if(n.nodeType===3){ const f=document.createDocumentFragment(); [...n.textContent].forEach(c=>{ const u=document.createElement("span"); u.className="su"; u.textContent=c; f.appendChild(u); }); p.replaceChild(f,n); } else { const u=document.createElement("span"); u.className="su"; p.replaceChild(u,n); u.appendChild(n); } }); });
       const sweep=(i,then)=>{ const us=[...$("#ri"+i).querySelectorAll(".su")]; us.forEach(u=>u.classList.remove("lit")); busy=true; upd();
-        const n=us.reduce((a,u)=>a+Math.max(1,(u.querySelector("rt")||u).textContent.length),0), per=calm()?60:Math.max(1500,n*260)/n; let j=0;
+        const n=us.reduce((a,u)=>a+Math.max(1,(u.querySelector("rt")||u).textContent.length),0), per=calm()?60:Math.max(1500,n*200)/n; let j=0;
         const step=()=>{ if(j>=us.length){ busy=false; then(); upd(true); return; } const u=us[j++]; u.classList.add("lit"); setTimeout(step,per*Math.max(1,(u.querySelector("rt")||u).textContent.length)); };
         step(); };
       const need=i=>st[i].rep&&st[i].hide;
@@ -649,7 +650,7 @@ function quiz(){
   function info(){
     const I=K[cur.k], w=cur.word||I.w[0];
     return `<div class="info"><span class="ik">${cur.k}</span><b>${esc(I.m)}</b><span class="jp" style="font-size:.92rem">${I.on.map(x=>`<span class="y-on">${esc(x)}</span>`).join("・")}${I.on.length&&I.kun.length?"・":""}${I.kun.map(([a,b])=>`<span class="y-kun">${esc(a)}</span>${b?`<span class="okuri">(${esc(b)})</span>`:""}`).join("・")}</span>
-    <span class="iw"><span class="jp" style="font-size:1.15rem">${ruby(w[0],cur.k)}</span> ${sayBtn(readR(w[0]),"Listen")} <span class="roma">${esc(romaji(readR(w[0])))}</span> · ${esc(w[1])}</span></div>
+    <span class="iw"><span class="jp" style="font-size:1.15rem">${ruby(w[0],cur.k)}</span> <span class="roma">${esc(romaji(readR(w[0])))}</span> · ${esc(w[1])}</span></div>
     ${cur.sent?`<p class="sent" style="font-size:1.05rem;margin:0">${ruby(cur.sent[0],cur.k)}</p><span class="roma">${esc(cur.sent[2])}</span>`:""}`;
   }
   function feedback(ok,extra){
