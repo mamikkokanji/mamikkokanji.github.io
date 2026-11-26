@@ -16,7 +16,7 @@ const calm=()=>matchMedia("(prefers-reduced-motion: reduce)").matches;
 const STAGES={
  pirate:["Little Pirate","Mini Pirate","Kid Pirate","Young Pirate","Pirate Trainee","Pirate in a Big Hat","Swashbuckler","Sea Pirate","Crew Pirate","Drummer Pirate","Helmsman Pirate","Sea-Palace Pirate","Treasure Pirate","Future Pirate King","Legendary Kanji Pirate"],
  unicorn:["Baby Unicorn","Toddling Unicorn","Little Unicorn","Ribbon Unicorn","Rainbow Unicorn","Star-Necklace Unicorn","Flower Unicorn","Fairy's Partner","Winged Unicorn","Caped Unicorn","Great-Winged Unicorn","Jewel Unicorn","Princess Unicorn","Golden Unicorn","Legendary Kanji Unicorn"],
- penguin:["Penguin Egg","Penguin Chick","Kid Penguin","Young Penguin","Grown-up Penguin","Penguin in a Cap","Scarf Penguin","Diving Penguin","Wise Penguin","Flapping Penguin","Star Penguin","Lake Penguin","Rainbow Penguin","Golden Penguin","Legendary Kanji Penguin"],
+ penguin:["Penguin Egg","Penguin Chick","Kid Penguin","Young Penguin","Grown-up Penguin","Straw-Hat Penguin","Scarf Penguin","Sailor Penguin","Wizard Penguin","Flapping Penguin","Star Penguin","Lake Penguin","Rainbow Penguin","Golden Penguin","Legendary Kanji Penguin"],
  dragon:["Mystery Egg","Tiny Dragon","Kid Dragon","Young Dragon","Grown-up Dragon","Sky Dragon","Wise Dragon","Fire Dragon","Water Dragon","Cloud Dragon","Earth Dragon","Shadow Dragon","Wind Dragon","Holy Dragon","Legendary Kanji Dragon"]};
 const FR={
  pirate:{name:"Kanji Pirate",jp:"かんじパイレーツ",who:"Pirate",box:"Treasure chest",boxE:"🧰",place:"🏝️",
