@@ -60,7 +60,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var
 .title p{margin:8px auto 0;max-width:30em;color:var(--muted);font-weight:700;font-size:.95rem}
 .friends{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .friend{display:flex;flex-direction:column;align-items:center;gap:2px;background:var(--surface);border:3px solid var(--line);border-radius:24px;padding:10px 8px 12px;text-decoration:none;color:inherit;box-shadow:0 6px 0 -2px var(--line)}
-.friend img{width:100%;max-width:150px;aspect-ratio:1;object-fit:contain;border-radius:18px;background:var(--soft)}
+.friend img{width:100%;max-width:150px;aspect-ratio:auto;height:auto;object-fit:contain;border-radius:18px;background:none}
 .friend b{color:var(--c);font-size:1.12rem;font-weight:900;margin-top:4px}
 .friend small{color:var(--muted);font-size:.78rem;font-weight:700;text-align:center;line-height:1.3}
 .friend.cur{border-color:var(--c)}
@@ -312,7 +312,7 @@ addEventListener("DOMContentLoaded",function(){ var n=null; try{ n=sessionStorag
 <div class="wrap" id="app"></div>
 <script src="data-g1.js?v=5"></script>
 <script src="voice-g1.js?v=1"></script>
-<script src="app.js?v=8"></script>
+<script src="app.js?v=9"></script>
 <script>
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
 </script>
