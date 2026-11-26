@@ -82,7 +82,7 @@ h1{font-size:1.7rem;font-weight:900;margin:0;letter-spacing:.06em;text-align:cen
 .paybtns button{font:inherit;font-weight:800;border:0;border-radius:12px;padding:10px 14px;background:#E08A2E;color:#fff;cursor:pointer;flex:1 1 auto}
 .paybtns button.sub{background:transparent;color:var(--ink,#333);border:2px solid var(--line,#e5e0d8)}
 .pbmsg{min-height:1.2em;font-weight:700}
-.gr h3 small.lk{margin-left:6px;color:#B4541A}
+.gr h3 small.lk{margin-left:6px;color:#B4541A}.gr h3{flex-wrap:wrap;row-gap:2px}.gr h3 .gn,.gr h3 small{white-space:nowrap;flex-shrink:0}.gr h3 small.lk{margin-left:0;flex-basis:100%}
 .pirate{--c:var(--pirate);--soft:var(--pirate-soft)} .dragon{--c:var(--dragon);--soft:var(--dragon-soft)}
 .hamster{--c:var(--hamster);--soft:var(--hamster-soft)} .unicorn{--c:var(--unicorn);--soft:var(--unicorn-soft)}
 
@@ -167,7 +167,7 @@ function render(open){
     $("panel").className="panel "+c.id;
     const PL={pirate:"島",unicorn:"国",hamster:"ばしょ",dragon:"ばしょ"}[c.id];
     $("panel").innerHTML=`<h2>${c.name}：学年と モードを えらぶ</h2>`+c.kyus.map(k=>{ const n=learnInfo(c,k), q=quizInfo(c,k);
-      return `<div class="gr"><h3>${GR[k]}年生 <small>${KYU_TXT[k]}</small>${PAY&&!PAY.free(GR[k],1)?`<small class="lk">🔒 さいしょの ${PL}だけ むりょう</small>`:""}</h3><div class="two">
+      return `<div class="gr"><h3><span class="gn">${GR[k]}年生</span><small>${KYU_TXT[k]}</small>${PAY&&!PAY.free(GR[k],1)?`<small class="lk">🔒 さいしょの ${PL}だけ むりょう</small>`:""}</h3><div class="two">
       <a class="md" href="learn.html?c=${c.id}&g=${LG[k]}"><b>📖 おぼえる</b><span>おぼえた ${n} / ${NK[k]}字</span><span class="pb"><i style="width:${n/NK[k]*100}%"></i></span></a>
       <a class="md" href="${c.id}-${k}.html"><b>✏️ クイズ</b><span>${PL} ${q} / ${SECN[k]} クリア・${info(c,k).replace(/<\/?b>/g,"")}</span><span class="pb"><i style="width:${q/SECN[k]*100}%"></i></span></a></div></div>`; }).join("");
     // えらんだキャラの段のすぐ下に出す
