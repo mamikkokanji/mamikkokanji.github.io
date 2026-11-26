@@ -19,19 +19,19 @@ const STAGES={
  penguin:["Penguin Egg","Penguin Chick","Kid Penguin","Young Penguin","Grown-up Penguin","Straw-Hat Penguin","Scarf Penguin","Sailor Penguin","Wizard Penguin","Flapping Penguin","Star Penguin","Lake Penguin","Rainbow Penguin","Golden Penguin","Legendary Kanji Penguin"],
  dragon:["Mystery Egg","Tiny Dragon","Kid Dragon","Young Dragon","Grown-up Dragon","Sky Dragon","Wise Dragon","Fire Dragon","Water Dragon","Cloud Dragon","Earth Dragon","Shadow Dragon","Wind Dragon","Holy Dragon","Legendary Kanji Dragon"]};
 const FR={
- pirate:{name:"Kanji Pirate",jp:"かんじパイレーツ",who:"Pirate",box:"Treasure chest",boxE:"🧰",place:"🏝️",
+ pirate:{name:"Kanji Pirate",jp:"かんじパイレーツ",who:"Pirate",box:"Treasure chest",boxE:"🧰",place:"🏝️",stop:"island",
   say:{hi:"Ahoy! Let's hunt for kanji treasure!",look:"Watch the stroke order closely, matey!",nari:"Here's the secret story of this kanji!",trace:"Trace the light lines from the red dot.",write:"Now write it without looking!",word:"Let's see this kanji in real words.",sent:"Read each sentence out loud!",check:"Last step: a quick check!"},
   items:[["🪙","gold coin"],["💎","gem"],["🗺️","treasure map"],["🧭","compass"],["⚓","anchor"],["🐚","seashell"],["🔭","spyglass"],["🗝️","mystery key"],["💍","ring"],["📿","necklace"],["🍾","message in a bottle"],["🦀","crab"],["🐙","octopus"],["🐠","tropical fish"],["🦜","parrot"],["🏴‍☠️","pirate flag"],["🪝","hook"],["🧱","gold brick"],["🍖","meat on the bone"],["🍌","banana"],["🥥","coconut"],["🐢","sea turtle"],["🦈","shark"],["🐳","whale"]],
   special:[["👑","crown"],["⛵","pirate ship"],["🏝️","treasure island"],["🏆","gold trophy"],["🔱","sea trident"],["🌊","giant wave"],["🐋","great whale"],["🌋","fire mountain"],["🎖️","medal"],["🗿","mystery statue"]]},
- unicorn:{name:"Kanji Unicorn",jp:"かんじユニコーン",who:"Unicorn",box:"Sparkle box",boxE:"💝",place:"🌈",
+ unicorn:{name:"Kanji Unicorn",jp:"かんじユニコーン",who:"Unicorn",box:"Sparkle box",boxE:"💝",place:"🌈",stop:"land",
   say:{hi:"Let's collect magic kanji together!",look:"Watch the stroke order, it's like magic!",nari:"Here's how this kanji was born!",trace:"Trace the light lines from the red dot.",write:"Now try writing it on your own!",word:"Let's use this kanji in words!",sent:"Read each sentence out loud!",check:"One last little check!"},
   items:[["🌟","star"],["🌸","cherry blossom"],["🌈","rainbow"],["🦋","butterfly"],["🍭","lollipop"],["💐","bouquet"],["🎀","ribbon"],["💖","heart"],["🔮","magic ball"],["🌙","moon"],["☁️","cloud"],["🌷","tulip"],["🧁","cupcake"],["🍬","candy"],["🫧","bubbles"],["🪄","magic wand"],["💎","jewel"],["🌼","daisy"],["🍓","strawberry"],["🎐","wind chime"],["🐚","seashell"],["🪽","wing"],["🍀","four-leaf clover"],["🌺","hibiscus"]],
   special:[["👑","tiara"],["🏰","castle"],["🎠","merry-go-round"],["🌌","starry sky"],["🏆","gold trophy"],["👗","dress"],["🧚","fairy"],["🎆","fireworks"],["🎖️","medal"],["🌠","shooting star"]]},
- penguin:{name:"Kanji Penguin",jp:"かんじペンギン",who:"Penguin",box:"Ice box",boxE:"🧊",place:"🐧",
+ penguin:{name:"Kanji Penguin",jp:"かんじペンギン",who:"Penguin",box:"Ice box",boxE:"🧊",place:"🐧",stop:"place",
   say:{hi:"Let's learn kanji together!",look:"Watch the stroke order carefully!",nari:"Let me tell you this kanji's secret!",trace:"Trace the light lines from the red dot.",write:"Now write it without looking!",word:"Let's use this kanji in words!",sent:"Read each sentence out loud!",check:"Let's check what you learned!"},
   items:[["🐟","fish"],["🦐","shrimp"],["🦑","squid"],["🐠","tropical fish"],["🐡","pufferfish"],["🦀","crab"],["🐚","seashell"],["🧊","ice cube"],["❄️","snowflake"],["⛄","snowman"],["🧣","scarf"],["🧤","mittens"],["🧢","cap"],["⛸️","ice skates"],["🎿","skis"],["🛷","sled"],["🪁","kite"],["🎈","balloon"],["🧸","teddy bear"],["🍙","rice ball"],["🍦","soft-serve"],["🍧","shaved ice"],["⭐","star"],["🔦","flashlight"]],
   special:[["🏠","penguin house"],["🛝","ice slide"],["🌌","aurora"],["🎂","cake"],["🏆","gold trophy"],["🛏️","fluffy bed"],["🎠","merry-go-round"],["🚂","steam train"],["🎖️","medal"],["🏰","castle"]]},
- dragon:{name:"Kanji Dragon",jp:"かんじドラゴン",who:"Dragon",box:"Jewel box",boxE:"🧰",place:"🐉",
+ dragon:{name:"Kanji Dragon",jp:"かんじドラゴン",who:"Dragon",box:"Jewel box",boxE:"🧰",place:"🐉",stop:"realm",
   say:{hi:"Let's gather the power of kanji!",look:"Watch the stroke order closely!",nari:"I'll tell you where this kanji came from!",trace:"Trace the light lines from the red dot.",write:"Now write it without looking!",word:"Let's use this kanji in words!",sent:"Read each sentence out loud!",check:"Final check, let's go!"},
   items:[["💎","gem"],["🔥","fire orb"],["⚡","lightning"],["🌙","moon stone"],["⭐","star shard"],["🔮","crystal"],["🍖","meat"],["🍎","apple"],["🪨","magic rock"],["🌿","healing herb"],["🍄","mystery mushroom"],["🗡️","sword"],["🛡️","shield"],["💠","blue gem"],["🔶","orange gem"],["🟢","green gem"],["🪶","feather"],["🦴","bone"],["☄️","comet"],["🌈","rainbow shard"],["🧪","magic potion"],["📜","scroll"],["🪵","firewood"],["🍯","honey"]],
   special:[["👑","dragon crown"],["🏯","dragon castle"],["🌋","volcano"],["🥚","legendary egg"],["🏆","gold trophy"],["🐉","dragon charm"],["🌌","galaxy"],["⛰️","dragon mountain"],["🎖️","medal"],["🔱","thunder spear"]]},
@@ -563,12 +563,15 @@ function lessonQuiz(k){
 
 // ---------- screen: quiz ----------
 const QT={k2m:18,m2k:18,read:20,wmean:10,blank:12,write:14,strokes:4,order:4};
-function quizPool(scope){
-  const learned=KS.filter(k=>L[k]);
-  if(scope==="all") return KS.slice();
-  if(scope&&scope.startsWith("s")){ return SECS[+scope.slice(1)].slice(); }
-  return learned;
-}
+// Quiz map (same as the Japanese version): one ${stop} per group, find every kanji (answer it correctly once) to open the next one.
+function QM(ch){ const fs=FS(ch);
+  if(!fs.found||typeof fs.found!=="object"){ fs.found={}; KS.forEach(k=>{ const s=S.st[k]; if(s&&Object.values(s).some(v=>v[0]>0)) fs.found[k]=1; }); }
+  if(typeof fs.cleared!=="number") fs.cleared=0;
+  while(fs.cleared<SECS.length&&SECS[fs.cleared].every(k=>fs.found[k])) fs.cleared++;
+  const open=Math.min(fs.cleared,SECS.length-1);
+  if(typeof fs.sec!=="number"||fs.sec<0||fs.sec>open) fs.sec=open;
+  return fs; }
+const secFound=(fs,i)=>SECS[i].filter(k=>fs.found[k]).length;
 function nearNums(n){ let lo=Math.max(1,n-1-Math.floor(Math.random()*3)); const out=[]; for(let i=0;i<4;i++) out.push(lo+i); if(!out.includes(n)) return [n-1,n,n+1,n+2].filter(x=>x>0); return out; }
 function makeQ(pool,last){
   // weak kanji come back more often
@@ -597,28 +600,37 @@ function makeQ(pool,last){
   }
 }
 function quiz(){
-  const ch=S.ch; theme(ch); const F=FR[ch];
-  const learned=KS.filter(k=>L[k]);
-  let scope=quiz._scope||(learned.length>=4?"learned":"s"+Math.max(0,secOf(nextK()||KS[0])));
-  if(scope==="learned"&&learned.length<4) scope="s0";
+  const ch=S.ch; theme(ch); const F=FR[ch], qm=QM(ch); save();
+  const STOP=F.stop, Stop=STOP[0].toUpperCase()+STOP.slice(1), NS=SECS.length;
   let cur=null, answered=false, streak=0, last=null, pad=null, sess={ok:0,n:0};
   app.innerHTML=`<div class="top"><a class="pill" href="#/f/${ch}">‹ All kanji</a><span class="spacer"></span><span class="pill" id="sess">✔ 0 / 0</span><button class="pill" id="setBtn" aria-label="Settings">⚙</button></div>
   <div id="heroBox">${heroHTML(ch,true)}</div>
-  <div class="scope" id="scope">${learned.length>=4?`<button data-s="learned">My kanji (${learned.length})</button>`:""}${SECS.map((s,i)=>`<button data-s="s${i}">${esc(SEC_NAMES[i])}</button>`).join("")}<button data-s="all">All ${KS.length}</button></div>
-  <div class="card" id="qcard"></div>`;
+  <div class="qhead" id="qhead"></div>
+  <div class="card" id="qcard"></div>
+  <div class="card qmap" id="qmap"></div>`;
   $("#setBtn").onclick=settings;
-  const markScope=()=>app.querySelectorAll("#scope button").forEach(b=>b.classList.toggle("on",b.dataset.s===scope));
-  app.querySelectorAll("#scope button").forEach(b=>b.onclick=()=>{ scope=quiz._scope=b.dataset.s; markScope(); next(); });
-  markScope(); { const on=app.querySelector("#scope .on"); if(on) on.scrollIntoView({block:"nearest",inline:"center"}); }
+  function drawMap(){
+    const i=qm.sec, ks=SECS[i], n=secFound(qm,i), clr=i<qm.cleared, lastS=i>=NS-1, open=Math.min(qm.cleared,NS-1);
+    $("#qhead").innerHTML=`<b>${F.place} ${i+1}. ${esc(SEC_NAMES[i])}</b><span>Found <b>${n}</b> / ${ks.length}</span>`;
+    $("#qmap").innerHTML=`<h3>Map: choose a${/^[aeiou]/.test(STOP)?"n":""} ${STOP}</h3>
+    <div class="isles">${SECS.map((_,k)=>{ const lock=k>open, c=k<qm.cleared;
+      return `<button class="isle ${c?"clear":""}" data-i="${k}" aria-pressed="${k===i}" ${lock?"disabled":""} aria-label="${esc(SEC_NAMES[k])}${c?" (cleared)":lock?" (locked)":""}"><b>${c?"★":lock?"🔒":k+1}</b>${esc(SEC_NAMES[k])}</button>`; }).join("")}</div>
+    <div class="isle-head"><span class="isle-name">${i+1}. ${esc(SEC_NAMES[i])}</span><span class="sub">Kanji found <b>${n}</b> / ${ks.length}</span></div>
+    <div class="ftiles">${ks.map(k=>`<span class="${qm.found[k]?"f":""}">${qm.found[k]?k:"?"}</span>`).join("")}</div>
+    <p class="isle-msg">${clr?(lastS?`🎉 You cleared every ${STOP}! Great job!`:`🎉 Cleared! You can go to the next ${STOP}. Choose it on the map.`):`Answer every kanji here correctly to open the next ${STOP} (${ks.length-n} left).`}</p>`;
+    app.querySelectorAll("#qmap .isle").forEach(b=>b.onclick=()=>{ const k=+b.dataset.i; if(k===qm.sec) return; qm.sec=k; save(); drawMap(); last=null; next(); });
+  }
+  drawMap();
   const onKey=e=>{
     if(e.target.closest&&e.target.closest("input,textarea")) return;
-    if(answered&&(e.key==="Enter"||e.key===" ")){ e.preventDefault(); next(); return; }
+    if(answered&&(e.key==="Enter"||e.key===" ")){ e.preventDefault(); ($("#nextQ")||{click:next}).click(); return; }
     const n=+e.key; if(!answered&&n>=1&&n<=4){ const b=app.querySelectorAll("#qcard .choices button")[n-1]; if(b) b.click(); }
   };
   document.addEventListener("keydown",onKey); leaveCurrent=()=>document.removeEventListener("keydown",onKey);
   function record(ok){
     const s=S.st[cur.k]=S.st[cur.k]||{}; const t=s[cur.type]=s[cur.type]||[0,0]; t[ok?0:1]++;
     S.q.answered=(S.q.answered||0)+1; sess.n++;
+    if(ok){ qm.found[cur.k]=1; const si=qm.sec; if(qm.cleared<=si&&SECS[si].every(k=>qm.found[k])){ qm.cleared=si+1; cur.cleared=si; } }
     if(ok){ S.q.correct=(S.q.correct||0)+1; sess.ok++; const before=stageOf(ch), tBefore=tickets(); FS(ch).correct++; save();
       const after=stageOf(ch);
       $("#heroBox").innerHTML=heroHTML(ch,true); const hb=$("#hero"); hb.classList.add("jump");
@@ -626,6 +638,7 @@ function quiz(){
       if(tickets()>tBefore) cur.ticket=true;
     } else save();
     $("#sess").textContent=`✔ ${sess.ok} / ${sess.n}`;
+    drawMap();
   }
   function info(){
     const I=K[cur.k], w=cur.word||I.w[0];
@@ -636,14 +649,14 @@ function quiz(){
   function feedback(ok,extra){
     const box=$("#qcard");
     const fb=document.createElement("div"); fb.className="fb";
-    fb.innerHTML=`<span class="res ${ok?"ok":"ng"}">${ok?pick(["Correct! ⭕","Great! ⭕","Nice! ⭕","Yes! ⭕"]):"Not quite ❌"}</span>${extra||""}${cur.ticket?`<a class="btn tix" href="#/play">🎟 You got a Play ticket! <b>Go to the Play zone ›</b></a>`:""}${info()}<button class="btn pri" id="nextQ" style="padding:12px">Next question ›</button>`;
-    box.appendChild(fb); bindSay(fb); $("#nextQ").onclick=next;
+    fb.innerHTML=`<span class="res ${ok?"ok":"ng"}">${ok?pick(["Correct! ⭕","Great! ⭕","Nice! ⭕","Yes! ⭕"]):"Not quite ❌"}</span>${extra||""}${cur.cleared!=null?`<div class="isle-clear">🎉 You cleared “${esc(SEC_NAMES[cur.cleared])}”!${cur.cleared>=NS-1?` You cleared every ${STOP}!`:""}</div>`:""}${cur.ticket?`<a class="btn tix" href="#/play">🎟 You got a Play ticket! <b>Go to the Play zone ›</b></a>`:""}${info()}${cur.cleared!=null&&cur.cleared<NS-1?`<button class="btn pri" id="nextQ" style="padding:12px">Next ${STOP}: ${esc(SEC_NAMES[cur.cleared+1])} ›</button>`:`<button class="btn pri" id="nextQ" style="padding:12px">Next question ›</button>`}`;
+    box.appendChild(fb); bindSay(fb); const goNext=cur.cleared!=null&&cur.cleared<NS-1;
+    $("#nextQ").onclick=()=>{ if(goNext){ qm.sec=cur.cleared+1; save(); drawMap(); last=null; } next(); };
     requestAnimationFrame(()=>{ const r=$("#nextQ").getBoundingClientRect(); if(r.bottom>innerHeight-10) window.scrollBy({top:r.bottom-innerHeight+20,behavior:calm()?"auto":"smooth"}); });
   }
   function next(){
-    const pool=quizPool(scope);
-    if(pool.length<1){ $("#qcard").innerHTML=`<p class="msg">Learn a few kanji first!</p><a class="btn pri" href="#/learn/${nextK()||KS[0]}">Go to Learn</a>`; return; }
-    cur=makeQ(pool,last); last=cur.k; answered=false;
+    const pool=SECS[qm.sec], fresh=pool.filter(k=>!qm.found[k]&&k!==last);
+    cur=makeQ(fresh.length&&Math.random()<0.6?fresh:pool,last); last=cur.k; answered=false;
     const box=$("#qcard");
     if(cur.write){
       box.innerHTML=`<h3>✍ Writing</h3><p class="q">${cur.q}</p><div class="big" id="pad"></div><p class="msg" id="msg" aria-live="polite"></p><div class="row"><button class="btn" id="giveup">I don’t know, show me</button></div>`;

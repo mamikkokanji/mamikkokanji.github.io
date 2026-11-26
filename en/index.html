@@ -223,6 +223,22 @@ body:has(#pad) .nav{position:static;box-shadow:none;margin:0;padding:4px 0}
 .btn.tix{flex-direction:column;gap:2px;background:#C8960C;border-color:#C8960C;color:#fff;text-align:center;padding:12px;animation:hop 1s ease-in-out 3}
 .rei-item.rdone .rei-tools .btn{opacity:.8}
 .nav .btn{flex:1;padding:12px;font-size:1.05rem}
+.qhead{display:flex;align-items:center;gap:8px;font-size:.88rem;padding:0 4px;color:var(--muted)}
+.qhead b{color:var(--ink)}.qhead>b:first-child{color:var(--c)}.qhead span{margin-left:auto}
+.qmap h3{margin:0 0 8px}
+.isles{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.isle{border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:6px 2px;font-size:.68rem;font-weight:800;color:var(--muted);line-height:1.2;display:flex;flex-direction:column;align-items:center;gap:2px;min-height:58px}
+.isle b{font-size:1rem;color:var(--c)}
+.isle[aria-pressed="true"]{border-color:var(--c);background:var(--soft);color:var(--ink)}
+.isle.clear b{color:#d4a017}
+.isle:disabled{opacity:.55}
+.isle-head{display:flex;align-items:baseline;gap:8px;margin:12px 0 6px}
+.isle-name{font-weight:900}.isle-head .sub{margin-left:auto;font-size:.82rem;color:var(--muted)}
+.ftiles{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.ftiles span{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border:2px dashed var(--line);border-radius:10px;font-family:var(--f-k);font-size:1.4rem;color:var(--muted)}
+.ftiles span.f{border-style:solid;border-color:var(--c);color:var(--ink);background:var(--surface)}
+.isle-msg{margin:10px 0 0;padding:10px;border-radius:12px;background:var(--bg);text-align:center;font-size:.88rem;font-weight:700}
+.isle-clear{margin:6px 0;padding:10px;border-radius:12px;background:#fff4c2;color:#5a4300;text-align:center;font-weight:900}
 .scope{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
 .scope::-webkit-scrollbar{display:none}
 .scope button{flex:none;border:2px solid var(--line);background:var(--surface);border-radius:99px;padding:4px 12px;font-size:.8rem;font-weight:800;color:var(--muted)}
@@ -312,7 +328,7 @@ addEventListener("DOMContentLoaded",function(){ var n=null; try{ n=sessionStorag
 <div class="wrap" id="app"></div>
 <script src="data-g1.js?v=5"></script>
 <script src="voice-g1.js?v=1"></script>
-<script src="app.js?v=9"></script>
+<script src="app.js?v=10"></script>
 <script>
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
 </script>
