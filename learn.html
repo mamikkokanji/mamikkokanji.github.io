@@ -399,7 +399,7 @@ function home(){
       ks.map(k=>`<button class="tile ${L[k]?"done":""} ${k===nk?"next":""}" data-k="${k}" aria-label="${k}${L[k]?"（おぼえた）":""}">${k}${star(k)}</button>`).join("")+`</div></section>`;
   }
   app.innerHTML=`<div class="top"><a class="pill" href="./">‹ キャラをえらぶ</a><span class="spacer"></span><button class="pill" id="boxBtn">${CHAR.boxE} ${CHAR.box}（${ownedCount()+Object.keys(SP).length}）</button></div>
-  <div class="hero"><img src="chara-${CH}.png?v=6" alt=""><div><h1>${CHAR.name} ${GRADE}年生<br>おぼえる</h1><p>おぼえた かんじ <b>${n}</b> / ${KS.length}${nk?`・いまは「${placeName(chapOf(nk))}」`:""}</p><div class="bar"><i style="width:${n/KS.length*100}%"></i></div></div></div>
+  <div class="hero"><img src="chara-${CH}.png?v=7" alt=""><div><h1>${CHAR.name} ${GRADE}年生<br>おぼえる</h1><p>おぼえた かんじ <b>${n}</b> / ${KS.length}${nk?`・いまは「${placeName(chapOf(nk))}」`:""}</p><div class="bar"><i style="width:${n/KS.length*100}%"></i></div></div></div>
   <div class="modes"><button class="on" aria-current="page">📖 おぼえる</button><a href="${CH}-${KYU}.html">✏️ クイズ</a></div>
   <div class="gift-meter"><span>${CHAR.boxE}</span><span>あと <b>${PER_ITEM-(n%PER_ITEM)}</b>字 れんしゅうすると アイテム！</span>${(()=>{const m=n%PER_ITEM;return `<div class="pips">${Array.from({length:PER_ITEM},(_,i)=>`<i class="${i<m?"on":""}"></i>`).join("")}</div>`;})()}</div>
   ${nk?`<button class="btn pri" id="goNext" style="padding:14px;font-size:1.1rem">つぎの かんじ「${nk}」を おぼえる ›</button>`:`<p class="msg ok">ぜんぶ おぼえたね！ クイズに ちょうせんしよう！</p>`}
@@ -416,7 +416,7 @@ function box(){
   const all=CHAR.items;
   const spList=Object.entries(SP);
   app.innerHTML=`<div class="top"><button class="pill" id="back">‹ もどる</button></div>
-  <div class="hero"><img src="chara-${CH}.png?v=6" alt=""><div><h1>${CHAR.boxE} ${CHAR.box}</h1><p>かんじを 5つ しっかり れんしゅうすると アイテムが 1つ。ひとつの ばしょの かんじを ぜんぶ おぼえると とくべつアイテム！</p></div></div>
+  <div class="hero"><img src="chara-${CH}.png?v=7" alt=""><div><h1>${CHAR.boxE} ${CHAR.box}</h1><p>かんじを 5つ しっかり れんしゅうすると アイテムが 1つ。ひとつの ばしょの かんじを ぜんぶ おぼえると とくべつアイテム！</p></div></div>
   <section class="card"><h3>とくべつアイテム（${spList.length}）</h3><div class="shelf">${CHAR.special.map((x,i)=>{ const has=spList.some(([id,j])=>j===i); return has?`<div class="it sp">${x[0]}<small>${x[1]}</small></div>`:`<div class="it no">？</div>`; }).join("")}</div></section>
   <section class="card"><h3>アイテム（${Object.keys(IT).length} / ${all.length}しゅるい）</h3><div class="shelf">${all.map((x,i)=>IT[i]?`<div class="it">${IT[i]>1?`<span class="n">×${IT[i]}</span>`:""}${x[0]}<small>${x[1]}</small></div>`:`<div class="it no">？</div>`).join("")}</div></section>`;
   $("#back").onclick=home; scrollTo(0,0);
@@ -446,7 +446,7 @@ function lesson(k){
     scrollTo(0,0);
   }
   const unlock=()=>{ done[step]=true; $("#next").disabled=false; };
-  const talk=t=>`<div class="talk"><img src="chara-${CH}.png?v=6" alt=""><p>${t}</p></div>`;
+  const talk=t=>`<div class="talk"><img src="chara-${CH}.png?v=7" alt=""><p>${t}</p></div>`;
   const pips=(n,need)=>`<div class="pips" aria-label="${n}/${need}">${Array.from({length:need},(_,i)=>`<i class="${i<n?"on":""}"></i>`).join("")}</div>`;
   const msgFn=(t,c)=>{ const m=$("#msg"); if(m){ m.textContent=t; m.className="msg "+c; } };
   function show(){
