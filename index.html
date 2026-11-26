@@ -159,7 +159,7 @@ function info(c,k){
 function render(open){
   $("grid").after($("panel"));
   $("grid").innerHTML = CHARS.map(c=>`<button type="button" class="chara ${c.id}" data-id="${c.id}" aria-expanded="${open===c.id}">
-      <img src="chara-${c.id}.png?v=5" alt="" width="366" height="322"><b>${c.name}</b><small>${GR[c.kyus[0]]}〜${GR[c.kyus[c.kyus.length-1]]}年生</small></button>`).join("");
+      <img src="chara-${c.id}.png?v=6" alt="" width="366" height="322"><b>${c.name}</b><small>${GR[c.kyus[0]]}〜${GR[c.kyus[c.kyus.length-1]]}年生</small></button>`).join("");
   $("grid").querySelectorAll(".chara").forEach(b=>b.addEventListener("click",()=>{ const id=b.dataset.id; render(open===id?null:id); if(open!==id) $("panel").scrollIntoView({behavior:"smooth",block:"nearest"}); }));
   const c=CHARS.find(x=>x.id===open);
   $("panel").hidden=!c;
@@ -180,10 +180,10 @@ const L=last(), lm=L&&L.match(/^learn:(pirate|dragon|hamster|unicorn)-([1-6])$/)
 const m=L&&L.match(/^(pirate|dragon|hamster|unicorn)-(10|9|8|7|6|5)$/), lc=m&&CHARS.find(c=>c.id===m[1]&&c.kyus.includes(m[2]));
 if(lm){ const c=CHARS.find(x=>x.id===lm[1]), k={"1":"10","2":"9","3":"8","4":"7","5":"6","6":"5"}[lm[2]];
   $("cont").hidden=false; $("cont").href=`learn.html?c=${c.id}&g=${lm[2]}`; $("cont").className="cont "+c.id;
-  $("cont").innerHTML=`<img src="chara-${c.id}.png?v=5" alt="" width="84" height="68"><div><b>つづきから：${c.name} ${lm[2]}年生</b><span>📖 おぼえる（${learnInfo(c,k)} / ${NK[k]}字）</span></div><i>›</i>`;
+  $("cont").innerHTML=`<img src="chara-${c.id}.png?v=6" alt="" width="84" height="68"><div><b>つづきから：${c.name} ${lm[2]}年生</b><span>📖 おぼえる（${learnInfo(c,k)} / ${NK[k]}字）</span></div><i>›</i>`;
 }else if(lc){
   $("cont").hidden=false; $("cont").href=L+".html"; $("cont").className="cont "+lc.id;
-  $("cont").innerHTML=`<img src="chara-${lc.id}.png?v=5" alt="" width="84" height="68"><div><b>つづきから：${lc.name} ${GR[m[2]]}年生</b><span>✏️ クイズ・${info(lc,m[2]).replace(/<\/?b>/g,"")}</span></div><i>›</i>`;
+  $("cont").innerHTML=`<img src="chara-${lc.id}.png?v=6" alt="" width="84" height="68"><div><b>つづきから：${lc.name} ${GR[m[2]]}年生</b><span>✏️ クイズ・${info(lc,m[2]).replace(/<\/?b>/g,"")}</span></div><i>›</i>`;
 }
 render(null);
 // 有料のしくみ（アプリのときだけ）：買う・購入を復元
