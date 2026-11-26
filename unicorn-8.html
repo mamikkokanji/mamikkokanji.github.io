@@ -1906,6 +1906,35 @@ if((CH==="pirate"||CH==="unicorn") && typeof renderSea==="function"){
   }
 })();
 </script>
+<script>
+// しんかは「学年の すすみぐあい」で（MAさん 2026-11-26、英語版と同じ）
+// ポイント＝おぼえた字（learn.html、kanji-learn-v1 の learned["<キャラ>-<学年>"]）＋ クイズで みつけた字（state.found）
+// その学年の字数×2 で さいごの だんかい。それより前は 14だんかいめまで。
+(function(){
+  if(typeof stageOf!=="function"||typeof state!=="object"||typeof STAGES==="undefined") return;
+  const CH=window.PLAY_CH, G=window.KF_GRADE;
+  const KS=(typeof ALL!=="undefined"&&ALL?ALL:[]).map(t=>t.k);
+  if(!CH||!G||!KS.length) return;
+  const N=KS.length, MAX=N*2, LAST=STAGES.length-1;
+  function learned(){ try{ const v=JSON.parse(localStorage.getItem("kanji-learn-v1")||"{}"); const L=(v.learned||{})[CH+"-"+G]||{}; return KS.filter(k=>L[k]).length; }catch(e){ return 0; } }
+  function pts(){ const f=state.found||{}; return learned()+KS.filter(k=>f[k]).length; }
+  const at=s=>Math.ceil(s*MAX/LAST);           // s だんかいめに なる ポイント
+  window.stageOf=function(){ const p=pts(); return p>=MAX?LAST:Math.min(LAST-1,Math.floor(p*LAST/MAX)); };
+  function meter(){
+    const bar=document.getElementById("meterBar"), txt=document.getElementById("meterTxt"); if(!bar||!txt) return;
+    const st=stageOf(), p=pts();
+    if(st>=LAST){ bar.style.width="100%"; txt.innerHTML="さいごの しんかまで できた！"; return; }
+    const lo=at(st), hi=st>=LAST-1?MAX:at(st+1);
+    bar.style.width=Math.max(0,Math.min(100,(p-lo)/(hi-lo)*100))+"%";
+    txt.innerHTML=`しんかまで あと <b>${hi-p}</b>もじ`;
+  }
+  const nextTxt=()=>{ const st=stageOf(); if(st>=LAST) return "さいごの しんかだよ。おめでとう！"; const hi=st>=LAST-1?MAX:at(st+1); return `つぎの しんかまで、あと ${hi-pts()}もじ（おぼえる・クイズで みつける）`; };
+  ["renderRoom","renderNest"].forEach(n=>{ if(typeof window[n]==="function"){ const o=window[n]; window[n]=function(){ const r=o.apply(this,arguments); meter(); return r; }; } });
+  const en=document.getElementById("evoNext");
+  if(en) new MutationObserver(()=>{ if(/あと\s*\d+\s*(もん|問)|あと\s*\d+問/.test(en.textContent)) en.textContent=nextTxt(); }).observe(en,{childList:true,characterData:true,subtree:true});
+  try{ (window.renderRoom||window.renderNest)(); }catch(e){ meter(); }
+})();
+</script>
 <script>if(window.KF_PAY) KF_PAY.guardQuiz();</script>
 <script>
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
