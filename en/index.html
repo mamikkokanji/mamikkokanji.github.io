@@ -65,7 +65,7 @@ button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var
 .friend small{color:var(--muted);font-size:.78rem;font-weight:700;text-align:center;line-height:1.3}
 .friend.cur{border-color:var(--c)}
 .levels{display:flex;flex-direction:column;gap:8px}
-.level{display:flex;align-items:center;gap:10px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:10px 14px;font-weight:800}
+.level{font:inherit;color:var(--ink);text-align:left;width:100%;cursor:pointer;display:flex;align-items:center;gap:10px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:10px 14px;font-weight:800}
 .level.on{border-color:var(--c);background:var(--soft)}
 .level small{margin-left:auto;font-weight:700;color:var(--muted);font-size:.8rem}
 .level .lv-k{font-family:var(--f-k);font-size:1.3rem;color:var(--c)}
@@ -328,10 +328,14 @@ addEventListener("DOMContentLoaded",function(){ var n=null; try{ n=sessionStorag
 </head>
 <body class="home">
 <div class="wrap" id="app"></div>
-<script src="data-g1.js?v=6"></script>
-<script src="voice-g1.js?v=2"></script>
+<script>
+/* 学年ごとの データを よむ（S.grade、ない学年は 1年生） */
+window.KGRADES={1:{v:"6",voice:"voice-g1.js?v=2",n:80},2:{v:"1",n:160}};
+(function(){ var G=1; try{ var v=JSON.parse(localStorage.getItem("kanji-friends-en-v1")||"{}"); if(window.KGRADES[v.grade]) G=+v.grade; }catch(e){} window.KGRADE=G;
+  var g=window.KGRADES[G]; document.write('<script src="data-g'+G+'.js?v='+g.v+'"><\/script>'+(g.voice?'<script src="'+g.voice+'"><\/script>':'')); })();
+</script>
 <script src="games.js?v=1"></script>
-<script src="app.js?v=11"></script>
+<script src="app.js?v=12"></script>
 <script>
 if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
 </script>

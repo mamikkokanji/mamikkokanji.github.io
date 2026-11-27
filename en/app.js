@@ -51,7 +51,8 @@ S.learned=S.learned||{};   // k -> {n,t}
 S.st=S.st||{};             // k -> {type:[ok,ng]}
 S.fr=S.fr||{};             // ch -> {correct, items:{}, sp:{}}
 S.play=S.play||{used:0,best:{}};
-S.q=S.q||{};               // total quiz {correct,answered}
+S.q=S.q||{};
+const GRADE=window.KGRADE||1; S.grade=GRADE; S.gcount=S.gcount||{};               // total quiz {correct,answered}
 function save(){ try{ localStorage.setItem(SKEY,JSON.stringify(S)); }catch(e){} }
 const FS=ch=>S.fr[ch]=S.fr[ch]||{correct:0,items:{},sp:{}};
 const L=S.learned;
@@ -97,6 +98,7 @@ const RB=/\{([^|}]+)\|([^|}]+)(?:\|([a-z]*))?\}/g;
 function ruby(s,k,opt){
   opt=opt||{};
   return esc(s).replace(RB,(m,a,b,t)=>{
+    if(t==="x") return a; // 下の学年の字：ふりがな なし
     if(opt.blank&&t&&a.includes(k)) return `<ruby><span class="blank"></span><rt class="y-${t}">${esc(b)}</rt></ruby>`;
     const cls=t&&!opt.nocolor?` class="y-${t}"`:"";
     const r=`<ruby>${a}<rt${cls}>${opt.both&&t&&a.includes(k)?`${b}・${kata(b)}`:b}</rt></ruby>`;
@@ -297,6 +299,7 @@ function route(){
   const h=decodeURIComponent(location.hash.slice(1)).split("/").filter(Boolean);
   if(h[0]==="f"&&CHS.includes(h[1])){ S.ch=h[1]; save(); return hub(); }
   if(!S.ch||!h.length) return home();
+  if(h[0]==="learn"&&!K[h[1]]) return hub();
   if(h[0]==="learn"&&K[h[1]]) return lesson(h[1],+h[2]||0);
   if(h[0]==="quiz") return quiz();
   if(h[0]==="play") return play(h[1]);
@@ -308,18 +311,19 @@ window.addEventListener("hashchange",route);
 // ---------- screen: home ----------
 function home(){
   theme("home");
-  const n=KS.filter(k=>L[k]).length;
+  const n=KS.filter(k=>L[k]).length; S.gcount[GRADE]=n; save();
   app.innerHTML=`<div class="top"><span class="spacer"></span><button class="pill" id="setBtn" aria-label="Settings">⚙ Settings</button></div>
   <header class="title"><h1>Kanji <span>Friends</span></h1><div class="jp">かんじフレンズ</div>
   <p>Learn real Japanese kanji with a friend. Meanings, stories, words and sentences are explained in English, with furigana and romaji.</p></header>
   <h2 class="sec">Choose your friend</h2>
   <div class="friends">${CHS.map(c=>`<a class="friend ${c} ${S.ch===c?"cur":""}" href="#/f/${c}"><img src="img/chara-${c}.webp" alt=""><b>${FR[c].name}</b><small>${esc(STAGES[c][stageOf(c)])}</small></a>`).join("")}</div>
   <h2 class="sec">Level</h2>
-  <div class="levels"><div class="level on"><span class="lv-k">一</span><span>Grade 1 kanji <span class="jp" style="color:var(--muted);font-size:.8rem">1年生</span></span><small>${n} / ${KS.length} learned</small></div>
-  <div class="level" style="opacity:.55"><span class="lv-k">二</span><span>Grade 2 kanji</span><small>coming soon</small></div></div>
+  <div class="levels">${[1,2,3,4,5,6].map(g=>{ const ok=!!(window.KGRADES||{})[g], on=g===GRADE, cnt=on?n:(S.gcount[g]||0), tot=ok?KGRADES[g].n:0;
+    return `<button class="level ${on?"on":""}" data-g="${g}" ${ok?"":"disabled style=\"opacity:.55\""}><span class="lv-k">${"一二三四五六"[g-1]}</span><span>Grade ${g} kanji <span class="jp" style="color:var(--muted);font-size:.8rem">${g}年生</span></span><small>${ok?`${cnt} / ${tot} learned`:"coming soon"}</small></button>`; }).join("")}</div>
   ${ONKUN_TIP}
   <p class="foot">Your progress is saved on this device (in this browser). Your learned kanji are shared by all four friends; each friend grows with your quiz answers.</p>`;
   $("#setBtn").onclick=settings;
+  app.querySelectorAll(".level[data-g]").forEach(b=>b.onclick=()=>{ const g=+b.dataset.g; if(g===GRADE||!(window.KGRADES||{})[g]) return; S.grade=g; save(); location.hash="#/"; location.reload(); });
 }
 
 // ---------- screen: friend hub ----------
@@ -340,7 +344,7 @@ function hub(){
       ks.map(k=>`<button class="tile ${L[k]?"done":""} ${k===nk?"next":""}" data-k="${k}" aria-label="${k}, ${esc(shortM(k))}${L[k]?", learned":""}">${k}<span class="tm">${esc(shortM(k))}</span>${star(k)}</button>`).join("")+`</div></section>`;
   });
   const t=tickets();
-  app.innerHTML=`<div class="top"><a class="pill" href="#/">‹ Friends</a><span class="spacer"></span><a class="pill" href="#/box">${F.boxE} ${esc(F.box)} (${Object.keys(fs.items).length+Object.keys(fs.sp).length})</a><button class="pill" id="setBtn" aria-label="Settings">⚙</button></div>
+  app.innerHTML=`<div class="top"><a class="pill" href="#/">‹ Friends</a><a class="pill" href="#/" title="Change grade">Grade ${GRADE} <span class="jp">${GRADE}年生</span></a><span class="spacer"></span><a class="pill" href="#/box">${F.boxE} ${esc(F.box)} (${Object.keys(fs.items).length+Object.keys(fs.sp).length})</a><button class="pill" id="setBtn" aria-label="Settings">⚙</button></div>
   ${heroHTML(ch)}
   <div class="modes"><a href="#/learn/${nk||KS[0]}" class="on">📖 Learn<small>おぼえる</small></a><a href="#/quiz">✏️ Quiz<small>クイズ · ★ ${qm.cleared}/${SECS.length}</small></a><a href="#/play">🎪 Play<small>あそびば</small>${t?`<span class="n">${t}</span>`:""}</a></div>
   ${nk?`<a class="btn pri" href="#/learn/${nk}" style="padding:14px;font-size:1.08rem">Learn the next kanji: <span style="font-family:var(--f-k);font-size:1.4rem;margin:0 4px">${nk}</span> (${esc(shortM(nk))}) ›</a>`:`<p class="msg ok">You learned all ${KS.length} kanji! Try the quiz!</p>`}
@@ -570,7 +574,9 @@ function lessonQuiz(k){
 // ---------- screen: quiz ----------
 const QT={k2m:18,m2k:18,read:20,wmean:10,blank:12,write:14,strokes:4,order:4};
 // Quiz map (same as the Japanese version): one ${stop} per group, find every kanji (answer it correctly once) to open the next one.
-function QM(ch){ const fs=FS(ch);
+// quiz map per friend and grade (grade 1 keeps its old place in fr[ch])
+function QM(ch){ const f0=FS(ch); let fs=f0;
+  if(GRADE!==1){ f0.gs=f0.gs||{}; fs=f0.gs[GRADE]=f0.gs[GRADE]||{}; fs.correct=f0.correct; }
   if(!fs.found||typeof fs.found!=="object"){ fs.found={}; if(fs.correct>0) KS.forEach(k=>{ const s=S.st[k]; if(s&&Object.values(s).some(v=>v[0]>0)) fs.found[k]=1; }); }
   if(typeof fs.cleared!=="number") fs.cleared=0;
   while(fs.cleared<SECS.length&&SECS[fs.cleared].every(k=>fs.found[k])) fs.cleared++;
