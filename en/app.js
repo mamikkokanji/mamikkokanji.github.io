@@ -113,7 +113,7 @@ function tgtHTML(w,k,sent){ // 「学 = ガッ GAK」: on'yomi in katakana / CAP
   if(/っ$/.test(t.y)&&nx){ r=romaji(t.y+nx); r=r.slice(0,r.length-romaji(nx).length); }
   if(t.t==="on") r=r.toUpperCase();
   let al=sent?altR(w,k,true):(altR(w,k)?[plainR(w),altR(w,k)]:null);
-  if(!al&&/\{日\|にっ\}\{本\|ぽん\}/.test(w)) al=["日本","にほん"]; // 日本 にっぽん／にほん どちらも正しい
+  if(!al&&/\{日\|にっ(\|x)?\}\{本\|ぽん(\|x)?\}/.test(w)) al=["日本","にほん"]; // 日本 にっぽん／にほん どちらも正しい
   return `${TAGS[t.t]} ${esc(t.g)} = <b class="y-${t.t}">${esc(t.t==="on"?`${kata(t.y)}（${t.y}）`:t.y)}</b> <span class="roma">${esc(r)}</span>${al?`<span class="also">${esc(al[0])} can also be read <b class="jp">${esc(al[1])}</b> <span class="roma">${esc(romaji(al[1]))}</span>. Both are correct.</span>`:""}`;
 }
 // 十本 じゅっぽん/じっぽん のように、どちらの読みも正しいもの
