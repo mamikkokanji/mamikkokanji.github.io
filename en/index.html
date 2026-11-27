@@ -330,7 +330,7 @@ addEventListener("DOMContentLoaded",function(){ var n=null; try{ n=sessionStorag
 <div class="wrap" id="app"></div>
 <script>
 /* 学年ごとの データを よむ（S.grade、ない学年は 1年生） */
-window.KGRADES={1:{v:"6",voice:"voice-g1.js?v=2",n:80},2:{v:"1",n:160}};
+window.KGRADES={1:{v:"6",voice:"voice-g1.js?v=2",n:80},2:{v:"1",n:160},3:{v:"1",n:200}};
 (function(){ var G=1; try{ var v=JSON.parse(localStorage.getItem("kanji-friends-en-v1")||"{}"); if(window.KGRADES[v.grade]) G=+v.grade; }catch(e){} window.KGRADE=G;
   var g=window.KGRADES[G]; document.write('<script src="data-g'+G+'.js?v='+g.v+'"><\/script>'+(g.voice?'<script src="'+g.voice+'"><\/script>':'')); })();
 </script>
